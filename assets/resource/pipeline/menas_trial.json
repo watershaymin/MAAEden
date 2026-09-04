@@ -1,0 +1,222 @@
+{
+    "MenasTrial": {
+        "desc": "完成一场梅纳斯试炼 STAGE SS，从主界面、活动列表或试炼选关页进入。",
+        "timeout": 120000,
+        "next": [
+            "MenasTrialSelectSS",
+            "MenasTrialOpenTrial",
+            "MenasTrialOpenActivities"
+        ]
+    },
+    "MenasTrialOpenActivities": {
+        "recognition": "TemplateMatch",
+        "template": "MenasTrial/Activities.png",
+        "roi": [
+            325,
+            630,
+            90,
+            70
+        ],
+        "threshold": 0.9,
+        "method": 10001,
+        "action": "Click",
+        "max_hit": 3,
+        "timeout": 30000,
+        "next": [
+            "MenasTrialOpenTrial",
+            "MenasTrialOpenActivities"
+        ]
+    },
+    "MenasTrialOpenTrial": {
+        "recognition": "TemplateMatch",
+        "template": "MenasTrial/Banner.png",
+        "roi": [
+            680,
+            80,
+            480,
+            170
+        ],
+        "threshold": 0.9,
+        "method": 10001,
+        "action": "Click",
+        "max_hit": 3,
+        "timeout": 60000,
+        "next": [
+            "MenasTrialSelectSS",
+            "MenasTrialOpenTrial"
+        ]
+    },
+    "MenasTrialSelectSS": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "MenasTrial/Title.png",
+                "roi": [
+                    550,
+                    0,
+                    185,
+                    40
+                ],
+                "threshold": 0.9,
+                "method": 10001
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "MenasTrial/StageSS.png",
+                "roi": [
+                    935,
+                    155,
+                    215,
+                    130
+                ],
+                "threshold": 0.9,
+                "method": 5
+            }
+        ],
+        "box_index": 1,
+        "action": "Click",
+        "max_hit": 3,
+        "timeout": 30000,
+        "next": [
+            "MenasTrialChallenge",
+            "MenasTrialSelectSS"
+        ]
+    },
+    "MenasTrialChallenge": {
+        "recognition": "TemplateMatch",
+        "template": "MenasTrial/Challenge.png",
+        "roi": [
+            680,
+            605,
+            215,
+            85
+        ],
+        "threshold": 0.9,
+        "method": 10001,
+        "desc": "只提交一次挑战，消耗一张入场券；不编辑或切换队伍。",
+        "action": "Click",
+        "max_hit": 1,
+        "timeout": 180000,
+        "next": [
+            "MenasTrialAttack"
+        ]
+    },
+    "MenasTrialAttack": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "MenasTrial/Attack.png",
+                "roi": [
+                    1080,
+                    545,
+                    185,
+                    165
+                ],
+                "threshold": 0.85,
+                "method": 5
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "MenasTrial/BattleStatus.png",
+                "roi": [
+                    20,
+                    15,
+                    155,
+                    55
+                ],
+                "threshold": 0.9,
+                "method": 10001
+            }
+        ],
+        "desc": "只点击攻击；每次识别到可操作的战斗界面才点击，动画期间等待。",
+        "action": "Click",
+        "max_hit": 100,
+        "timeout": 180000,
+        "next": [
+            "MenasTrialRewards",
+            "MenasTrialAttack"
+        ]
+    },
+    "MenasTrialRewards": {
+        "desc": "道具和经验结算页，点击空白区域继续。",
+        "recognition": "TemplateMatch",
+        "template": "MenasTrial/Rewards.png",
+        "roi": [
+            0,
+            15,
+            205,
+            80
+        ],
+        "threshold": 0.85,
+        "action": "Click",
+        "target": [
+            630,
+            420,
+            20,
+            20
+        ],
+        "max_hit": 8,
+        "timeout": 60000,
+        "next": [
+            "MenasTrialCongratulations",
+            "MenasTrialRewards"
+        ]
+    },
+    "MenasTrialCongratulations": {
+        "desc": "通过提示及逐条任务达成展示；只在 Congratulations 标题可见时继续。",
+        "recognition": "TemplateMatch",
+        "template": "MenasTrial/Congratulations.png",
+        "roi": [
+            270,
+            65,
+            740,
+            150
+        ],
+        "threshold": 0.85,
+        "action": "Click",
+        "target": [
+            630,
+            420,
+            20,
+            20
+        ],
+        "max_hit": 16,
+        "timeout": 60000,
+        "next": [
+            "MenasTrialCongratulations",
+            "MenasTrialComplete"
+        ]
+    },
+    "MenasTrialComplete": {
+        "desc": "只有通过结算后，主界面的菜单和地图同时恢复亮度才完成。",
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMenu.png",
+                "roi": [
+                    25,
+                    625,
+                    120,
+                    78
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMap.png",
+                "roi": [
+                    235,
+                    630,
+                    85,
+                    73
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            }
+        ]
+    }
+}

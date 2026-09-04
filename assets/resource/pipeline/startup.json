@@ -1,0 +1,83 @@
+{
+    "StartUp": {
+        "desc": "启动另一个伊甸，复用设备上已有的登录状态。",
+        "action": "StartApp",
+        "package": "com.xd.anothereden/net.wrightflyer.toybox.AppActivity",
+        "timeout": 180000,
+        "next": [
+            "StartUpCloseAnnouncement",
+            "StartUpLoadGame",
+            "StartUpWorldReady"
+        ]
+    },
+    "StartUpLoadGame": {
+        "desc": "仅在标题页的读取游戏按钮可见时点击；最多尝试三次。",
+        "recognition": "TemplateMatch",
+        "template": "Startup/LoadGame.png",
+        "roi": [
+            540,
+            490,
+            200,
+            105
+        ],
+        "threshold": 0.85,
+        "action": "Click",
+        "max_hit": 3,
+        "timeout": 180000,
+        "next": [
+            "StartUpCloseAnnouncement",
+            "StartUpWorldReady",
+            "StartUpLoadGame"
+        ]
+    },
+    "StartUpCloseAnnouncement": {
+        "desc": "匹配登录公告右上角的关闭按钮，不依赖会更新的公告正文。",
+        "recognition": "TemplateMatch",
+        "template": "Startup/AnnouncementClose.png",
+        "roi": [
+            975,
+            10,
+            140,
+            70
+        ],
+        "method": 10001,
+        "threshold": 0.9,
+        "action": "Click",
+        "max_hit": 3,
+        "timeout": 120000,
+        "next": [
+            "StartUpCloseAnnouncement",
+            "StartUpWorldReady"
+        ]
+    },
+    "StartUpWorldReady": {
+        "desc": "菜单与地图按钮同时可见才完成；亮度敏感匹配排除弹窗遮罩下的背景按钮。",
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMenu.png",
+                "roi": [
+                    25,
+                    625,
+                    120,
+                    78
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMap.png",
+                "roi": [
+                    235,
+                    630,
+                    85,
+                    73
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            }
+        ]
+    }
+}

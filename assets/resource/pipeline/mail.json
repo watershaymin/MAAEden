@@ -1,0 +1,345 @@
+{
+    "CollectMail": {
+        "desc": "领取信箱中尚未开封的邮件附件；已有邮件不删除。",
+        "timeout": 60000,
+        "next": [
+            "MailConfirmReceived",
+            "MailCloseInbox",
+            "MailInspectMenu",
+            "MailOpenMenu"
+        ]
+    },
+    "MailOpenMenu": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMenu.png",
+                "roi": [
+                    25,
+                    625,
+                    120,
+                    78
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMap.png",
+                "roi": [
+                    235,
+                    630,
+                    85,
+                    73
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            }
+        ],
+        "action": "Click",
+        "max_hit": 103,
+        "timeout": 30000,
+        "next": [
+            "MailInspectMenu"
+        ]
+    },
+    "MailInspectMenu": {
+        "recognition": "TemplateMatch",
+        "template": "Mail/InboxIcon.png",
+        "roi": [
+            1165,
+            575,
+            100,
+            70
+        ],
+        "method": 10001,
+        "threshold": 0.95,
+        "desc": "先确认菜单和信箱图标可见，再检查固定位置的未读红色角标。",
+        "pre_wait_freezes": {
+            "time": 300,
+            "target": [
+                1170,
+                540,
+                90,
+                100
+            ],
+            "timeout": 5000
+        },
+        "max_hit": 103,
+        "timeout": 10000,
+        "next": [
+            "MailOpenInbox",
+            "MailNoUnread"
+        ]
+    },
+    "MailOpenInbox": {
+        "recognition": "ColorMatch",
+        "roi": [
+            1212,
+            550,
+            41,
+            39
+        ],
+        "method": 4,
+        "lower": [
+            180,
+            45,
+            65
+        ],
+        "upper": [
+            255,
+            150,
+            170
+        ],
+        "count": 250,
+        "desc": "只有菜单信箱仍有未读角标才进入。",
+        "action": "Click",
+        "target": [
+            1195,
+            598,
+            30,
+            22
+        ],
+        "max_hit": 100,
+        "timeout": 60000,
+        "next": [
+            "MailOpenUnread",
+            "MailScrollInbox"
+        ]
+    },
+    "MailOpenUnread": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Mail/InboxTitle.png",
+                "roi": [
+                    585,
+                    40,
+                    100,
+                    60
+                ],
+                "method": 10001,
+                "threshold": 0.95
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Mail/UnreadRow.png",
+                "roi": [
+                    580,
+                    170,
+                    225,
+                    442
+                ],
+                "method": 5,
+                "threshold": 0.9,
+                "order_by": "Vertical"
+            }
+        ],
+        "box_index": 1,
+        "desc": "匹配没有已开封标记的邮件卡片状态栏与底边，跳过历史邮件。",
+        "action": "Click",
+        "max_hit": 100,
+        "timeout": 60000,
+        "next": [
+            "MailConfirmReceived"
+        ]
+    },
+    "MailConfirmReceived": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Mail/Received.png",
+                "roi": [
+                    550,
+                    420,
+                    180,
+                    65
+                ],
+                "method": 10001,
+                "threshold": 0.95
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Mail/Confirm.png",
+                "roi": [
+                    580,
+                    590,
+                    130,
+                    80
+                ],
+                "method": 10001,
+                "threshold": 0.95
+            }
+        ],
+        "box_index": 1,
+        "desc": "确认已领取以下道具后关闭详情，再重新检查未读数量。",
+        "action": "Click",
+        "max_hit": 103,
+        "timeout": 60000,
+        "next": [
+            "MailCloseInbox"
+        ]
+    },
+    "MailCloseInbox": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Mail/InboxTitle.png",
+                "roi": [
+                    585,
+                    40,
+                    100,
+                    60
+                ],
+                "method": 10001,
+                "threshold": 0.95
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Mail/Close.png",
+                "roi": [
+                    1000,
+                    10,
+                    120,
+                    65
+                ],
+                "method": 10001,
+                "threshold": 0.95
+            }
+        ],
+        "box_index": 1,
+        "action": "Click",
+        "max_hit": 103,
+        "timeout": 30000,
+        "next": [
+            "MailInspectMenu",
+            "MailOpenMenu"
+        ]
+    },
+    "MailScrollInbox": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Mail/InboxTitle.png",
+                "roi": [
+                    585,
+                    40,
+                    100,
+                    60
+                ],
+                "method": 10001,
+                "threshold": 0.95
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Mail/Close.png",
+                "roi": [
+                    1000,
+                    10,
+                    120,
+                    65
+                ],
+                "method": 10001,
+                "threshold": 0.95
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Mail/Opened.png",
+                "roi": [
+                    580,
+                    116,
+                    225,
+                    140
+                ],
+                "method": 5,
+                "threshold": 0.9
+            }
+        ],
+        "desc": "首个可见邮件状态明确为已开封且没有命中未开封邮件时才向下翻页，避免列表尚未加载时翻页。",
+        "action": "Swipe",
+        "begin": [
+            970,
+            555,
+            10,
+            10
+        ],
+        "end": [
+            970,
+            285,
+            10,
+            10
+        ],
+        "duration": 500,
+        "max_hit": 100,
+        "timeout": 60000,
+        "next": [
+            "MailOpenUnread",
+            "MailScrollInbox"
+        ]
+    },
+    "MailNoUnread": {
+        "recognition": "ColorMatch",
+        "roi": [
+            1212,
+            550,
+            41,
+            39
+        ],
+        "method": 4,
+        "lower": [
+            180,
+            45,
+            65
+        ],
+        "upper": [
+            255,
+            150,
+            170
+        ],
+        "count": 250,
+        "inverse": true,
+        "desc": "仅从确认菜单可见的检查节点进入。无未读角标时返回主界面。",
+        "action": "ClickKey",
+        "key": 4,
+        "max_hit": 1,
+        "timeout": 30000,
+        "next": [
+            "MailComplete"
+        ]
+    },
+    "MailComplete": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMenu.png",
+                "roi": [
+                    25,
+                    625,
+                    120,
+                    78
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMap.png",
+                "roi": [
+                    235,
+                    630,
+                    85,
+                    73
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            }
+        ],
+        "desc": "确认未读角标消失且已回到主界面，领取任务完成。"
+    }
+}

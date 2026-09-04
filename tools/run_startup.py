@@ -1,0 +1,83 @@
+"""通过 MaaFramework 在指定 ADB 设备上运行任务，默认启动并登录。"""
+
+import argparse
+import sys
+import time
+from pathlib import Path
+
+from maa.controller import AdbController
+from maa.define import MaaAdbInputMethodEnum, MaaAdbScreencapMethodEnum
+from maa.resource import Resource
+from maa.tasker import Tasker
+from maa.toolkit import Toolkit
+
+
+TASKS = {
+    "StartUp": ("StartUpWorldReady", 300, "startup-run", "已进入游戏主界面。"),
+    "MenasTrial": ("MenasTrialComplete", 900, "menas-trial-run", "梅纳斯试炼已结算并返回主界面。"),
+    "CollectMail": ("MailComplete", 600, "mail-run", "邮件已领取完毕并返回主界面。"),
+}
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--adb-path", required=True, type=Path)
+    parser.add_argument("--address", required=True, help="例如 127.0.0.1:16384")
+    parser.add_argument("--task", choices=list(TASKS), default="StartUp")
+    args = parser.parse_args()
+    if not args.adb_path.is_file():
+        parser.error("--adb-path 必须指向 adb 可执行文件")
+
+    root = Path(__file__).resolve().parents[1]
+    completion_node, time_limit, log_dir, success_message = TASKS[args.task]
+    Toolkit.init_option(root / "debug" / log_dir)
+    controller = AdbController(
+        args.adb_path,
+        args.address,
+        screencap_methods=MaaAdbScreencapMethodEnum.Encode,
+        input_methods=MaaAdbInputMethodEnum.AdbShell,
+    )
+    if not controller.post_connection().wait().succeeded:
+        print("ADB 连接失败，请检查模拟器地址。", file=sys.stderr)
+        return 1
+    controller.set_screenshot_target_short_side(720)
+    frame = controller.post_screencap().wait().get()
+    if frame is None or frame.shape[:2] != (720, 1280):
+        print("当前仅支持 16:9 横屏设备（缩放后 1280×720）。", file=sys.stderr)
+        return 1
+
+    resource = Resource()
+    if not resource.post_bundle(root / "assets" / "resource").wait().succeeded:
+        print(f"资源加载失败，请检查 debug/{log_dir} 下的日志。", file=sys.stderr)
+        return 1
+    tasker = Tasker()
+    if not tasker.bind(resource, controller) or not tasker.inited:
+        print("MaaFramework 初始化失败。", file=sys.stderr)
+        return 1
+
+    job = tasker.post_task(args.task)
+    deadline = time.monotonic() + time_limit
+    try:
+        while not job.done:
+            if time.monotonic() >= deadline:
+                print(f"任务超过 {time_limit // 60} 分钟，停止任务。请检查当前画面。", file=sys.stderr)
+                tasker.post_stop().wait()
+                return 1
+            time.sleep(0.2)
+    except KeyboardInterrupt:
+        tasker.post_stop().wait()
+        print("任务已停止。", file=sys.stderr)
+        return 130
+
+    detail = job.get()
+    if detail:
+        print(" → ".join(node.name for node in detail.nodes))
+    if not job.succeeded or not detail or not detail.nodes or detail.nodes[-1].name != completion_node:
+        print("任务失败，请检查当前画面与日志。", file=sys.stderr)
+        return 1
+    print(success_message)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
