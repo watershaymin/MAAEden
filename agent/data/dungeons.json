@@ -1,0 +1,2944 @@
+{
+    "version": 1,
+    "survey_complete": true,
+    "observed_on": "2026-09-05",
+    "scope": "2026-09-05 当前账号蓝门内全部已显示入口、可选难度与已解锁楼层；队伍限制逐项记录，未解锁楼层不视为可进入",
+    "maps": [
+        {
+            "era": "现代",
+            "region": "米古尼娜大陆",
+            "boundary_scan_complete": true,
+            "children_inspected": true,
+            "points": [
+                "印象空间",
+                "异世界",
+                "异时层",
+                "忘乡画廊",
+                "扭曲的大漩涡",
+                "教义之塔",
+                "月影森林",
+                "王都尤尼冈",
+                "神话时代的雷姆利亚",
+                "米格兰斯城",
+                "米格兰斯王宫",
+                "蛇骨岛",
+                "阿斯特拉岛",
+                "露洽纳遗迹",
+                "魔兽城"
+            ],
+            "evidence": "modern-mig-coverage.json",
+            "search_routes": {
+                "异世界": [
+                    "L"
+                ],
+                "异时层": [
+                    "L"
+                ],
+                "月影森林": [
+                    "L"
+                ],
+                "米格兰斯王宫": [
+                    "L"
+                ],
+                "魔兽城": [
+                    "L",
+                    "L"
+                ],
+                "教义之塔": [
+                    "L",
+                    "L",
+                    "L"
+                ],
+                "露洽纳遗迹": [
+                    "L",
+                    "L",
+                    "L"
+                ],
+                "扭曲的大漩涡": [
+                    "U",
+                    "U",
+                    "L",
+                    "L"
+                ],
+                "忘乡画廊": [
+                    "U",
+                    "L",
+                    "L",
+                    "L",
+                    "L",
+                    "L",
+                    "R",
+                    "R"
+                ],
+                "王都尤尼冈": [
+                    "U",
+                    "L",
+                    "L",
+                    "L",
+                    "L",
+                    "L",
+                    "R",
+                    "R"
+                ],
+                "米格兰斯城": [
+                    "U",
+                    "L",
+                    "L",
+                    "L",
+                    "L",
+                    "L",
+                    "R",
+                    "R"
+                ],
+                "印象空间": [
+                    "U",
+                    "L",
+                    "L",
+                    "L",
+                    "L",
+                    "L",
+                    "R",
+                    "R",
+                    "R"
+                ],
+                "神话时代的雷姆利亚": [
+                    "U",
+                    "U",
+                    "L",
+                    "L",
+                    "L",
+                    "L"
+                ],
+                "蛇骨岛": [
+                    "U",
+                    "U",
+                    "L",
+                    "L",
+                    "L",
+                    "L"
+                ],
+                "阿斯特拉岛": [
+                    "U",
+                    "U",
+                    "U",
+                    "L",
+                    "L",
+                    "L",
+                    "L",
+                    "L"
+                ]
+            },
+            "inspected_points": [
+                "月影森林",
+                "教义之塔",
+                "米格兰斯城",
+                "米格兰斯王宫",
+                "魔兽城",
+                "印象空间",
+                "异世界",
+                "忘乡画廊",
+                "异时层",
+                "王都尤尼冈",
+                "扭曲的大漩涡",
+                "阿斯特拉岛",
+                "神话时代的雷姆利亚",
+                "蛇骨岛",
+                "露洽纳遗迹"
+            ]
+        },
+        {
+            "era": "现代",
+            "region": "嘉路雷亚大陆",
+            "boundary_scan_complete": true,
+            "children_inspected": true,
+            "points": [
+                "异时层",
+                "扭曲的大漩涡",
+                "现代嘉路雷亚大陆"
+            ],
+            "evidence": "modern-garulea-coverage.json",
+            "search_routes": {
+                "扭曲的大漩涡": [
+                    "U",
+                    "U",
+                    "L"
+                ],
+                "现代嘉路雷亚大陆": [
+                    "U",
+                    "U",
+                    "L"
+                ],
+                "异时层": [
+                    "U",
+                    "U",
+                    "L",
+                    "L"
+                ]
+            },
+            "inspected_points": [
+                "扭曲的大漩涡",
+                "异时层",
+                "现代嘉路雷亚大陆"
+            ]
+        },
+        {
+            "era": "古代",
+            "region": "席尔贝利亚大陆",
+            "boundary_scan_complete": true,
+            "children_inspected": true,
+            "points": [
+                "古代席尔贝利亚大陆 晶",
+                "古代席尔贝利亚大陆 阴",
+                "古代席尔贝利亚大陆 雷",
+                "失乐之都"
+            ],
+            "evidence": "ancient-west-coverage.json",
+            "search_routes": {
+                "古代席尔贝利亚大陆 晶": [
+                    "L"
+                ],
+                "失乐之都": [
+                    "L",
+                    "L",
+                    "L"
+                ],
+                "古代席尔贝利亚大陆 阴": [
+                    "U",
+                    "L",
+                    "L",
+                    "L",
+                    "L",
+                    "L"
+                ],
+                "古代席尔贝利亚大陆 雷": [
+                    "U",
+                    "U",
+                    "L",
+                    "L"
+                ]
+            },
+            "inspected_points": [
+                "古代席尔贝利亚大陆 晶",
+                "古代席尔贝利亚大陆 雷",
+                "古代席尔贝利亚大陆 阴",
+                "失乐之都"
+            ]
+        },
+        {
+            "era": "古代",
+            "region": "米古尼娜大陆",
+            "boundary_scan_complete": true,
+            "children_inspected": true,
+            "points": [
+                "冥界",
+                "卧龙岛",
+                "忘乡画廊",
+                "扭曲的大漩涡",
+                "时之塔",
+                "星之塔",
+                "梦幻花盛开之章",
+                "梦见幻视之章",
+                "流冰海域",
+                "纳达拉火山",
+                "贪婪者的旅途",
+                "酸性沼泽",
+                "龙宫城"
+            ],
+            "evidence": "ancient-mig-coverage.json",
+            "search_routes": {
+                "忘乡画廊": [
+                    "L"
+                ],
+                "流冰海域": [
+                    "L"
+                ],
+                "龙宫城": [
+                    "L"
+                ],
+                "纳达拉火山": [
+                    "L",
+                    "L"
+                ],
+                "梦幻花盛开之章": [
+                    "U",
+                    "L",
+                    "L",
+                    "L",
+                    "L",
+                    "L"
+                ],
+                "扭曲的大漩涡": [
+                    "U",
+                    "L",
+                    "L",
+                    "L",
+                    "L",
+                    "L",
+                    "R"
+                ],
+                "酸性沼泽": [
+                    "U",
+                    "L",
+                    "L",
+                    "L",
+                    "L",
+                    "L",
+                    "R"
+                ],
+                "星之塔": [
+                    "U",
+                    "L",
+                    "L",
+                    "L",
+                    "L",
+                    "L",
+                    "R",
+                    "R"
+                ],
+                "时之塔": [
+                    "U",
+                    "U"
+                ],
+                "梦见幻视之章": [
+                    "U",
+                    "L",
+                    "L",
+                    "L",
+                    "L",
+                    "L",
+                    "R",
+                    "R",
+                    "R"
+                ],
+                "贪婪者的旅途": [
+                    "U",
+                    "U",
+                    "L",
+                    "L"
+                ],
+                "冥界": [
+                    "U",
+                    "U",
+                    "L",
+                    "L",
+                    "L"
+                ],
+                "卧龙岛": [
+                    "U",
+                    "U",
+                    "L",
+                    "L",
+                    "L"
+                ]
+            },
+            "inspected_points": [
+                "时之塔",
+                "星之塔",
+                "纳达拉火山",
+                "酸性沼泽",
+                "冥界",
+                "流冰海域",
+                "梦幻花盛开之章",
+                "贪婪者的旅途",
+                "梦见幻视之章",
+                "卧龙岛",
+                "龙宫城",
+                "忘乡画廊",
+                "扭曲的大漩涡"
+            ]
+        },
+        {
+            "era": "古代",
+            "region": "嘉路雷亚大陆",
+            "boundary_scan_complete": true,
+            "children_inspected": true,
+            "points": [
+                "古代嘉路雷亚大陆"
+            ],
+            "evidence": "ancient-garulea-coverage.json",
+            "search_routes": {
+                "古代嘉路雷亚大陆": [
+                    "U",
+                    "L",
+                    "L",
+                    "L",
+                    "L",
+                    "L",
+                    "R"
+                ]
+            },
+            "inspected_points": [
+                "古代嘉路雷亚大陆"
+            ]
+        },
+        {
+            "era": "未来",
+            "region": "米古尼娜大陆",
+            "boundary_scan_complete": true,
+            "children_inspected": true,
+            "points": [
+                "IDA学院",
+                "伊丝卡莉欧忒",
+                "伊甸原型",
+                "工业都市废墟",
+                "常夜的灵长机关",
+                "庭园之岛",
+                "异元晶控制所",
+                "忘乡画廊",
+                "托托剧场世界",
+                "托托的梦幻乐园",
+                "扭曲的大漩涡",
+                "旧KMS总部",
+                "时层回廊",
+                "次元战舰",
+                "次元战舰方舟"
+            ],
+            "evidence": "future-mig-coverage.json",
+            "search_routes": {
+                "伊丝卡莉欧忒": [
+                    "L"
+                ],
+                "异元晶控制所": [
+                    "L"
+                ],
+                "忘乡画廊": [
+                    "L"
+                ],
+                "托托剧场世界": [
+                    "L"
+                ],
+                "托托的梦幻乐园": [
+                    "L"
+                ],
+                "扭曲的大漩涡": [
+                    "L"
+                ],
+                "时层回廊": [
+                    "L"
+                ],
+                "IDA学院": [
+                    "U",
+                    "L",
+                    "L",
+                    "L"
+                ],
+                "次元战舰": [
+                    "U",
+                    "L",
+                    "L",
+                    "L"
+                ],
+                "次元战舰方舟": [
+                    "U",
+                    "L",
+                    "L",
+                    "L"
+                ],
+                "工业都市废墟": [
+                    "U",
+                    "L",
+                    "L",
+                    "L"
+                ],
+                "常夜的灵长机关": [
+                    "U",
+                    "L",
+                    "L",
+                    "L"
+                ],
+                "旧KMS总部": [
+                    "U",
+                    "L",
+                    "L",
+                    "L"
+                ]
+            },
+            "inspected_points": [
+                "工业都市废墟",
+                "次元战舰",
+                "时层回廊",
+                "异元晶控制所",
+                "IDA学院",
+                "伊丝卡莉欧忒",
+                "伊甸原型",
+                "庭园之岛",
+                "扭曲的大漩涡",
+                "忘乡画廊",
+                "托托剧场世界",
+                "托托的梦幻乐园",
+                "常夜的灵长机关",
+                "旧KMS总部",
+                "次元战舰方舟"
+            ]
+        },
+        {
+            "era": "未来",
+            "region": "嘉路雷亚大陆",
+            "boundary_scan_complete": true,
+            "children_inspected": true,
+            "points": [
+                "未来嘉路雷亚大陆"
+            ],
+            "evidence": "future-garulea-coverage.json",
+            "search_routes": {
+                "未来嘉路雷亚大陆": [
+                    "U",
+                    "U",
+                    "L",
+                    "L"
+                ]
+            },
+            "inspected_points": [
+                "未来嘉路雷亚大陆"
+            ]
+        },
+        {
+            "era": "???",
+            "region": "冥峡界",
+            "boundary_scan_complete": true,
+            "children_inspected": true,
+            "points": [
+                "冥峡界"
+            ],
+            "evidence": "unknown-coverage.json",
+            "search_routes": {
+                "冥峡界": [
+                    "U",
+                    "U",
+                    "L"
+                ]
+            },
+            "inspected_points": [
+                "冥峡界"
+            ]
+        },
+        {
+            "era": "虚时层",
+            "region": "石华人世界 黎弗艾尔格",
+            "boundary_scan_complete": true,
+            "children_inspected": true,
+            "points": [
+                "吉思梦德"
+            ],
+            "evidence": "void-stone-coverage.json",
+            "search_routes": {
+                "吉思梦德": [
+                    "U",
+                    "L",
+                    "L",
+                    "L",
+                    "L",
+                    "L"
+                ]
+            },
+            "inspected_points": [
+                "吉思梦德"
+            ]
+        },
+        {
+            "era": "虚时层",
+            "region": "猫人世界 柏拉图诺斯",
+            "boundary_scan_complete": true,
+            "children_inspected": true,
+            "points": [
+                "恩特纳"
+            ],
+            "evidence": "void-cat-coverage.json",
+            "search_routes": {
+                "恩特纳": [
+                    "U",
+                    "U",
+                    "L",
+                    "L"
+                ]
+            },
+            "inspected_points": [
+                "恩特纳"
+            ]
+        },
+        {
+            "era": "虚时层",
+            "region": "机人世界 钢铁圣尼加",
+            "boundary_scan_complete": true,
+            "children_inspected": true,
+            "points": [
+                "奥枚加巨城"
+            ],
+            "evidence": "void-machine-coverage.json",
+            "search_routes": {
+                "奥枚加巨城": [
+                    "U",
+                    "L",
+                    "L",
+                    "L",
+                    "L",
+                    "L"
+                ]
+            },
+            "inspected_points": [
+                "奥枚加巨城"
+            ]
+        },
+        {
+            "era": "虚时层",
+            "region": "蚀时领域",
+            "boundary_scan_complete": true,
+            "children_inspected": true,
+            "points": [
+                "蚀时尤尼冈"
+            ],
+            "evidence": "void-erosion-coverage.json",
+            "search_routes": {
+                "蚀时尤尼冈": [
+                    "U",
+                    "U",
+                    "L",
+                    "L"
+                ]
+            },
+            "inspected_points": [
+                "蚀时尤尼冈"
+            ]
+        },
+        {
+            "era": "???",
+            "region": "幻象界",
+            "boundary_scan_complete": true,
+            "children_inspected": true,
+            "points": [
+                "幻璃境"
+            ],
+            "inspected_points": [
+                "幻璃境"
+            ],
+            "evidence": "phantom-region-coverage.json",
+            "search_routes": {}
+        }
+    ],
+    "dungeons": [
+        {
+            "id": "snake_damak_vh",
+            "name": "蛇肝达玛克",
+            "difficulty": "非常困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "蛇骨岛",
+                "蛇肝达玛克"
+            ],
+            "ticket": "red",
+            "ticket_cost": 1,
+            "can_enter": true,
+            "can_skip": true,
+            "skip_verified": true,
+            "evidence": [
+                "tree-8dfa1c39abc2-vh"
+            ]
+        },
+        {
+            "id": "moon_forest_h",
+            "name": "月影森林",
+            "difficulty": "困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "月影森林"
+            ],
+            "ticket": "green",
+            "ticket_cost": 1,
+            "can_enter": true,
+            "can_skip": true,
+            "skip_verified": true,
+            "evidence": [
+                "inspect-moon-h"
+            ],
+            "verified_count": 2
+        },
+        {
+            "id": "moon_forest_vh",
+            "name": "月影森林",
+            "difficulty": "非常困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "月影森林"
+            ],
+            "ticket": "red",
+            "ticket_cost": 1,
+            "can_enter": true,
+            "can_skip": true,
+            "skip_verified": true,
+            "evidence": [
+                "inspect-moon-vh"
+            ],
+            "verified_count": 8,
+            "red_proof_refill_verified": true
+        },
+        {
+            "id": "otherlands_baruoki_1_vh",
+            "name": "巴尔沃基地区 第1层 努阿鲁平原 光照草原",
+            "confirmation_name": "异境巴尔沃基地区",
+            "difficulty": "非常困难",
+            "path": [
+                "异境",
+                "巴尔沃基地区",
+                "第1层 努阿鲁平原"
+            ],
+            "ticket": "green",
+            "ticket_cost": 2,
+            "can_enter": true,
+            "can_skip": false,
+            "skip_verified": false,
+            "evidence": [
+                "other-df3f742e32-1"
+            ]
+        },
+        {
+            "id": "doctrine_tower_vh",
+            "name": "教义之塔",
+            "difficulty": "非常困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "教义之塔"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "inspect-tower-vh"
+            ],
+            "restriction": "如需移动到教义之塔(非常困难)，请将以下成员编入队伍。 平行迷宫 波波罗"
+        },
+        {
+            "id": "doctrine_tower_h",
+            "name": "教义之塔",
+            "difficulty": "困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "教义之塔"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "inspect-tower-h"
+            ],
+            "restriction": "如需移动到教义之塔(困难)，请将以下成员编入队伍。 平行迷宫 波波罗"
+        },
+        {
+            "id": "miglance_castle_vh",
+            "name": "米格兰斯城",
+            "difficulty": "非常困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "米格兰斯城"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "inspect-miglance-castle-vh"
+            ]
+        },
+        {
+            "id": "miglance_castle_h",
+            "name": "米格兰斯城",
+            "difficulty": "困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "米格兰斯城"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "green",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "inspect-miglance-castle-h"
+            ]
+        },
+        {
+            "id": "miglance_palace_vh",
+            "name": "奇幻森林",
+            "difficulty": "非常困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "米格兰斯王宫"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "inspect-miglance-palace-vh"
+            ]
+        },
+        {
+            "id": "beast_castle_vh",
+            "name": "魔兽城",
+            "difficulty": "非常困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "魔兽城"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "inspect-beast-castle-vh"
+            ]
+        },
+        {
+            "id": "beast_castle_h",
+            "name": "魔兽城",
+            "difficulty": "困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "魔兽城"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "green",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "inspect-beast-castle-h"
+            ]
+        },
+        {
+            "id": "dungeon_35ca4ae41489",
+            "name": "星之塔",
+            "difficulty": "困难",
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "星之塔"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "green",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "inspect-star-tower-h"
+            ]
+        },
+        {
+            "id": "dungeon_7009ec53dd46",
+            "name": "时之塔",
+            "difficulty": "困难",
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "时之塔"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "green",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "inspect-time-tower-h"
+            ]
+        },
+        {
+            "id": "dungeon_9b2633b0040a",
+            "name": "酸性沼泽",
+            "difficulty": "非常困难",
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "酸性沼泽"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "inspect-acid-swamp-vh"
+            ]
+        },
+        {
+            "id": "dungeon_0db21f39429f",
+            "name": "酸性沼泽",
+            "difficulty": "困难",
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "酸性沼泽"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "green",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "inspect-acid-swamp-h"
+            ]
+        },
+        {
+            "id": "dungeon_11bb8571da07",
+            "name": "纳达拉火山",
+            "difficulty": "非常困难",
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "纳达拉火山"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "inspect-nadara-volcano-vh"
+            ]
+        },
+        {
+            "id": "dungeon_7bf701f841ec",
+            "name": "纳达拉火山",
+            "difficulty": "困难",
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "纳达拉火山"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "green",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "inspect-nadara-volcano-h"
+            ]
+        },
+        {
+            "id": "dungeon_3699eb590147",
+            "name": "龙宫城",
+            "difficulty": "非常困难",
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "龙宫城"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "inspect-dragon-palace-vh"
+            ],
+            "restriction": "如需移动到龙宫城(非常困难），请将以下成员编入队伍。 平行迷宫 希拉"
+        },
+        {
+            "id": "dungeon_a69c31ca7402",
+            "name": "龙宫城",
+            "difficulty": "困难",
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "龙宫城"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "inspect-dragon-palace-h"
+            ],
+            "restriction": "如需移动到龙宫城(困难)，请将以下成员编入队伍。 平行迷宫 希拉"
+        },
+        {
+            "id": "dungeon_c2b918bbe611",
+            "name": "冥龙王的领域",
+            "difficulty": "困难",
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "冥界",
+                "冥龙王的领域"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "inspect-nether-dragon-h"
+            ],
+            "restriction": "如需移动到冥龙王的领域(困难) 琉结 ，请将以下成员编入队伍。"
+        },
+        {
+            "id": "dungeon_3a2b7c064237",
+            "name": "冥龙王的领域",
+            "difficulty": "非常困难",
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "冥界",
+                "冥龙王的领域"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "inspect-nether-dragon-vh"
+            ],
+            "restriction": "如需移动到冥龙王的领域(非常困难)，请将以下成员编入队伍。 琉结"
+        },
+        {
+            "id": "dungeon_31fdff63b0b1",
+            "name": "冰之海",
+            "difficulty": "非常困难",
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "流冰海域",
+                "冰之海"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-399697b269ef-vh"
+            ],
+            "restriction": "如需移动到冰之海(非常困难)，请将以下成员编入队伍。 希拉"
+        },
+        {
+            "id": "dungeon_03c72f655352",
+            "name": "梦幻花盛开之章",
+            "difficulty": "非常困难",
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "梦幻花盛开之章"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-16abcf4089ea-vh"
+            ],
+            "restriction": "如需移动到梦幻花盛开之章(非常困难)，请将以下成员编入队伍。 罗伊德，柯蕾特，奥尔芬，希侬 平行迷宫"
+        },
+        {
+            "id": "dungeon_33f98189534c",
+            "name": "梦幻花盛开之章",
+            "difficulty": "困难",
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "梦幻花盛开之章"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-16abcf4089ea-h"
+            ],
+            "restriction": "如需移动到梦幻花盛开之章（困难），请将以下成员编入队伍。 罗伊德，柯蕾特，奥尔芬，希侬 平行迷宫"
+        },
+        {
+            "id": "dungeon_3b64cee687b8",
+            "name": "贪婪者的旅途",
+            "difficulty": "非常困难",
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "贪婪者的旅途"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-51252874d7db-vh"
+            ],
+            "restriction": "如需移动到贪婪者的旅途(非常困难)，请将以下成员编入队伍。 赛拉斯，帕特提欧，缇缇 平行迷宫"
+        },
+        {
+            "id": "dungeon_f757623d2ad2",
+            "name": "贪婪者的旅途",
+            "difficulty": "困难",
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "贪婪者的旅途"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-51252874d7db-h"
+            ],
+            "restriction": "如需移动到贪婪者的旅途(困难)，请将以下成员编入队伍。 赛拉斯，帕特提欧，缇缇 平行迷宫"
+        },
+        {
+            "id": "dungeon_458c6bc7ffd8",
+            "name": "梦见幻视之章",
+            "difficulty": "非常困难",
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "梦见幻视之章"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-8204a58b22eb-vh"
+            ],
+            "restriction": "如需移动到梦见幻视之章（非常困难），请将以下成员编入队伍。 克雷斯，米拉，尤利，薇尔贝特 平行迷宫"
+        },
+        {
+            "id": "dungeon_9cdc15e25013",
+            "name": "梦见幻视之章",
+            "difficulty": "困难",
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "梦见幻视之章"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-8204a58b22eb-h"
+            ],
+            "restriction": "如需移动到梦见幻视之章（困难），请将以下成员编入队伍。 克雷斯，米拉，尤利，薇尔贝特 平行迷宫"
+        },
+        {
+            "id": "dungeon_e79fe25af6b0",
+            "name": "龙腹海洞",
+            "difficulty": "非常困难",
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "卧龙岛",
+                "龙腹海洞"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-1c7843945a1d-vh"
+            ],
+            "restriction": "如需移动到龙腹海洞(非常困难) 琉结 ，请将以下成员编入队伍。"
+        },
+        {
+            "id": "dungeon_0ad66e907cc4",
+            "name": "龙腹海洞",
+            "difficulty": "困难",
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "卧龙岛",
+                "龙腹海洞"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-1c7843945a1d-h"
+            ],
+            "restriction": "如需移动到龙腹海洞(困难) 琉结 请将以下成员编入队伍。"
+        },
+        {
+            "id": "dungeon_298ba8b305f5",
+            "name": "瓜达拉平原",
+            "difficulty": "非常困难",
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "卧龙岛",
+                "瓜达拉平原"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-ab058450e7d1-vh"
+            ],
+            "restriction": "如需移动到瓜达拉平原(非常困难），请将以下成员编入队伍。 琉结"
+        },
+        {
+            "id": "dungeon_2c5de58fb5f7",
+            "name": "瓜达拉平原",
+            "difficulty": "困难",
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "卧龙岛",
+                "瓜达拉平原"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-ab058450e7d1-h"
+            ],
+            "restriction": "如需移动到瓜达拉平原（困难），请将以下成员编入队伍。 琉结"
+        },
+        {
+            "id": "dungeon_34c1ab42ae2d",
+            "name": "忘乡画廊",
+            "difficulty": "非常困难",
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "忘乡画廊"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-2a1c1b486985-vh"
+            ]
+        },
+        {
+            "id": "dungeon_e20106a12d3a",
+            "name": "扭曲的大漩涡",
+            "difficulty": "非常困难",
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "扭曲的大漩涡"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-62bf548296b3-vh"
+            ]
+        },
+        {
+            "id": "dungeon_7051f7a81af3",
+            "name": "工业都市废墟",
+            "difficulty": "非常困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "工业都市废墟"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-c324eca47bd2-vh"
+            ]
+        },
+        {
+            "id": "dungeon_9a5179226ba8",
+            "name": "工业都市废墟",
+            "difficulty": "困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "工业都市废墟"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "green",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-c324eca47bd2-h"
+            ]
+        },
+        {
+            "id": "dungeon_c845c5b316f6",
+            "name": "巴尔沃基地区 第2层 努阿鲁平原 扩散之大地",
+            "difficulty": "非常困难",
+            "path": [
+                "异境",
+                "巴尔沃基地区",
+                "第2层 努阿鲁平原"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "other-df3f742e32-2"
+            ],
+            "confirmation_name": "异境巴尔沃基地区"
+        },
+        {
+            "id": "dungeon_7ee334867a21",
+            "name": "巴尔沃基地区 第3层月影森林 树海入口",
+            "difficulty": "非常困难",
+            "path": [
+                "异境",
+                "巴尔沃基地区",
+                "第3层月影森林"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "other-df3f742e32-3"
+            ],
+            "confirmation_name": "异境巴尔沃基地区"
+        },
+        {
+            "id": "dungeon_df2485b4cf3a",
+            "name": "巴尔沃基地区 第4层 月影森林 深渊之地",
+            "difficulty": "非常困难",
+            "path": [
+                "异境",
+                "巴尔沃基地区",
+                "第4层 月影森林"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "other-df3f742e32-4"
+            ],
+            "confirmation_name": "异境巴尔沃基地区"
+        },
+        {
+            "id": "dungeon_fbb7520a4ad8",
+            "name": "拉托尔地区 第1层 佐尔平原 古老的大地",
+            "difficulty": "非常困难",
+            "path": [
+                "异境",
+                "拉托尔地区",
+                "第1层 佐尔平原"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "other-f0a16f442a-1"
+            ],
+            "confirmation_name": "异境拉托尔地区"
+        },
+        {
+            "id": "dungeon_ed93abe105d1",
+            "name": "拉托尔地区 第2层 瓦修山岭 巍峨山路",
+            "difficulty": "非常困难",
+            "path": [
+                "异境",
+                "拉托尔地区",
+                "第2层 瓦修山岭"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "other-f0a16f442a-2"
+            ],
+            "confirmation_name": "异境拉托尔地区"
+        },
+        {
+            "id": "dungeon_55e90e8ed5cf",
+            "name": "泡沫一刻的夹缝",
+            "difficulty": "非常困难",
+            "path": [
+                "封域",
+                "泡沫一刻的夹缝"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "seal-202d7072d0"
+            ]
+        },
+        {
+            "id": "dungeon_6ea2f11883f4",
+            "name": "玉响一刻之殿",
+            "difficulty": "困难",
+            "path": [
+                "封域",
+                "玉响一刻之殿"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "green",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "seal-d8379bbb6e"
+            ]
+        },
+        {
+            "id": "dungeon_fe1b51d74e42",
+            "name": "玉响一刻之殿",
+            "difficulty": "非常困难",
+            "path": [
+                "封域",
+                "玉响一刻之殿"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "seal-e64c2d3110"
+            ]
+        },
+        {
+            "id": "dungeon_c0dd38aa90f7",
+            "name": "次元战舰",
+            "difficulty": "困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "次元战舰"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "green",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-02da3eef6932-h"
+            ]
+        },
+        {
+            "id": "dungeon_956f55402594",
+            "name": "次元战舰",
+            "difficulty": "非常困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "次元战舰"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-02da3eef6932-vh"
+            ]
+        },
+        {
+            "id": "dungeon_1986aaeef679",
+            "name": "时层回廊",
+            "difficulty": "困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "时层回廊"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "green",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-ca28bd2f3e2f-h"
+            ]
+        },
+        {
+            "id": "dungeon_51542db882a6",
+            "name": "异元晶控制所",
+            "difficulty": "非常困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "异元晶控制所"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-d3df71112a21-vh"
+            ]
+        },
+        {
+            "id": "dungeon_8090e0571915",
+            "name": "异元晶控制所",
+            "difficulty": "困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "异元晶控制所"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "green",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-d3df71112a21-h"
+            ]
+        },
+        {
+            "id": "dungeon_7775fbe5d653",
+            "name": "埃尔吉昂地区 第1层 埃尔吉昂机场 天空港湾",
+            "difficulty": "非常困难",
+            "path": [
+                "异境",
+                "埃尔吉昂地区",
+                "第1层 埃尔吉昂机场"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "other-9f56094cc9-1"
+            ],
+            "confirmation_name": "异境埃尔吉昂地区"
+        },
+        {
+            "id": "dungeon_79d8fa601783",
+            "name": "埃尔吉昂地区 第2层 废道公路99 荒废之路",
+            "difficulty": "非常困难",
+            "path": [
+                "异境",
+                "埃尔吉昂地区",
+                "第2层 废道公路99"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "other-9f56094cc9-2"
+            ],
+            "confirmation_name": "异境埃尔吉昂地区"
+        },
+        {
+            "id": "dungeon_d98fc6e12725",
+            "name": "埃尔吉昂地区 第3层工业都市废墟 文明的亡骸",
+            "difficulty": "非常困难",
+            "path": [
+                "异境",
+                "埃尔吉昂地区",
+                "第3层工业都市废墟"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "other-9f56094cc9-3"
+            ],
+            "confirmation_name": "异境埃尔吉昂地区"
+        },
+        {
+            "id": "dungeon_771e2750a552",
+            "name": "拉托尔地区 第3层 纳达拉火山 燃烧的岩窟",
+            "difficulty": "非常困难",
+            "path": [
+                "异境",
+                "拉托尔地区",
+                "第3层 纳达拉火山"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "other-f0a16f442a-3"
+            ],
+            "confirmation_name": "异境拉托尔地区"
+        },
+        {
+            "id": "dungeon_d48affb1a330",
+            "name": "拉托尔地区 第4层 纳达拉火山 红莲之顶",
+            "difficulty": "非常困难",
+            "path": [
+                "异境",
+                "拉托尔地区",
+                "第4层 纳达拉火山"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "other-f0a16f442a-4"
+            ],
+            "confirmation_name": "异境拉托尔地区"
+        },
+        {
+            "id": "dungeon_f99dc7373338",
+            "name": "埃尔吉昂地区 第1层 埃尔吉昂机场 天空港湾",
+            "difficulty": "困难",
+            "path": [
+                "异境",
+                "埃尔吉昂地区",
+                "第1层 埃尔吉昂机场"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "other-6039e9ac5b-1"
+            ],
+            "confirmation_name": "异境埃尔吉昂地区"
+        },
+        {
+            "id": "dungeon_a1b49580a7e3",
+            "name": "巴尔沃基地区 第1层 努阿鲁平原 光照草原",
+            "difficulty": "困难",
+            "path": [
+                "异境",
+                "巴尔沃基地区",
+                "第1层 努阿鲁平原"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "other-6573f71f98-1"
+            ],
+            "confirmation_name": "异境巴尔沃基地区"
+        },
+        {
+            "id": "dungeon_fba2189df6f2",
+            "name": "巴尔沃基地区 第2层 努阿鲁平原 扩散之大地",
+            "difficulty": "困难",
+            "path": [
+                "异境",
+                "巴尔沃基地区",
+                "第2层 努阿鲁平原"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "other-6573f71f98-2"
+            ],
+            "confirmation_name": "异境巴尔沃基地区"
+        },
+        {
+            "id": "dungeon_0545f4aeb85a",
+            "name": "埃尔吉昂地区 第4层 工业都市废墟 革命之道",
+            "difficulty": "非常困难",
+            "path": [
+                "异境",
+                "埃尔吉昂地区",
+                "第4层 工业都市废墟"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "other-9f56094cc9-4"
+            ],
+            "confirmation_name": "异境埃尔吉昂地区"
+        },
+        {
+            "id": "dungeon_603ff09ff2b3",
+            "name": "拉托尔地区 第1层佐尔平原 古老的大地",
+            "difficulty": "困难",
+            "path": [
+                "异境",
+                "拉托尔地区",
+                "第1层佐尔平原"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "other-d7e670be1b-1"
+            ],
+            "confirmation_name": "异境拉托尔地区"
+        },
+        {
+            "id": "dungeon_937a3e736a57",
+            "name": "拉托尔地区 第2层 瓦修山岭 巍峨山路",
+            "difficulty": "困难",
+            "path": [
+                "异境",
+                "拉托尔地区",
+                "第2层 瓦修山岭"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "other-d7e670be1b-2"
+            ],
+            "confirmation_name": "异境拉托尔地区"
+        },
+        {
+            "id": "dungeon_0d30063353cc",
+            "name": "拉托尔地区 第3层 纳达拉火山 燃烧的岩窟",
+            "difficulty": "困难",
+            "path": [
+                "异境",
+                "拉托尔地区",
+                "第3层 纳达拉火山"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "other-d7e670be1b-3"
+            ],
+            "confirmation_name": "异境拉托尔地区"
+        },
+        {
+            "id": "dungeon_62bae51ad119",
+            "name": "拉托尔地区 第4层纳达拉火山 红莲之顶",
+            "difficulty": "困难",
+            "path": [
+                "异境",
+                "拉托尔地区",
+                "第4层纳达拉火山"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "other-d7e670be1b-4"
+            ],
+            "confirmation_name": "异境拉托尔地区"
+        },
+        {
+            "id": "dungeon_f15c4c46a868",
+            "name": "古代席尔贝利亚大陆晶",
+            "difficulty": "非常困难",
+            "path": [
+                "古代",
+                "席尔贝利亚大陆",
+                "古代席尔贝利亚大陆 晶"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-98c31e28a099-vh"
+            ]
+        },
+        {
+            "id": "dungeon_75768847b805",
+            "name": "古代席尔贝利亚大陆雷",
+            "difficulty": "非常困难",
+            "path": [
+                "古代",
+                "席尔贝利亚大陆",
+                "古代席尔贝利亚大陆 雷"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-4127b101714c-vh"
+            ]
+        },
+        {
+            "id": "dungeon_e6ac54d4ff90",
+            "name": "古代席尔贝利亚大陆阴",
+            "difficulty": "非常困难",
+            "path": [
+                "古代",
+                "席尔贝利亚大陆",
+                "古代席尔贝利亚大陆 阴"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-9c0d2cbb95dc-vh"
+            ]
+        },
+        {
+            "id": "dungeon_c701afe5aae3",
+            "name": "扭曲的大漩涡",
+            "difficulty": "非常困难",
+            "path": [
+                "现代",
+                "嘉路雷亚大陆",
+                "扭曲的大漩涡"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-2ee6ef56205b-vh"
+            ]
+        },
+        {
+            "id": "dungeon_38b739261ddb",
+            "name": "冥狱",
+            "difficulty": "非常困难",
+            "path": [
+                "现代",
+                "嘉路雷亚大陆",
+                "异时层",
+                "冥狱"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-5862984d4c3d-vh"
+            ]
+        },
+        {
+            "id": "dungeon_731fdaf7bab6",
+            "name": "失乐之都",
+            "difficulty": "非常困难",
+            "path": [
+                "古代",
+                "席尔贝利亚大陆",
+                "失乐之都"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-8c84fadcc572-vh"
+            ]
+        },
+        {
+            "id": "dungeon_2ccf27631210",
+            "name": "燃烧中的黑鹭城",
+            "difficulty": "非常困难",
+            "path": [
+                "现代",
+                "嘉路雷亚大陆",
+                "异时层",
+                "燃烧中的黑鹭城"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-bb957c341683-vh"
+            ]
+        },
+        {
+            "id": "dungeon_0c9f1d080b96",
+            "name": "古代嘉路雷亚大陆",
+            "difficulty": "困难",
+            "path": [
+                "古代",
+                "嘉路雷亚大陆",
+                "古代嘉路雷亚大陆"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "tree-f4bd8eb68cca-h"
+            ]
+        },
+        {
+            "id": "dungeon_233d11e32869",
+            "name": "现代嘉路雷亚大陆",
+            "difficulty": "困难",
+            "path": [
+                "现代",
+                "嘉路雷亚大陆",
+                "现代嘉路雷亚大陆"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "tree-4be0e4ddbac1-h"
+            ]
+        },
+        {
+            "id": "dungeon_e516a9cf2584",
+            "name": "未来嘉路雷亚大陆",
+            "difficulty": "困难",
+            "path": [
+                "未来",
+                "嘉路雷亚大陆",
+                "未来嘉路雷亚大陆"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "tree-8665a78e4ab1-h"
+            ]
+        },
+        {
+            "id": "dungeon_d7a84c97a9ce",
+            "name": "吉思梦德",
+            "difficulty": "困难",
+            "path": [
+                "虚时层",
+                "石华人世界 黎弗艾尔格",
+                "吉思梦德"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "tree-a87e339e4746-h"
+            ]
+        },
+        {
+            "id": "dungeon_ccf8c3a95a12",
+            "name": "冥峡界",
+            "difficulty": "困难",
+            "path": [
+                "???",
+                "冥峡界",
+                "冥峡界"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "tree-c5b6c4a67faf-h"
+            ]
+        },
+        {
+            "id": "dungeon_19a630653d8c",
+            "name": "奥枚加巨城",
+            "difficulty": "困难",
+            "path": [
+                "虚时层",
+                "机人世界 钢铁圣尼加",
+                "奥枚加巨城"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "tree-38db42440043-h"
+            ]
+        },
+        {
+            "id": "dungeon_4b3317dc6d85",
+            "name": "蚀时尤尼冈",
+            "difficulty": "困难",
+            "path": [
+                "虚时层",
+                "蚀时领域",
+                "蚀时尤尼冈"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "tree-5ba002b15adf-h"
+            ]
+        },
+        {
+            "id": "dungeon_d6bebfdd633b",
+            "name": "恩特纳",
+            "difficulty": "困难",
+            "path": [
+                "虚时层",
+                "猫人世界 柏拉图诺斯",
+                "恩特纳"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "tree-de4c2f7d6fe0-h"
+            ]
+        },
+        {
+            "id": "dungeon_21b0fdd37620",
+            "name": "伊丝卡莉欧忒",
+            "difficulty": "非常困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "伊丝卡莉欧忒"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-1a3c9afffe54-vh"
+            ]
+        },
+        {
+            "id": "dungeon_40a2c7a5e471",
+            "name": "咲的梦境",
+            "difficulty": "非常困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "IDA学院",
+                "咲的梦境"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-ba3d12d6819a-vh"
+            ],
+            "restriction": "如需移动到咲的梦境(非常困难) 杰德 ，请将以下成员编入队伍。"
+        },
+        {
+            "id": "dungeon_4a3b96039121",
+            "name": "咲的梦境",
+            "difficulty": "困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "IDA学院",
+                "咲的梦境"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-ba3d12d6819a-h"
+            ],
+            "restriction": "如需移动到咲的梦境(困难) 杰德 请将以下成员编入队伍。"
+        },
+        {
+            "id": "dungeon_f702260929ee",
+            "name": "伊甸原型",
+            "difficulty": "困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "伊甸原型"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-cececb07409a-h"
+            ],
+            "restriction": "如需移动到伊甸原型（困难），请将以下成员编入队伍。 加里亚德 平行迷宫"
+        },
+        {
+            "id": "dungeon_ae86d5c942bf",
+            "name": "伊甸原型",
+            "difficulty": "非常困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "伊甸原型"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-cececb07409a-vh"
+            ],
+            "restriction": "如需移动到伊甸原型(非常困难) 加里亚德 平行迷宫 请将以下成员编入队伍。"
+        },
+        {
+            "id": "dungeon_158ff8579b0b",
+            "name": "真由的梦境",
+            "difficulty": "非常困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "IDA学院",
+                "真由的梦境"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-e95ae41a7fa1-vh"
+            ],
+            "restriction": "如需移动到真由的梦境（非常困难），请将以下成员编入队伍。 咲"
+        },
+        {
+            "id": "dungeon_f7752f90b13a",
+            "name": "真由的梦境",
+            "difficulty": "困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "IDA学院",
+                "真由的梦境"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-e95ae41a7fa1-h"
+            ],
+            "restriction": "如需移动到真由的梦境（困难），请将以下成员编入队伍。 咲"
+        },
+        {
+            "id": "dungeon_8569cb4ba867",
+            "name": "空中庭园",
+            "difficulty": "非常困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "庭园之岛"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-0e9df5626164-vh"
+            ]
+        },
+        {
+            "id": "dungeon_65b4bf69bf67",
+            "name": "扭曲的大漩涡",
+            "difficulty": "非常困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "扭曲的大漩涡"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-3274a38b8b25-vh"
+            ]
+        },
+        {
+            "id": "dungeon_95ad376be06f",
+            "name": "忘乡画廊",
+            "difficulty": "非常困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "忘乡画廊"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-3d09e07fa978-vh"
+            ]
+        },
+        {
+            "id": "dungeon_f3341bb568bc",
+            "name": "托托剧场世界",
+            "difficulty": "非常困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "托托剧场世界"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-3f91297ad718-vh"
+            ]
+        },
+        {
+            "id": "dungeon_92355a67ad66",
+            "name": "托托的梦幻乐园",
+            "difficulty": "非常困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "托托的梦幻乐园"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-42327760357b-vh"
+            ]
+        },
+        {
+            "id": "dungeon_236e993e7704",
+            "name": "托托的梦幻乐园",
+            "difficulty": "困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "托托的梦幻乐园"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "green",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-42327760357b-h"
+            ]
+        },
+        {
+            "id": "dungeon_ef300b66fd5b",
+            "name": "常夜的灵长机关",
+            "difficulty": "非常困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "常夜的灵长机关"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-d6cf5341e8d4-vh"
+            ]
+        },
+        {
+            "id": "dungeon_92b5414320d3",
+            "name": "印象空间",
+            "difficulty": "非常困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "印象空间"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-3c86dee060a5-vh"
+            ],
+            "restriction": "如需移动到印象空间(非常困难)，请将以下成员编入队伍。 JOKER，摩尔加纳，SKULL，VIOLET 平行迷宫"
+        },
+        {
+            "id": "dungeon_5093b124b23b",
+            "name": "印象空间",
+            "difficulty": "困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "印象空间"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-3c86dee060a5-h"
+            ],
+            "restriction": "如需移动到印象空间(困难) JOKER，摩尔加纳，SKULL，VIOLET 平行迷宫 ，请将以下成员编入队伍。"
+        },
+        {
+            "id": "dungeon_3500d28ec5f3",
+            "name": "旧KMS总部",
+            "difficulty": "非常困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "旧KMS总部"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-48af773ddb32-vh"
+            ],
+            "restriction": "如需移动到旧KMS总部（非常困难），请将以下成员编入队伍。 赫蕾娜，加里亚德 平行迷宫"
+        },
+        {
+            "id": "dungeon_4a9a193fd61e",
+            "name": "旧KMS总部",
+            "difficulty": "困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "旧KMS总部"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-48af773ddb32-h"
+            ],
+            "restriction": "如需移动到旧KMS总部(困难)，请将以下成员编入队伍。 赫蕾娜，加里亚德 平行迷宫"
+        },
+        {
+            "id": "dungeon_dfe600265d64",
+            "name": "异梦时之塔",
+            "difficulty": "非常困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "异世界",
+                "异梦时之塔"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-7f45abfe28ac-vh"
+            ],
+            "restriction": "如需移动到异梦时之塔(非常困难)，请将以下成员编入队伍。 赛尔杰，琪德，月读，星之子"
+        },
+        {
+            "id": "dungeon_320371407e35",
+            "name": "异梦时之塔",
+            "difficulty": "困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "异世界",
+                "异梦时之塔"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-7f45abfe28ac-h"
+            ],
+            "restriction": "如需移动到异梦时之塔(困难) 赛尔杰，琪德，月读，星之子 ），请将以下成员编入队伍。"
+        },
+        {
+            "id": "dungeon_f86ecb8d095c",
+            "name": "次元战舰方舟",
+            "difficulty": "困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "次元战舰方舟"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "green",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-b8d482382ff2-h"
+            ]
+        },
+        {
+            "id": "dungeon_5f796781815d",
+            "name": "次元战舰方舟",
+            "difficulty": "非常困难",
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "次元战舰方舟"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-b8d482382ff2-vh"
+            ]
+        },
+        {
+            "id": "dungeon_f9e2824049b1",
+            "name": "燃烧的魔兽城",
+            "difficulty": "非常困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "异时层",
+                "燃烧的魔兽城"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-100da0a0288e-vh"
+            ],
+            "restriction": "如需移动到燃烧的魔兽城(非常困难) 狄雅德拉 ，请将以下成员编入队伍。"
+        },
+        {
+            "id": "dungeon_e4dbffda188b",
+            "name": "燃烧的魔兽城",
+            "difficulty": "困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "异时层",
+                "燃烧的魔兽城"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-100da0a0288e-h"
+            ],
+            "restriction": "如需移动到燃烧的魔兽城(困难) 狄雅德拉 ，请将以下成员编入队伍。"
+        },
+        {
+            "id": "dungeon_33415dc9dcb4",
+            "name": "忘乡画廊",
+            "difficulty": "非常困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "忘乡画廊"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-4a39c8560294-vh"
+            ]
+        },
+        {
+            "id": "dungeon_b202a8750d90",
+            "name": "米格兰斯地下迷宫",
+            "difficulty": "非常困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "王都尤尼冈"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-c0b1a40900b0-vh"
+            ],
+            "restriction": "如需移动到米格兰斯地下迷宫 (非常困难)，请将以下成员编入队伍。 狄雅德拉 平行迷宫"
+        },
+        {
+            "id": "dungeon_38517c9f58b9",
+            "name": "米格兰斯地下迷宫",
+            "difficulty": "困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "王都尤尼冈"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-c0b1a40900b0-h"
+            ],
+            "restriction": "如需移动到米格兰斯地下迷宫(困难) 狄雅德拉 平行迷宫 ，请将以下成员编入队伍。"
+        },
+        {
+            "id": "dungeon_9772881c46d4",
+            "name": "扭曲的大漩涡",
+            "difficulty": "非常困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "扭曲的大漩涡"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "red",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-e5f948b538e5-vh"
+            ]
+        },
+        {
+            "id": "dungeon_134359cdbbdd",
+            "name": "阿斯特拉遗迹",
+            "difficulty": "非常困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "阿斯特拉岛",
+                "阿斯特拉遗迹"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-340299e13d7d-vh"
+            ],
+            "restriction": "如需移动到阿斯特拉遗迹(非常困难) 吉尔德纳 ，请将以下成员编入队伍。"
+        },
+        {
+            "id": "dungeon_70a18592fab5",
+            "name": "星球已做之梦",
+            "difficulty": "非常困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "神话时代的雷姆利亚",
+                "星球已做之梦"
+            ],
+            "can_enter": false,
+            "can_skip": false,
+            "ticket": null,
+            "ticket_cost": null,
+            "skip_verified": false,
+            "evidence": [
+                "tree-61fb295c4d30-vh"
+            ],
+            "restriction": "如需移动到星球已做之梦(非常困难) 幽雪莉佳 ，请将以下成员编入队伍。"
+        },
+        {
+            "id": "dungeon_3e9ad9089dd1",
+            "name": "蛇肝达玛克",
+            "difficulty": "困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "蛇骨岛",
+                "蛇肝达玛克"
+            ],
+            "can_enter": true,
+            "can_skip": true,
+            "ticket": "green",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "tree-8dfa1c39abc2-h"
+            ]
+        },
+        {
+            "id": "dungeon_f6faf6acba71",
+            "name": "露洽纳遗迹",
+            "difficulty": "困难",
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "露洽纳遗迹"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "green",
+            "ticket_cost": 2,
+            "skip_verified": false,
+            "evidence": [
+                "tree-f14d93abf875-h"
+            ]
+        },
+        {
+            "id": "phantom_white_h",
+            "name": "幻璃境",
+            "difficulty": "困难",
+            "path": [
+                "???",
+                "幻象界",
+                "幻璃境"
+            ],
+            "can_enter": true,
+            "can_skip": false,
+            "ticket": "white",
+            "ticket_cost": 1,
+            "skip_verified": false,
+            "evidence": [
+                "phantom-party"
+            ]
+        }
+    ],
+    "refill": {
+        "resource": "导证之力（星天引导之证）",
+        "red_verified": true,
+        "red_tickets_per_use": 7,
+        "green_verified": false,
+        "stones_allowed": false,
+        "evidence": [
+            "proof-after-connection",
+            "debug/dungeon-skip-run/debug/maafw.log"
+        ]
+    },
+    "nested_maps": [
+        {
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "冥界"
+            ],
+            "points": [
+                "冥龙王的领域"
+            ],
+            "boundary_scan_complete": true,
+            "children_inspected": true,
+            "evidence": "ancient-underworld-coverage.json"
+        },
+        {
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "流冰海域"
+            ],
+            "points": [
+                "冰之海"
+            ],
+            "boundary_scan_complete": true,
+            "children_inspected": true,
+            "evidence": "tree-ca8860227668-nested.json"
+        },
+        {
+            "path": [
+                "古代",
+                "米古尼娜大陆",
+                "卧龙岛"
+            ],
+            "points": [
+                "瓜达拉平原",
+                "龙腹海洞"
+            ],
+            "boundary_scan_complete": true,
+            "children_inspected": true,
+            "evidence": "tree-d06e8efb725d-nested.json"
+        },
+        {
+            "path": [
+                "现代",
+                "嘉路雷亚大陆",
+                "异时层"
+            ],
+            "points": [
+                "燃烧中的黑鹭城",
+                "冥狱"
+            ],
+            "boundary_scan_complete": true,
+            "children_inspected": true,
+            "evidence": "tree-ba0b32a70402-nested.json"
+        },
+        {
+            "path": [
+                "未来",
+                "米古尼娜大陆",
+                "IDA学院"
+            ],
+            "points": [
+                "咲的梦境",
+                "真由的梦境"
+            ],
+            "boundary_scan_complete": true,
+            "children_inspected": true,
+            "evidence": "tree-09c7598b98bf-nested.json"
+        },
+        {
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "异世界"
+            ],
+            "points": [
+                "异梦时之塔"
+            ],
+            "boundary_scan_complete": true,
+            "children_inspected": true,
+            "evidence": "tree-b2b1561faa2b-nested.json"
+        },
+        {
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "异时层"
+            ],
+            "points": [
+                "燃烧的魔兽城"
+            ],
+            "boundary_scan_complete": true,
+            "children_inspected": true,
+            "evidence": "tree-b5ae5fef2cdc-nested.json"
+        },
+        {
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "神话时代的雷姆利亚"
+            ],
+            "points": [
+                "星球已做之梦"
+            ],
+            "boundary_scan_complete": true,
+            "children_inspected": true,
+            "evidence": "tree-b957544b3689-nested.json"
+        },
+        {
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "阿斯特拉岛"
+            ],
+            "points": [
+                "阿斯特拉遗迹"
+            ],
+            "boundary_scan_complete": true,
+            "children_inspected": true,
+            "evidence": "tree-2d40dcf96b0e-nested.json"
+        },
+        {
+            "path": [
+                "现代",
+                "米古尼娜大陆",
+                "蛇骨岛"
+            ],
+            "points": [
+                "蛇肝达玛克"
+            ],
+            "boundary_scan_complete": true,
+            "children_inspected": true,
+            "evidence": "tree-cb5868fda4db-nested.json"
+        }
+    ],
+    "wide_maps": [
+        {
+            "era": "古代",
+            "regions": [
+                "席尔贝利亚大陆",
+                "米古尼娜大陆",
+                "嘉路雷亚大陆"
+            ],
+            "boundary_scan_complete": true,
+            "evidence": "ancient-wide-coverage.json"
+        },
+        {
+            "era": "现代",
+            "regions": [
+                "米古尼娜大陆",
+                "嘉路雷亚大陆"
+            ],
+            "boundary_scan_complete": true,
+            "evidence": "modern-wide-coverage.json"
+        },
+        {
+            "era": "未来",
+            "regions": [
+                "米古尼娜大陆",
+                "嘉路雷亚大陆"
+            ],
+            "boundary_scan_complete": true,
+            "evidence": "future-wide-coverage.json"
+        },
+        {
+            "era": "???",
+            "regions": [
+                "冥峡界",
+                "幻象界"
+            ],
+            "boundary_scan_complete": true,
+            "evidence": "unknown-wide-complete-coverage.json"
+        },
+        {
+            "era": "虚时层",
+            "regions": [
+                "石华人世界 黎弗艾尔格",
+                "猫人世界 柏拉图诺斯",
+                "机人世界 钢铁圣尼加",
+                "蚀时领域"
+            ],
+            "boundary_scan_complete": true,
+            "evidence": "void-wide-full-coverage.json"
+        }
+    ],
+    "special_maps": {
+        "sealed": {
+            "complete": true,
+            "hard": [
+                "玉响一刻之殿"
+            ],
+            "very_hard": [
+                "玉响一刻之殿",
+                "泡沫一刻的夹缝"
+            ]
+        },
+        "otherlands": {
+            "complete": true,
+            "unlocked_very_hard": {
+                "巴尔沃基地区": [
+                    1,
+                    2,
+                    3,
+                    4
+                ],
+                "拉托尔地区": [
+                    1,
+                    2,
+                    3,
+                    4
+                ],
+                "埃尔吉昂地区": [
+                    1,
+                    2,
+                    3,
+                    4
+                ]
+            },
+            "unlocked_hard": {
+                "巴尔沃基地区": [
+                    1,
+                    2
+                ],
+                "拉托尔地区": [
+                    1,
+                    2,
+                    3,
+                    4
+                ],
+                "埃尔吉昂地区": [
+                    1
+                ]
+            },
+            "locked_hard": {
+                "巴尔沃基地区": [
+                    3,
+                    4
+                ],
+                "拉托尔地区": [],
+                "埃尔吉昂地区": [
+                    2,
+                    3,
+                    4
+                ]
+            }
+        }
+    },
+    "consumables": {
+        "red_keys": 6,
+        "green_keys": 39,
+        "cat_express_tickets": 4,
+        "auto_refill": [
+            "red",
+            "green"
+        ],
+        "cat_ticket_refill": "stop_without_confirmation",
+        "chronos_stones": "never_use"
+    }
+}

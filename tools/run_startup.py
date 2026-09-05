@@ -13,9 +13,14 @@ from maa.toolkit import Toolkit
 
 
 TASKS = {
+    "DungeonSkip": ("DungeonSkipComplete", 900, "dungeon-skip-run", "已完成指定次数跳过并返回蓝门。"),
+    "DungeonEntrance": ("DungeonMenuReady", 180, "dungeon-entrance-run", "已到达平行迷宫选图界面。"),
     "StartUp": ("StartUpWorldReady", 300, "startup-run", "已进入游戏主界面。"),
     "MenasTrial": ("MenasTrialComplete", 900, "menas-trial-run", "梅纳斯试炼已结算并返回主界面。"),
     "CollectMail": ("MailComplete", 600, "mail-run", "邮件已领取完毕并返回主界面。"),
+    "NavigationMove": ("NavigationMoveComplete", 240, "navigation-run", "已通过区域地图确认位移。"),
+    "NavigationTeleport": ("NavigationTeleportComplete", 180, "navigation-run", "已确认传送到巴尔沃基。"),
+    "NavigationBaruokiRoute": ("NavigationRouteComplete", 240, "navigation-run", "已到达巴尔沃基北侧路口。"),
 }
 
 
@@ -24,7 +29,12 @@ def main() -> int:
     parser.add_argument("--adb-path", required=True, type=Path)
     parser.add_argument("--address", required=True, help="例如 127.0.0.1:16384")
     parser.add_argument("--task", choices=list(TASKS), default="StartUp")
+    parser.add_argument("--direction", choices=["left", "right", "up", "down"], default="left")
+    parser.add_argument("--dungeon", default="snake_damak_vh")
+    parser.add_argument("--count", type=int, default=1)
     args = parser.parse_args()
+    if args.task == "DungeonSkip" and not 1 <= args.count <= 999:
+        parser.error("--count 必须为 1～999")
     if not args.adb_path.is_file():
         parser.error("--adb-path 必须指向 adb 可执行文件")
 
@@ -47,6 +57,20 @@ def main() -> int:
         return 1
 
     resource = Resource()
+    if args.task.startswith("Dungeon"):
+        sys.path.insert(0, str(root / "agent"))
+        from dungeons import register
+        if not register(resource):
+            print("副本动作注册失败。", file=sys.stderr)
+            return 1
+        if args.task == "DungeonSkip":
+            time_limit = 600 + args.count * 90
+    if args.task.startswith("Navigation"):
+        sys.path.insert(0, str(root / "agent"))
+        from navigation import register
+        if not register(resource):
+            print("移动动作注册失败。", file=sys.stderr)
+            return 1
     if not resource.post_bundle(root / "assets" / "resource").wait().succeeded:
         print(f"资源加载失败，请检查 debug/{log_dir} 下的日志。", file=sys.stderr)
         return 1
@@ -55,7 +79,12 @@ def main() -> int:
         print("MaaFramework 初始化失败。", file=sys.stderr)
         return 1
 
-    job = tasker.post_task(args.task)
+    override = {}
+    if args.task == "DungeonSkip":
+        override = {"DungeonSkip": {"custom_action_param": {"target": args.dungeon, "count": args.count}}}
+    if args.task == "NavigationMove":
+        override = {"NavigationMove": {"custom_action_param": {"direction": args.direction, "duration": 600}}}
+    job = tasker.post_task(args.task, override)
     deadline = time.monotonic() + time_limit
     try:
         while not job.done:

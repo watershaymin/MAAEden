@@ -39,6 +39,607 @@
             "label": "领取邮件",
             "entry": "CollectMail",
             "description": "从主界面进入菜单和信箱，逐封领取未开封邮件的附件，确认没有未读邮件后返回主界面。已开封邮件会保留。"
+        },
+        {
+            "name": "NavigationMove",
+            "label": "基础移动",
+            "entry": "NavigationMove",
+            "description": "从可操作主界面滑动一步，通过展开区域地图核对实际位移；撞墙或无法定位时失败停止。仅适配 16:9 横屏。",
+            "option": [
+                "NavigationDirection"
+            ]
+        },
+        {
+            "name": "NavigationTeleport",
+            "label": "传送至巴尔沃基",
+            "entry": "NavigationTeleport",
+            "description": "打开世界地图，选择现代与巴尔沃基，核对确认弹窗，传送后验证区域地图名称。"
+        },
+        {
+            "name": "NavigationBaruokiRoute",
+            "label": "巴尔沃基寻路示例",
+            "entry": "NavigationBaruokiRoute",
+            "description": "先运行传送至巴尔沃基；从落点沿主路向左，在路口转向北侧道路，逐步读取区域地图定位。起点不符会停止。"
+        },
+        {
+            "name": "DungeonEntrance",
+            "label": "前往副本蓝门",
+            "entry": "DungeonEntrance",
+            "description": "独立前置：传送至次元夹缝，向左找到蓝门并交互，确认进入平行迷宫选图页。已在选图页时直接完成。"
+        },
+        {
+            "name": "DungeonSkip",
+            "label": "副本跳过",
+            "entry": "DungeonSkip",
+            "description": "进入次元夹缝蓝门，核对副本、难度和入场券后跳过指定次数。每次消耗入场券和猫掌特急券；红绿票不足时可使用导证之力补充，猫掌券不足则停止。禁止使用克洛诺斯之石。选项仅包含实机确认启用跳过的入口。",
+            "option": [
+                "DungeonTarget",
+                "DungeonCount"
+            ]
         }
-    ]
+    ],
+    "agent": {
+        "child_exec": "python",
+        "child_args": [
+            "{PROJECT_DIR}/agent/main.py"
+        ]
+    },
+    "option": {
+        "NavigationDirection": {
+            "type": "select",
+            "label": "移动方向",
+            "default_case": "left",
+            "cases": [
+                {
+                    "name": "left",
+                    "label": "左",
+                    "pipeline_override": {
+                        "NavigationMove": {
+                            "custom_action_param": {
+                                "direction": "left",
+                                "duration": 600
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "right",
+                    "label": "右",
+                    "pipeline_override": {
+                        "NavigationMove": {
+                            "custom_action_param": {
+                                "direction": "right",
+                                "duration": 600
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "up",
+                    "label": "上",
+                    "pipeline_override": {
+                        "NavigationMove": {
+                            "custom_action_param": {
+                                "direction": "up",
+                                "duration": 600
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "down",
+                    "label": "下",
+                    "pipeline_override": {
+                        "NavigationMove": {
+                            "custom_action_param": {
+                                "direction": "down",
+                                "duration": 600
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "DungeonTarget": {
+            "type": "select",
+            "label": "副本",
+            "default_case": "snake_damak_vh",
+            "cases": [
+                {
+                    "name": "snake_damak_vh",
+                    "label": "蛇肝达玛克 / 非常困难 / 红票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "snake_damak_vh"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "moon_forest_h",
+                    "label": "月影森林 / 困难 / 绿票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "moon_forest_h"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "moon_forest_vh",
+                    "label": "月影森林 / 非常困难 / 红票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "moon_forest_vh"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "miglance_castle_vh",
+                    "label": "米格兰斯城 / 非常困难 / 红票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "miglance_castle_vh"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "miglance_castle_h",
+                    "label": "米格兰斯城 / 困难 / 绿票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "miglance_castle_h"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "miglance_palace_vh",
+                    "label": "奇幻森林 / 非常困难 / 红票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "miglance_palace_vh"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "beast_castle_vh",
+                    "label": "魔兽城 / 非常困难 / 红票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "beast_castle_vh"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "beast_castle_h",
+                    "label": "魔兽城 / 困难 / 绿票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "beast_castle_h"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_35ca4ae41489",
+                    "label": "星之塔 / 困难 / 绿票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_35ca4ae41489"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_7009ec53dd46",
+                    "label": "时之塔 / 困难 / 绿票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_7009ec53dd46"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_9b2633b0040a",
+                    "label": "酸性沼泽 / 非常困难 / 红票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_9b2633b0040a"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_0db21f39429f",
+                    "label": "酸性沼泽 / 困难 / 绿票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_0db21f39429f"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_11bb8571da07",
+                    "label": "纳达拉火山 / 非常困难 / 红票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_11bb8571da07"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_7bf701f841ec",
+                    "label": "纳达拉火山 / 困难 / 绿票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_7bf701f841ec"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_e20106a12d3a",
+                    "label": "扭曲的大漩涡（古代 → 米古尼娜大陆） / 非常困难 / 红票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_e20106a12d3a"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_7051f7a81af3",
+                    "label": "工业都市废墟 / 非常困难 / 红票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_7051f7a81af3"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_9a5179226ba8",
+                    "label": "工业都市废墟 / 困难 / 绿票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_9a5179226ba8"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_c0dd38aa90f7",
+                    "label": "次元战舰 / 困难 / 绿票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_c0dd38aa90f7"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_956f55402594",
+                    "label": "次元战舰 / 非常困难 / 红票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_956f55402594"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_1986aaeef679",
+                    "label": "时层回廊 / 困难 / 绿票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_1986aaeef679"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_51542db882a6",
+                    "label": "异元晶控制所 / 非常困难 / 红票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_51542db882a6"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_8090e0571915",
+                    "label": "异元晶控制所 / 困难 / 绿票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_8090e0571915"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_f15c4c46a868",
+                    "label": "古代席尔贝利亚大陆晶 / 非常困难 / 红票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_f15c4c46a868"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_75768847b805",
+                    "label": "古代席尔贝利亚大陆雷 / 非常困难 / 红票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_75768847b805"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_e6ac54d4ff90",
+                    "label": "古代席尔贝利亚大陆阴 / 非常困难 / 红票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_e6ac54d4ff90"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_c701afe5aae3",
+                    "label": "扭曲的大漩涡（现代 → 嘉路雷亚大陆） / 非常困难 / 红票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_c701afe5aae3"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_38b739261ddb",
+                    "label": "冥狱 / 非常困难 / 红票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_38b739261ddb"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_2ccf27631210",
+                    "label": "燃烧中的黑鹭城 / 非常困难 / 红票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_2ccf27631210"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_0c9f1d080b96",
+                    "label": "古代嘉路雷亚大陆 / 困难 / 绿票 ×2",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_0c9f1d080b96"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_233d11e32869",
+                    "label": "现代嘉路雷亚大陆 / 困难 / 绿票 ×2",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_233d11e32869"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_e516a9cf2584",
+                    "label": "未来嘉路雷亚大陆 / 困难 / 绿票 ×2",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_e516a9cf2584"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_d7a84c97a9ce",
+                    "label": "吉思梦德 / 困难 / 绿票 ×2",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_d7a84c97a9ce"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_ccf8c3a95a12",
+                    "label": "冥峡界 / 困难 / 绿票 ×2",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_ccf8c3a95a12"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_19a630653d8c",
+                    "label": "奥枚加巨城 / 困难 / 绿票 ×2",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_19a630653d8c"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_4b3317dc6d85",
+                    "label": "蚀时尤尼冈 / 困难 / 绿票 ×2",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_4b3317dc6d85"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_d6bebfdd633b",
+                    "label": "恩特纳 / 困难 / 绿票 ×2",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_d6bebfdd633b"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_8569cb4ba867",
+                    "label": "空中庭园 / 非常困难 / 红票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_8569cb4ba867"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_65b4bf69bf67",
+                    "label": "扭曲的大漩涡（未来 → 米古尼娜大陆） / 非常困难 / 红票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_65b4bf69bf67"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_92355a67ad66",
+                    "label": "托托的梦幻乐园 / 非常困难 / 红票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_92355a67ad66"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_236e993e7704",
+                    "label": "托托的梦幻乐园 / 困难 / 绿票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_236e993e7704"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_ef300b66fd5b",
+                    "label": "常夜的灵长机关 / 非常困难 / 红票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_ef300b66fd5b"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_9772881c46d4",
+                    "label": "扭曲的大漩涡（现代 → 米古尼娜大陆） / 非常困难 / 红票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_9772881c46d4"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "dungeon_3e9ad9089dd1",
+                    "label": "蛇肝达玛克 / 困难 / 绿票 ×1",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "target": "dungeon_3e9ad9089dd1"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "DungeonCount": {
+            "type": "input",
+            "label": "跳过次数",
+            "inputs": [
+                {
+                    "name": "count",
+                    "label": "次数",
+                    "default": "1",
+                    "pipeline_type": "int",
+                    "verify": "^[1-9][0-9]{0,2}$",
+                    "pattern_msg": "请输入 1～999 的整数"
+                }
+            ],
+            "pipeline_override": {
+                "DungeonSkip": {
+                    "custom_action_param": {
+                        "count": "{count}"
+                    }
+                }
+            }
+        }
+    }
 }

@@ -1,0 +1,808 @@
+{
+    "DungeonOpenWorldMap": {
+        "desc": "菜单与地图按钮同时可见才完成；亮度敏感匹配排除弹窗遮罩下的背景按钮。",
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMenu.png",
+                "roi": [
+                    25,
+                    625,
+                    120,
+                    78
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMap.png",
+                "roi": [
+                    235,
+                    630,
+                    85,
+                    73
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            }
+        ],
+        "action": "Click",
+        "target": [
+            275,
+            670
+        ],
+        "next": [
+            "DungeonSelectUnknownEra"
+        ],
+        "timeout": 10000
+    },
+    "DungeonSelectUnknownEra": {
+        "recognition": "TemplateMatch",
+        "template": "Navigation/WorldMapTitle.png",
+        "roi": [
+            560,
+            0,
+            170,
+            40
+        ],
+        "method": 10001,
+        "threshold": 0.9,
+        "action": "Click",
+        "target": [
+            450,
+            110
+        ],
+        "next": [
+            "DungeonSelectRift"
+        ],
+        "timeout": 10000,
+        "pre_delay": 1000
+    },
+    "DungeonSelectRift": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Navigation/WorldMapTitle.png",
+                "roi": [
+                    560,
+                    0,
+                    170,
+                    40
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    0,
+                    180,
+                    1280,
+                    400
+                ],
+                "expected": [
+                    "^次元夹缝$"
+                ]
+            }
+        ],
+        "box_index": 1,
+        "action": "Click",
+        "next": [
+            "DungeonConfirmRift"
+        ],
+        "timeout": 10000
+    },
+    "DungeonConfirmRift": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "OCR",
+                "roi": [
+                    450,
+                    270,
+                    400,
+                    85
+                ],
+                "expected": [
+                    "即将移动到次元夹缝"
+                ]
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Navigation/ConfirmYes.png",
+                "roi": [
+                    660,
+                    385,
+                    250,
+                    85
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            }
+        ],
+        "box_index": 1,
+        "action": "Click",
+        "next": [
+            "DungeonArrivedWorld"
+        ],
+        "timeout": 60000
+    },
+    "DungeonArrivedWorld": {
+        "desc": "菜单与地图按钮同时可见才完成；亮度敏感匹配排除弹窗遮罩下的背景按钮。",
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMenu.png",
+                "roi": [
+                    25,
+                    625,
+                    120,
+                    78
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMap.png",
+                "roi": [
+                    235,
+                    630,
+                    85,
+                    73
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            }
+        ],
+        "action": "Click",
+        "target": [
+            1150,
+            140
+        ],
+        "next": [
+            "DungeonVerifyRift"
+        ],
+        "timeout": 10000
+    },
+    "DungeonVerifyRift": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Navigation/LocalMapDecoration.png",
+                "roi": [
+                    0,
+                    40,
+                    650,
+                    60
+                ],
+                "method": 10001,
+                "threshold": 0.85
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    15,
+                    10,
+                    500,
+                    53
+                ],
+                "expected": [
+                    "^次元夹缝$"
+                ]
+            }
+        ],
+        "action": "Click",
+        "target": [
+            1150,
+            140
+        ],
+        "next": [
+            "DungeonInteractDoor",
+            "DungeonApproachDoor"
+        ],
+        "timeout": 10000
+    },
+    "DungeonEntrance": {
+        "desc": "独立前置：传送次元夹缝，向左找到蓝门并打开平行迷宫。",
+        "next": [
+            "DungeonReturnParty",
+            "DungeonCloseDetail",
+            "DungeonCloseNested",
+            "DungeonMenuReady",
+            "DungeonOpenWorldMap"
+        ],
+        "timeout": 10000
+    },
+    "DungeonMenuReady": {
+        "recognition": "Custom",
+        "custom_recognition": "DungeonMenuReady"
+    },
+    "DungeonInteractDoor": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "desc": "菜单与地图按钮同时可见才完成；亮度敏感匹配排除弹窗遮罩下的背景按钮。",
+                "recognition": "And",
+                "all_of": [
+                    {
+                        "recognition": "TemplateMatch",
+                        "template": "Startup/WorldMenu.png",
+                        "roi": [
+                            25,
+                            625,
+                            120,
+                            78
+                        ],
+                        "method": 10001,
+                        "threshold": 0.9
+                    },
+                    {
+                        "recognition": "TemplateMatch",
+                        "template": "Startup/WorldMap.png",
+                        "roi": [
+                            235,
+                            630,
+                            85,
+                            73
+                        ],
+                        "method": 10001,
+                        "threshold": 0.9
+                    }
+                ]
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Dungeons/BlueDoor.png",
+                "roi": [
+                    0,
+                    180,
+                    1280,
+                    200
+                ],
+                "threshold": 0.85
+            }
+        ],
+        "box_index": 1,
+        "action": "Click",
+        "target_offset": [
+            0,
+            -120,
+            0,
+            0
+        ],
+        "next": [
+            "DungeonMenuReady"
+        ],
+        "timeout": 15000
+    },
+    "DungeonApproachDoor": {
+        "desc": "菜单与地图按钮同时可见才完成；亮度敏感匹配排除弹窗遮罩下的背景按钮。",
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMenu.png",
+                "roi": [
+                    25,
+                    625,
+                    120,
+                    78
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMap.png",
+                "roi": [
+                    235,
+                    630,
+                    85,
+                    73
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            }
+        ],
+        "action": "Swipe",
+        "begin": [
+            640,
+            450
+        ],
+        "end": [
+            460,
+            450
+        ],
+        "duration": 600,
+        "max_hit": 5,
+        "next": [
+            "DungeonInteractDoor",
+            "DungeonApproachDoor"
+        ],
+        "timeout": 10000
+    },
+    "DungeonReadText": {
+        "recognition": "OCR",
+        "roi": [
+            0,
+            0,
+            1280,
+            720
+        ]
+    },
+    "DungeonClick": {
+        "action": "Click",
+        "target": [
+            0,
+            0
+        ]
+    },
+    "DungeonPan": {
+        "action": "Swipe",
+        "begin": [
+            350,
+            420
+        ],
+        "end": [
+            900,
+            420
+        ],
+        "duration": 600
+    },
+    "DungeonSkipActive": {
+        "recognition": "TemplateMatch",
+        "template": "Dungeons/Skip.png",
+        "roi": [
+            510,
+            590,
+            260,
+            100
+        ],
+        "method": 10001,
+        "threshold": 0.9,
+        "action": "Click",
+        "target": [
+            640,
+            640
+        ]
+    },
+    "DungeonContinuePage": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Dungeons/ContinueSkip.png",
+                "roi": [
+                    540,
+                    450,
+                    200,
+                    75
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    550,
+                    40,
+                    190,
+                    80
+                ],
+                "expected": [
+                    "^获得道具$"
+                ]
+            }
+        ]
+    },
+    "DungeonCongratulations": {
+        "recognition": "OCR",
+        "roi": [
+            250,
+            20,
+            780,
+            180
+        ],
+        "expected": [
+            "^Congratulations$"
+        ],
+        "action": "Click",
+        "target": [
+            640,
+            600
+        ]
+    },
+    "DungeonSkip": {
+        "action": "Custom",
+        "custom_action": "DungeonSkip",
+        "custom_action_param": {
+            "target": "snake_damak_vh",
+            "count": 1
+        },
+        "next": [
+            "DungeonSkipComplete"
+        ]
+    },
+    "DungeonSkipComplete": {
+        "desc": "菜单与地图按钮同时可见才完成；亮度敏感匹配排除弹窗遮罩下的背景按钮。",
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMenu.png",
+                "roi": [
+                    25,
+                    625,
+                    120,
+                    78
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMap.png",
+                "roi": [
+                    235,
+                    630,
+                    85,
+                    73
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            }
+        ]
+    },
+    "DungeonContinueSkip": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Dungeons/ContinueSkip.png",
+                "roi": [
+                    540,
+                    450,
+                    200,
+                    75
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    550,
+                    40,
+                    190,
+                    80
+                ],
+                "expected": [
+                    "^获得道具$"
+                ]
+            }
+        ],
+        "action": "Click",
+        "target": [
+            780,
+            590
+        ]
+    },
+    "DungeonEndSkip": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Dungeons/ContinueSkip.png",
+                "roi": [
+                    540,
+                    450,
+                    200,
+                    75
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    550,
+                    40,
+                    190,
+                    80
+                ],
+                "expected": [
+                    "^获得道具$"
+                ]
+            }
+        ],
+        "action": "Click",
+        "target": [
+            495,
+            590
+        ]
+    },
+    "DungeonWhiteCardReward": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "OCR",
+                "roi": [
+                    430,
+                    220,
+                    420,
+                    130
+                ],
+                "expected": [
+                    "^获得门票$"
+                ]
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    410,
+                    390,
+                    400,
+                    100
+                ],
+                "expected": [
+                    "^获得白色解锁卡$"
+                ]
+            }
+        ],
+        "action": "Click",
+        "target": [
+            640,
+            600
+        ]
+    },
+    "DungeonProofRefill": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "OCR",
+                "roi": [
+                    500,
+                    160,
+                    290,
+                    65
+                ],
+                "expected": [
+                    "^回复[红绿]色解锁卡$"
+                ]
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    400,
+                    225,
+                    490,
+                    65
+                ],
+                "expected": [
+                    "要使用1次导证之力.*回复[红绿]色解锁卡吗"
+                ]
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    500,
+                    315,
+                    300,
+                    65
+                ],
+                "expected": [
+                    "导证之力.*剩余[0-9]+次"
+                ]
+            }
+        ],
+        "action": "Click",
+        "target": [
+            785,
+            490
+        ]
+    },
+    "DungeonProofReceived": {
+        "recognition": "OCR",
+        "roi": [
+            430,
+            280,
+            430,
+            70
+        ],
+        "expected": [
+            "^获得了[红绿]色解锁卡[1-9][0-9]*个.*$"
+        ],
+        "action": "Click",
+        "target": [
+            640,
+            410
+        ]
+    },
+    "DungeonReturnParty": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "OCR",
+                "roi": [
+                    250,
+                    20,
+                    780,
+                    85
+                ],
+                "expected": [
+                    "移动到"
+                ]
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Dungeons/PartyReturn.png",
+                "roi": [
+                    230,
+                    590,
+                    270,
+                    105
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            }
+        ],
+        "action": "Click",
+        "target": [
+            360,
+            640
+        ],
+        "next": [
+            "DungeonReturnParty",
+            "DungeonCloseDetail",
+            "DungeonCloseNested",
+            "DungeonMenuReady"
+        ],
+        "timeout": 10000,
+        "max_hit": 5
+    },
+    "DungeonCloseDetail": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "Or",
+                "any_of": [
+                    {
+                        "recognition": "TemplateMatch",
+                        "template": "Dungeons/TicketLabel.png",
+                        "roi": [
+                            655,
+                            600,
+                            190,
+                            80
+                        ],
+                        "method": 10001,
+                        "threshold": 0.9
+                    },
+                    {
+                        "recognition": "TemplateMatch",
+                        "template": "Dungeons/PhantomDetailTitle.png",
+                        "roi": [
+                            660,
+                            90,
+                            160,
+                            80
+                        ],
+                        "method": 10001,
+                        "threshold": 0.9
+                    }
+                ]
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    1010,
+                    220,
+                    220,
+                    340
+                ],
+                "expected": [
+                    "推荐等级"
+                ]
+            }
+        ],
+        "action": "Custom",
+        "next": [
+            "DungeonReturnParty",
+            "DungeonCloseDetail",
+            "DungeonCloseNested",
+            "DungeonMenuReady"
+        ],
+        "timeout": 10000,
+        "max_hit": 5,
+        "custom_action": "DungeonDismissDetail"
+    },
+    "DungeonCloseNested": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Dungeons/NestedClose.png",
+                "roi": [
+                    1090,
+                    40,
+                    125,
+                    65
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    550,
+                    0,
+                    180,
+                    40
+                ],
+                "expected": [
+                    "^平行迷宫$"
+                ]
+            }
+        ],
+        "action": "Click",
+        "target": [
+            1160,
+            70
+        ],
+        "next": [
+            "DungeonReturnParty",
+            "DungeonCloseDetail",
+            "DungeonCloseNested",
+            "DungeonMenuReady"
+        ],
+        "timeout": 10000,
+        "max_hit": 5
+    },
+    "DungeonMenuBase": {
+        "recognition": "TemplateMatch",
+        "template": "Dungeons/MenuTitle.png",
+        "roi": [
+            560,
+            0,
+            180,
+            40
+        ],
+        "method": 10001,
+        "threshold": 0.9
+    },
+    "DungeonOpenWide": {
+        "recognition": "TemplateMatch",
+        "template": "Dungeons/WideMap.png",
+        "roi": [
+            1120,
+            580,
+            140,
+            130
+        ],
+        "threshold": 0.9,
+        "method": 10001,
+        "action": "Click",
+        "target": [
+            1190,
+            650
+        ]
+    },
+    "DungeonCategorySelected": {
+        "recognition": "TemplateMatch",
+        "template": "Dungeons/SelectedCategory.png",
+        "roi": [
+            300,
+            35,
+            50,
+            40
+        ],
+        "threshold": 0.85,
+        "method": 10001
+    }
+}

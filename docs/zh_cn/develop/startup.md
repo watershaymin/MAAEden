@@ -1,5 +1,7 @@
 # 启动并登录
 
+移动、传送与区域地图定位的开发说明见 [基础移动与传送](navigation.md)。
+
 任务入口为 `StartUp`，在客户端显示为“启动并登录”。流程位于
 `assets/resource/pipeline/startup.json`，识别图片位于 `assets/resource/image/Startup/`。
 

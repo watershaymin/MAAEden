@@ -5,6 +5,14 @@ from maa.toolkit import Toolkit
 
 import my_action
 import my_reco
+import navigation
+import dungeons
+
+AgentServer.custom_action("NavigationMove")(navigation.NavigationMove)
+AgentServer.custom_action("NavigationBaruokiRoute")(navigation.NavigationBaruokiRoute)
+AgentServer.custom_action("DungeonSkip")(dungeons.DungeonSkip)
+AgentServer.custom_action("DungeonDismissDetail")(dungeons.DungeonDismissDetail)
+AgentServer.custom_recognition("DungeonMenuReady")(dungeons.DungeonMenuRecognition)
 
 
 def main():

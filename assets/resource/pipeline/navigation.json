@@ -1,0 +1,431 @@
+{
+    "NavigationMove": {
+        "action": "Custom",
+        "custom_action": "NavigationMove",
+        "custom_action_param": {
+            "direction": "left",
+            "duration": 600
+        },
+        "next": [
+            "NavigationMoveComplete"
+        ]
+    },
+    "NavigationMoveComplete": {
+        "desc": "菜单与地图按钮同时可见才完成；亮度敏感匹配排除弹窗遮罩下的背景按钮。",
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMenu.png",
+                "roi": [
+                    25,
+                    625,
+                    120,
+                    78
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMap.png",
+                "roi": [
+                    235,
+                    630,
+                    85,
+                    73
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            }
+        ]
+    },
+    "NavigationBaruokiRoute": {
+        "action": "Custom",
+        "custom_action": "NavigationBaruokiRoute",
+        "next": [
+            "NavigationRouteComplete"
+        ]
+    },
+    "NavigationRouteComplete": {
+        "desc": "菜单与地图按钮同时可见才完成；亮度敏感匹配排除弹窗遮罩下的背景按钮。",
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMenu.png",
+                "roi": [
+                    25,
+                    625,
+                    120,
+                    78
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMap.png",
+                "roi": [
+                    235,
+                    630,
+                    85,
+                    73
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            }
+        ]
+    },
+    "NavigationToggleLocalMap": {
+        "action": "Click",
+        "target": [
+            1150,
+            140
+        ]
+    },
+    "NavigationLocalMap": {
+        "recognition": "TemplateMatch",
+        "template": "Navigation/LocalMapDecoration.png",
+        "roi": [
+            0,
+            40,
+            650,
+            60
+        ],
+        "method": 10001,
+        "threshold": 0.85
+    },
+    "NavigationMapName": {
+        "recognition": "OCR",
+        "roi": [
+            15,
+            10,
+            640,
+            53
+        ],
+        "expected": [
+            ".+"
+        ]
+    },
+    "NavigationPlayer": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "Navigation/PlayerRingLarge.png",
+            "Navigation/PlayerRingSmall.png",
+            "Navigation/PlayerIdle.png",
+            "Navigation/PlayerRingMedium.png"
+        ],
+        "roi": [
+            230,
+            140,
+            840,
+            450
+        ],
+        "method": 5,
+        "threshold": 0.85
+    },
+    "NavigationSwipe": {
+        "action": "Swipe",
+        "begin": [
+            640,
+            450
+        ],
+        "end": [
+            460,
+            450
+        ],
+        "duration": 600
+    },
+    "NavigationBattle": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "MenasTrial/Attack.png",
+                "roi": [
+                    1080,
+                    545,
+                    185,
+                    165
+                ],
+                "threshold": 0.85,
+                "method": 5
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "MenasTrial/BattleStatus.png",
+                "roi": [
+                    20,
+                    15,
+                    155,
+                    55
+                ],
+                "threshold": 0.9,
+                "method": 10001
+            }
+        ],
+        "action": "Click"
+    },
+    "NavigationRewards": {
+        "recognition": "TemplateMatch",
+        "template": "MenasTrial/Rewards.png",
+        "roi": [
+            0,
+            15,
+            205,
+            80
+        ],
+        "threshold": 0.85,
+        "action": "Click",
+        "target": [
+            630,
+            420,
+            20,
+            20
+        ]
+    },
+    "NavigationTeleport": {
+        "next": [
+            "NavigationOpenWorldMap"
+        ],
+        "timeout": 10000
+    },
+    "NavigationOpenWorldMap": {
+        "desc": "菜单与地图按钮同时可见才完成；亮度敏感匹配排除弹窗遮罩下的背景按钮。",
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMenu.png",
+                "roi": [
+                    25,
+                    625,
+                    120,
+                    78
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMap.png",
+                "roi": [
+                    235,
+                    630,
+                    85,
+                    73
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            }
+        ],
+        "action": "Click",
+        "target": [
+            275,
+            670
+        ],
+        "next": [
+            "NavigationSelectModern"
+        ],
+        "timeout": 10000
+    },
+    "NavigationSelectModern": {
+        "recognition": "TemplateMatch",
+        "template": "Navigation/WorldMapTitle.png",
+        "roi": [
+            560,
+            0,
+            170,
+            40
+        ],
+        "method": 10001,
+        "threshold": 0.9,
+        "action": "Click",
+        "target": [
+            200,
+            115
+        ],
+        "next": [
+            "NavigationSelectBaruoki"
+        ],
+        "timeout": 10000
+    },
+    "NavigationSelectBaruoki": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Navigation/WorldMapTitle.png",
+                "roi": [
+                    560,
+                    0,
+                    170,
+                    40
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    0,
+                    180,
+                    1280,
+                    400
+                ],
+                "expected": [
+                    "^巴尔沃基$"
+                ]
+            }
+        ],
+        "box_index": 1,
+        "action": "Click",
+        "next": [
+            "NavigationConfirmBaruoki"
+        ],
+        "timeout": 10000
+    },
+    "NavigationConfirmBaruoki": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "OCR",
+                "roi": [
+                    450,
+                    270,
+                    400,
+                    85
+                ],
+                "expected": [
+                    "即将移动到巴尔沃基"
+                ]
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Navigation/ConfirmYes.png",
+                "roi": [
+                    660,
+                    385,
+                    250,
+                    85
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            }
+        ],
+        "box_index": 1,
+        "action": "Click",
+        "next": [
+            "NavigationArrivedWorld"
+        ],
+        "timeout": 60000
+    },
+    "NavigationArrivedWorld": {
+        "desc": "菜单与地图按钮同时可见才完成；亮度敏感匹配排除弹窗遮罩下的背景按钮。",
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMenu.png",
+                "roi": [
+                    25,
+                    625,
+                    120,
+                    78
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMap.png",
+                "roi": [
+                    235,
+                    630,
+                    85,
+                    73
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            }
+        ],
+        "action": "Click",
+        "target": [
+            1150,
+            140
+        ],
+        "next": [
+            "NavigationVerifyBaruoki"
+        ],
+        "timeout": 10000
+    },
+    "NavigationVerifyBaruoki": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Navigation/LocalMapDecoration.png",
+                "roi": [
+                    0,
+                    40,
+                    650,
+                    60
+                ],
+                "method": 10001,
+                "threshold": 0.85
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    15,
+                    10,
+                    500,
+                    53
+                ],
+                "expected": [
+                    "巴尔沃基"
+                ]
+            }
+        ],
+        "action": "Click",
+        "target": [
+            1150,
+            140
+        ],
+        "next": [
+            "NavigationTeleportComplete"
+        ],
+        "timeout": 10000
+    },
+    "NavigationTeleportComplete": {
+        "desc": "菜单与地图按钮同时可见才完成；亮度敏感匹配排除弹窗遮罩下的背景按钮。",
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMenu.png",
+                "roi": [
+                    25,
+                    625,
+                    120,
+                    78
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMap.png",
+                "roi": [
+                    235,
+                    630,
+                    85,
+                    73
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            }
+        ]
+    }
+}
