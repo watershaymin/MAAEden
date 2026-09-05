@@ -1,0 +1,20 @@
+--- a/MFAAvalonia.Desktop/Program.cs
++++ b/MFAAvalonia.Desktop/Program.cs
+@@ -67,6 +67,17 @@
+                 App.IsTempDirMode = true;
+             }
+ 
++            // libzmq 4.3.5 can fail to create its internal IPC signaler in the
++            // Windows profile temp directory (zeromq/libzmq#4734).
++            // Set this before loading Maa native libraries; Agent inherits it.
++            if (OperatingSystem.IsWindows())
++            {
++                var agentTempPath = Path.Combine(AppContext.BaseDirectory, "temp");
++                Directory.CreateDirectory(agentTempPath);
++                Environment.SetEnvironmentVariable("TMP", agentTempPath);
++                Environment.SetEnvironmentVariable("TEMP", agentTempPath);
++            }
++
+             LoggerHelper.InitializeLogger();
+             Directory.SetCurrentDirectory(AppContext.BaseDirectory);
+             PendingUpdateDeletionHelper.ProcessPendingDirectories();

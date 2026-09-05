@@ -1,0 +1,4 @@
+maafw==5.12.3
+maaagentbinary==1.0.1
+numpy==2.5.2
+strenum==0.4.15
