@@ -18,6 +18,7 @@ def check(package):
     from maa.toolkit import Toolkit
 
     Library.open(package / 'runtimes/win-x64/native')
+    assert Library.version().removeprefix('v') == '5.12.3', 'GUI 原生框架版本不是 5.12.3'
     Toolkit.init_option(str(package / 'debug/agent-smoke'))
     resource = Resource()
     client = AgentClient()
@@ -36,7 +37,7 @@ def check(package):
             actions = client.custom_action_list
             recognitions = client.custom_recognition_list
             assert {'NavigationMove', 'NavigationBaruokiRoute', 'DungeonSkip',
-                    'DungeonDismissDetail', 'MenasTrial', 'MonthlyStarTrial', 'MonthlyTrialDungeons', 'CatDiary'} <= set(actions), actions
+                    'DungeonDismissDetail', 'MenasTrial', 'MenasAppraisal', 'MonthlyStarTrial', 'MonthlyTrialDungeons', 'CatDiary'} <= set(actions), actions
             assert 'DungeonMenuReady' in recognitions, recognitions
             print(f'Agent 握手及注册通过：{actions}, {recognitions}', flush=True)
             assert client.disconnect(), 'Agent 断开失败'

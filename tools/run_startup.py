@@ -13,6 +13,7 @@ from maa.toolkit import Toolkit
 
 
 TASKS = {
+    "MenasAppraisal": ("MenasAppraisalComplete", 780, "menas-appraisal-run", "谜晶鉴定筛选完成，停留鉴定道具页；详细结果见 debug/menas-appraisal。"),
     "CatDiary": ("CatDiaryComplete", 2760, "cat-diary-run", "本轮猫咪日记已全部完成，停留日记页。"),
     "MonthlyTrialDungeons": ("MonthlyTrialDungeonsComplete", 1860, "monthly-trial-dungeons-run", "本期可跳过的副本任务已处理，停留试炼页；略过原因见日志。"),
     "MonthlyStarTrial": ("MonthlyStarTrialComplete", 10860, "monthly-star-trial-run", "本月星天200胜试炼已完成，停留试炼页。"),
@@ -38,6 +39,7 @@ def main() -> int:
     parser.add_argument("--refill-red", action="store_true", help="红票不足时使用星天之证的导证之力补充")
     parser.add_argument("--refill-green", action="store_true", help="绿票不足时使用星天之证的导证之力补充")
     parser.add_argument("--refill-cat", action="store_true", help="猫掌券不足时使用星天之证的导证之力补充")
+    parser.add_argument("--appraisal-config", type=Path, help="谜晶鉴定规则 JSON，字段与 Custom 参数一致")
     args = parser.parse_args()
     if args.count is None:
         args.count = 0 if args.task == "MenasTrial" else 1
@@ -49,13 +51,28 @@ def main() -> int:
         parser.error("--adb-path 必须指向 adb 可执行文件")
 
     root = Path(__file__).resolve().parents[1]
+    appraisal_params = None
+    if args.task == "MenasAppraisal":
+        import json
+        sys.path.insert(0, str(root / "agent"))
+        from menas_appraisal import parse_rules
+        if args.appraisal_config is None:
+            parser.error("谜晶鉴定需要 --appraisal-config 指定筛选规则")
+        try:
+            appraisal_params = json.loads(args.appraisal_config.read_text(encoding="utf-8"))
+            # 旧 CLI 规则显式使用自定义模式，避免继承 Pipeline 新增的默认组合。
+            if isinstance(appraisal_params, dict):
+                appraisal_params.setdefault("rule_mode", "custom")
+            appraisal_rules = parse_rules(appraisal_params)
+        except (OSError, ValueError) as exc:
+            parser.error(str(exc))
     completion_node, time_limit, log_dir, success_message = TASKS[args.task]
     Toolkit.init_option(root / "debug" / log_dir)
     capture = MaaAdbScreencapMethodEnum.Encode
     input_method = MaaAdbInputMethodEnum.AdbShell
     config = {}
-    if args.task == "CatDiary":
-        # 移动目标需要及时截图。仅复用明确匹配用户所选地址的模拟器配置。
+    if args.task in ("CatDiary", "MenasAppraisal"):
+        # 移动目标和逐把鉴定需要及时截图。只复用明确匹配用户所选地址的模拟器配置。
         devices = [device for device in Toolkit.find_adb_devices() if device.address == args.address
                    and device.adb_path.resolve() == args.adb_path.resolve()]
         capture = MaaAdbScreencapMethodEnum.Encode | MaaAdbScreencapMethodEnum.RawWithGzip
@@ -81,6 +98,12 @@ def main() -> int:
         return 1
 
     resource = Resource()
+    if args.task == "MenasAppraisal":
+        from menas_appraisal import register
+        if not register(resource):
+            print("谜晶鉴定动作注册失败。", file=sys.stderr)
+            return 1
+        time_limit = 180 + (appraisal_rules.batches or 999) * 600
     if args.task == "MenasTrial":
         sys.path.insert(0, str(root / "agent"))
         from menas_trial import register
@@ -129,6 +152,8 @@ def main() -> int:
         return 1
 
     override = {}
+    if args.task == "MenasAppraisal":
+        override = {"MenasAppraisal": {"custom_action_param": appraisal_params}}
     if args.task == "MenasTrial":
         override = {"MenasTrial": {"custom_action_param": {"count": args.count}}}
     if args.task == "DungeonSkip":

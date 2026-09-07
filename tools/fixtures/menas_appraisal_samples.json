@@ -1,0 +1,924 @@
+[
+    {
+        "batch": 1,
+        "index": 1,
+        "kind": "弓",
+        "attack": 178,
+        "magic": 66,
+        "affixes": [
+            "火属性耐性",
+            "全状态20UP",
+            "连击倍率强化",
+            "HP最大时伤害+25%"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 2,
+        "kind": "枪",
+        "attack": 50,
+        "magic": 134,
+        "affixes": [
+            "晶属性耐性",
+            "全状态20UP",
+            "斩耐性",
+            "天冥强化幸运UP"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 3,
+        "kind": "弓",
+        "attack": 150,
+        "magic": 61,
+        "affixes": [
+            "中毒时强化+30%",
+            "全状态20UP",
+            "晶属性耐性"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 4,
+        "kind": "剑",
+        "attack": 86,
+        "magic": 98,
+        "affixes": [
+            "自身获得的经验值",
+            "阴属性耐性",
+            "全状态20UP"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 5,
+        "kind": "刀",
+        "attack": 212,
+        "magic": 118,
+        "affixes": [
+            "HP最大时伤害+25%",
+            "全状态20UP"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 6,
+        "kind": "枪",
+        "attack": 128,
+        "magic": 122,
+        "affixes": [
+            "全状态20UP",
+            "胜利时回复20%AnotherForce",
+            "全属性耐性",
+            "斩耐性"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 7,
+        "kind": "刀",
+        "attack": 68,
+        "magic": 114,
+        "affixes": [
+            "斩耐性",
+            "天冥强化耐久UP",
+            "水属性耐性"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 8,
+        "kind": "拳",
+        "attack": 156,
+        "magic": 130,
+        "affixes": [
+            "打耐性",
+            "雷属性耐性",
+            "突耐性",
+            "晶属性耐性"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 9,
+        "kind": "锤",
+        "attack": 171,
+        "magic": 88,
+        "affixes": [
+            "连击倍率强化",
+            "天冥强化耐久UP",
+            "斩耐性"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 10,
+        "kind": "锤",
+        "attack": 120,
+        "magic": 162,
+        "affixes": [
+            "将一般攻击变成自我回复",
+            "疼痛时强化+30%",
+            "HP最大时伤害+25%",
+            "雷属性耐性"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 11,
+        "kind": "剑",
+        "attack": 226,
+        "magic": 56,
+        "affixes": [
+            "晶属性耐性",
+            "暴击威力+40%",
+            "获得Git数量UP"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 12,
+        "kind": "斧",
+        "attack": 144,
+        "magic": 106,
+        "affixes": [
+            "水属性耐性",
+            "天冥强化速度UP",
+            "阴属性耐性",
+            "疼痛时强化+30%"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 13,
+        "kind": "斧",
+        "attack": 236,
+        "magic": 58,
+        "affixes": [
+            "天冥强化精神UP",
+            "斩耐性",
+            "全属性攻击力+25%",
+            "连击倍率强化"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 14,
+        "kind": "弓",
+        "attack": 116,
+        "magic": 214,
+        "affixes": [
+            "天冥强化速度UP",
+            "地属性耐性"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 15,
+        "kind": "锤",
+        "attack": 184,
+        "magic": 122,
+        "affixes": [
+            "全属性攻击力+25%",
+            "火属性耐性",
+            "连击倍率强化",
+            "地属性耐性"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 16,
+        "kind": "拳",
+        "attack": 244,
+        "magic": 61,
+        "affixes": [
+            "一般攻击全体化",
+            "获得Git数量UP",
+            "全属性耐性",
+            "阴属性耐性"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 17,
+        "kind": "枪",
+        "attack": 250,
+        "magic": 66,
+        "affixes": [
+            "地属性耐性",
+            "随时治愈"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 18,
+        "kind": "枪",
+        "attack": 72,
+        "magic": 230,
+        "affixes": [
+            "一般攻击全体化",
+            "阴属性耐性"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 19,
+        "kind": "拳",
+        "attack": 106,
+        "magic": 102,
+        "affixes": [
+            "胜利时回复20%AnotherForce",
+            "全状态20UP",
+            "雷属性耐性",
+            "将一般攻击变成自我回复"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 20,
+        "kind": "拳",
+        "attack": 116,
+        "magic": 130,
+        "affixes": [
+            "斩耐性",
+            "一般攻击全体化"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 21,
+        "kind": "锤",
+        "attack": 94,
+        "magic": 124,
+        "affixes": [
+            "胜利时回复20%AnotherForce",
+            "天冥强化精神UP"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 22,
+        "kind": "剑",
+        "attack": 150,
+        "magic": 126,
+        "affixes": [
+            "突耐性",
+            "打耐性",
+            "地属性耐性",
+            "天冥强化速度UP"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 23,
+        "kind": "剑",
+        "attack": 81,
+        "magic": 56,
+        "affixes": [
+            "疼痛时强化+30%",
+            "晶属性耐性",
+            "突耐性",
+            "将一般攻击变成自我回复"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 24,
+        "kind": "斧",
+        "attack": 74,
+        "magic": 32,
+        "affixes": [
+            "随时治愈",
+            "阴属性耐性",
+            "风属性耐性"
+        ]
+    },
+    {
+        "batch": 1,
+        "index": 25,
+        "kind": "枪",
+        "attack": 128,
+        "magic": 122,
+        "affixes": [
+            "全状态20UP",
+            "胜利时回复20%AnotherForce",
+            "全属性耐性",
+            "斩耐性"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 1,
+        "kind": "刀",
+        "attack": 112,
+        "magic": 130,
+        "affixes": [
+            "斩耐性",
+            "天冥强化耐久UP",
+            "水属性耐性"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 2,
+        "kind": "剑",
+        "attack": 98,
+        "magic": 82,
+        "affixes": [
+            "疼痛时强化+30%",
+            "获得Git数量UP",
+            "水属性耐性"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 3,
+        "kind": "拳",
+        "attack": 50,
+        "magic": 88,
+        "affixes": [
+            "地属性耐性",
+            "一般攻击全体化",
+            "将一般攻击变成自我回复",
+            "天冥强化耐久UP"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 4,
+        "kind": "弓",
+        "attack": 54,
+        "magic": 50,
+        "affixes": [
+            "风属性耐性",
+            "阴属性耐性",
+            "中毒时强化+30%"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 5,
+        "kind": "剑",
+        "attack": 216,
+        "magic": 194,
+        "affixes": [
+            "HP最大时伤害+25%",
+            "天冥强化力量UP"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 6,
+        "kind": "剑",
+        "attack": 78,
+        "magic": 96,
+        "affixes": [
+            "随时治愈",
+            "水属性耐性",
+            "一般攻击全体化"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 7,
+        "kind": "枪",
+        "attack": 202,
+        "magic": 206,
+        "affixes": [
+            "暴击威力+40%",
+            "HP最大时伤害+25%",
+            "全状态20UP"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 8,
+        "kind": "弓",
+        "attack": 84,
+        "magic": 139,
+        "affixes": [
+            "打耐性",
+            "全属性攻击力+25%",
+            "将一般攻击变成自我回复"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 9,
+        "kind": "剑",
+        "attack": 98,
+        "magic": 160,
+        "affixes": [
+            "自身获得的经验值",
+            "斩耐性",
+            "全属性攻击力+25%",
+            "地属性耐性"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 10,
+        "kind": "弓",
+        "attack": 92,
+        "magic": 178,
+        "affixes": [
+            "风属性耐性",
+            "天冥强化精神UP",
+            "雷属性耐性",
+            "火属性耐性"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 11,
+        "kind": "刀",
+        "attack": 92,
+        "magic": 198,
+        "affixes": [
+            "天冥强化精神UP",
+            "疼痛时强化+30%",
+            "火属性耐性",
+            "天冥强化幸运UP"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 12,
+        "kind": "枪",
+        "attack": 88,
+        "magic": 151,
+        "affixes": [
+            "斩耐性",
+            "突耐性",
+            "全属性耐性",
+            "天冥强化速度UP"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 13,
+        "kind": "弓",
+        "attack": 248,
+        "magic": 72,
+        "affixes": [
+            "阴属性耐性",
+            "天冥强化速度UP",
+            "天冥强化精神UP"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 14,
+        "kind": "拳",
+        "attack": 126,
+        "magic": 66,
+        "affixes": [
+            "获得Git数量UP",
+            "火属性耐性"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 15,
+        "kind": "杖",
+        "attack": 84,
+        "magic": 36,
+        "affixes": [
+            "获得Git数量UP",
+            "突耐性",
+            "全属性耐性"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 16,
+        "kind": "弓",
+        "attack": 178,
+        "magic": 66,
+        "affixes": [
+            "火属性耐性",
+            "全状态20UP",
+            "连击倍率强化",
+            "HP最大时伤害+25%"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 17,
+        "kind": "枪",
+        "attack": 56,
+        "magic": 54,
+        "affixes": [
+            "全属性耐性",
+            "中毒时强化+30%",
+            "一般攻击全体化",
+            "水属性耐性"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 18,
+        "kind": "枪",
+        "attack": 208,
+        "magic": 91,
+        "affixes": [
+            "随时治愈",
+            "将一般攻击变成自我回复",
+            "一般攻击全体化",
+            "风属性耐性"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 19,
+        "kind": "刀",
+        "attack": 116,
+        "magic": 66,
+        "affixes": [
+            "火属性耐性",
+            "随时治愈",
+            "天冥强化耐久UP",
+            "全属性攻击力+25%"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 20,
+        "kind": "刀",
+        "attack": 248,
+        "magic": 110,
+        "affixes": [
+            "HP最大时伤害+25%",
+            "一般攻击全体化",
+            "全状态20UP",
+            "地属性耐性"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 21,
+        "kind": "斧",
+        "attack": 122,
+        "magic": 48,
+        "affixes": [
+            "突耐性",
+            "雷属性耐性",
+            "HP最大时伤害+25%",
+            "晶属性耐性"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 22,
+        "kind": "杖",
+        "attack": 236,
+        "magic": 152,
+        "affixes": [
+            "天冥强化速度UP",
+            "疼痛时强化+30%",
+            "全属性攻击力+25%"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 23,
+        "kind": "刀",
+        "attack": 62,
+        "magic": 72,
+        "affixes": [
+            "连击倍率强化",
+            "天冥强化智慧UP",
+            "暴击威力+40%",
+            "阴属性耐性"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 24,
+        "kind": "拳",
+        "attack": 76,
+        "magic": 134,
+        "affixes": [
+            "连击倍率强化",
+            "暴击威力+40%"
+        ]
+    },
+    {
+        "batch": 2,
+        "index": 25,
+        "kind": "剑",
+        "attack": 88,
+        "magic": 122,
+        "affixes": [
+            "全状态20UP",
+            "暴击威力+40%",
+            "天冥强化幸运UP",
+            "天冥强化速度UP"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 1,
+        "kind": "锤",
+        "attack": 82,
+        "magic": 198,
+        "affixes": [
+            "天冥强化幸运UP",
+            "雷属性耐性"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 2,
+        "kind": "枪",
+        "attack": 178,
+        "magic": 226,
+        "affixes": [
+            "地属性耐性",
+            "天冥强化智慧UP",
+            "全属性耐性",
+            "将一般攻击变成自我回复"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 3,
+        "kind": "剑",
+        "attack": 248,
+        "magic": 162,
+        "affixes": [
+            "天冥强化力量UP",
+            "天冥强化幸运UP",
+            "天冥强化速度UP",
+            "获得Git数量UP"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 4,
+        "kind": "剑",
+        "attack": 105,
+        "magic": 130,
+        "affixes": [
+            "天冥强化幸运UP",
+            "风属性耐性",
+            "天冥强化力量UP"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 5,
+        "kind": "斧",
+        "attack": 186,
+        "magic": 136,
+        "affixes": [
+            "连击倍率强化",
+            "疼痛时强化+30%",
+            "HP最大时伤害+25%"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 6,
+        "kind": "剑",
+        "attack": 246,
+        "magic": 56,
+        "affixes": [
+            "获得Git数量UP",
+            "天冥强化力量UP",
+            "风属性耐性"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 7,
+        "kind": "弓",
+        "attack": 124,
+        "magic": 186,
+        "affixes": [
+            "晶属性耐性",
+            "连击倍率强化",
+            "打耐性"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 8,
+        "kind": "锤",
+        "attack": 136,
+        "magic": 96,
+        "affixes": [
+            "暴击威力+40%",
+            "雷属性耐性",
+            "水属性耐性"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 9,
+        "kind": "刀",
+        "attack": 66,
+        "magic": 58,
+        "affixes": [
+            "全状态20UP",
+            "天冥强化智慧UP",
+            "将一般攻击变成自我回复"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 10,
+        "kind": "剑",
+        "attack": 159,
+        "magic": 206,
+        "affixes": [
+            "天冥强化精神UP",
+            "暴击威力+40%",
+            "晶属性耐性",
+            "全属性耐性"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 11,
+        "kind": "刀",
+        "attack": 194,
+        "magic": 98,
+        "affixes": [
+            "火属性耐性",
+            "晶属性耐性",
+            "连击倍率强化",
+            "HP最大时伤害+25%"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 12,
+        "kind": "杖",
+        "attack": 126,
+        "magic": 82,
+        "affixes": [
+            "阴属性耐性",
+            "暴击威力+40%",
+            "雷属性耐性"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 13,
+        "kind": "杖",
+        "attack": 198,
+        "magic": 224,
+        "affixes": [
+            "斩耐性",
+            "天冥强化精神UP"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 14,
+        "kind": "杖",
+        "attack": 230,
+        "magic": 178,
+        "affixes": [
+            "天冥强化耐久UP",
+            "天冥强化力量UP",
+            "阴属性耐性",
+            "获得Git数量UP"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 15,
+        "kind": "弓",
+        "attack": 142,
+        "magic": 182,
+        "affixes": [
+            "暴击威力+40%",
+            "水属性耐性",
+            "将一般攻击变成自我回复",
+            "雷属性耐性"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 16,
+        "kind": "枪",
+        "attack": 100,
+        "magic": 106,
+        "affixes": [
+            "风属性耐性",
+            "地属性耐性",
+            "随时治愈",
+            "晶属性耐性"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 17,
+        "kind": "拳",
+        "attack": 236,
+        "magic": 164,
+        "affixes": [
+            "暴击威力+40%",
+            "突耐性",
+            "天冥强化耐久UP"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 18,
+        "kind": "拳",
+        "attack": 102,
+        "magic": 80,
+        "affixes": [
+            "随时治愈",
+            "天冥强化力量UP",
+            "雷属性耐性"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 19,
+        "kind": "弓",
+        "attack": 86,
+        "magic": 98,
+        "affixes": [
+            "获得Git数量UP",
+            "随时治愈",
+            "将一般攻击变成自我回复",
+            "天冥强化精神UP"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 20,
+        "kind": "拳",
+        "attack": 52,
+        "magic": 216,
+        "affixes": [
+            "天冥强化力量UP",
+            "风属性耐性"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 21,
+        "kind": "锤",
+        "attack": 171,
+        "magic": 61,
+        "affixes": [
+            "突耐性",
+            "地属性耐性",
+            "阴属性耐性",
+            "天冥强化速度UP"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 22,
+        "kind": "斧",
+        "attack": 130,
+        "magic": 66,
+        "affixes": [
+            "突耐性",
+            "天冥强化精神UP"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 23,
+        "kind": "刀",
+        "attack": 84,
+        "magic": 180,
+        "affixes": [
+            "天冥强化耐久UP",
+            "雷属性耐性"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 24,
+        "kind": "斧",
+        "attack": 74,
+        "magic": 32,
+        "affixes": [
+            "随时治愈",
+            "阴属性耐性",
+            "风属性耐性"
+        ]
+    },
+    {
+        "batch": 3,
+        "index": 25,
+        "kind": "枪",
+        "attack": 144,
+        "magic": 78,
+        "affixes": [
+            "水属性耐性",
+            "火属性耐性",
+            "获得Git数量UP",
+            "天冥强化耐久UP"
+        ]
+    }
+]

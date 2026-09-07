@@ -1,0 +1,160 @@
+{
+    "observed_on": "2026-09-08",
+    "source": "国服 MuMu 实机鉴定结果；详情放大镜 OCR，原图位于 debug/appraisal/",
+    "batches": 3,
+    "weapons_observed": 75,
+    "complete_pool": false,
+    "note": "次数为出现该词条的武器数量；样本不是完整词条池，不代表真实概率。",
+    "affixes": [
+        {
+            "id": "all_stats_20",
+            "name": "全状态20UP",
+            "observed_count": 13
+        },
+        {
+            "id": "element_attack_25",
+            "name": "全属性攻击力+25%",
+            "observed_count": 6
+        },
+        {
+            "id": "critical_damage_40",
+            "name": "暴击威力+40%",
+            "observed_count": 10
+        },
+        {
+            "id": "full_hp_damage_25",
+            "name": "HP最大时伤害+25%",
+            "observed_count": 10
+        },
+        {
+            "id": "poison_damage_30",
+            "name": "中毒时强化+30%",
+            "observed_count": 3
+        },
+        {
+            "id": "pain_damage_30",
+            "name": "疼痛时强化+30%",
+            "observed_count": 7
+        },
+        {
+            "id": "combo_rate",
+            "name": "连击倍率强化",
+            "observed_count": 10
+        },
+        {
+            "id": "victory_af_20",
+            "name": "胜利时回复20%AnotherForce",
+            "observed_count": 4
+        },
+        {
+            "id": "normal_attack_all",
+            "name": "一般攻击全体化",
+            "observed_count": 8
+        },
+        {
+            "id": "normal_attack_heal",
+            "name": "将一般攻击变成自我回复",
+            "observed_count": 10
+        },
+        {
+            "id": "regeneration",
+            "name": "随时治愈",
+            "observed_count": 9
+        },
+        {
+            "id": "experience",
+            "name": "自身获得的经验值",
+            "observed_count": 2
+        },
+        {
+            "id": "git_up",
+            "name": "获得Git数量UP",
+            "observed_count": 10
+        },
+        {
+            "id": "light_shadow_power",
+            "name": "天冥强化力量UP",
+            "observed_count": 7
+        },
+        {
+            "id": "light_shadow_intelligence",
+            "name": "天冥强化智慧UP",
+            "observed_count": 3
+        },
+        {
+            "id": "light_shadow_speed",
+            "name": "天冥强化速度UP",
+            "observed_count": 9
+        },
+        {
+            "id": "light_shadow_endurance",
+            "name": "天冥强化耐久UP",
+            "observed_count": 9
+        },
+        {
+            "id": "light_shadow_spirit",
+            "name": "天冥强化精神UP",
+            "observed_count": 9
+        },
+        {
+            "id": "light_shadow_luck",
+            "name": "天冥强化幸运UP",
+            "observed_count": 6
+        },
+        {
+            "id": "resist_all",
+            "name": "全属性耐性",
+            "observed_count": 8
+        },
+        {
+            "id": "resist_fire",
+            "name": "火属性耐性",
+            "observed_count": 9
+        },
+        {
+            "id": "resist_water",
+            "name": "水属性耐性",
+            "observed_count": 9
+        },
+        {
+            "id": "resist_earth",
+            "name": "地属性耐性",
+            "observed_count": 10
+        },
+        {
+            "id": "resist_wind",
+            "name": "风属性耐性",
+            "observed_count": 9
+        },
+        {
+            "id": "resist_thunder",
+            "name": "雷属性耐性",
+            "observed_count": 11
+        },
+        {
+            "id": "resist_shadow",
+            "name": "阴属性耐性",
+            "observed_count": 12
+        },
+        {
+            "id": "resist_crystal",
+            "name": "晶属性耐性",
+            "observed_count": 10
+        },
+        {
+            "id": "resist_slash",
+            "name": "斩耐性",
+            "observed_count": 11
+        },
+        {
+            "id": "resist_pierce",
+            "name": "突耐性",
+            "observed_count": 9
+        },
+        {
+            "id": "resist_blunt",
+            "name": "打耐性",
+            "observed_count": 4
+        }
+    ]
+}

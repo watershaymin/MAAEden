@@ -39,6 +39,16 @@
             ]
         },
         {
+            "name": "MenasAppraisal",
+            "label": "梅纳斯谜晶鉴定",
+            "entry": "MenasAppraisal",
+            "description": "从主界面、梅纳斯试炼或鉴定道具页开始，每批鉴定25个谜晶，逐把读取攻击、魔力及完整词条，默认锁定杖魔力／其他武器攻击大于210，且双毒痛，或毒痛之一加满血伤害、暴击威力、全属性攻击力中至少两种的装备。可切换自定义规则或关闭自动锁定以收集样本。不出售装备、不解除已有锁定；完成后停在鉴定道具页，剩余不足25个时停止。",
+            "option": [
+                "MenasAppraisalBatches",
+                "MenasAppraisalAutoLock"
+            ]
+        },
+        {
             "name": "MonthlyStarTrial",
             "label": "星天试炼·每月200胜",
             "entry": "MonthlyStarTrial",
@@ -789,6 +799,776 @@
                     }
                 }
             ]
+        },
+        "MenasAppraisalBatches": {
+            "type": "input",
+            "label": "鉴定批数",
+            "description": "只处理每批25个。剩余不足25个时停止，保留余数。",
+            "inputs": [
+                {
+                    "name": "batches",
+                    "label": "批数（每批25个；0＝全部完整批次）",
+                    "default": "1",
+                    "pipeline_type": "int",
+                    "verify": "^(0|[1-9][0-9]{0,2})$",
+                    "pattern_msg": "请输入0～999"
+                }
+            ],
+            "pipeline_override": {
+                "MenasAppraisal": {
+                    "custom_action_param": {
+                        "batches": "{batches}"
+                    }
+                }
+            }
+        },
+        "MenasAppraisalAutoLock": {
+            "type": "switch",
+            "label": "自动锁定符合条件的武器",
+            "default_case": "Yes",
+            "description": "默认使用毒痛增伤组合规则，也可切换自定义；关闭时仅鉴定并保存统计。已有锁定会保留。",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "label": "按条件锁定",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "auto_lock": true
+                            }
+                        }
+                    },
+                    "option": [
+                        "MenasAppraisalRuleMode"
+                    ]
+                },
+                {
+                    "name": "No",
+                    "label": "仅鉴定并记录",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "auto_lock": false
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "MenasAppraisalWeapons": {
+            "type": "checkbox",
+            "label": "适用武器",
+            "description": "不勾选表示全部武器。选择后仅锁定这些类型。",
+            "default_case": [],
+            "cases": [
+                {
+                    "name": "staff",
+                    "label": "杖",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "weapons": {
+                                    "staff": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "sword",
+                    "label": "剑",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "weapons": {
+                                    "sword": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "katana",
+                    "label": "刀",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "weapons": {
+                                    "katana": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "axe",
+                    "label": "斧",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "weapons": {
+                                    "axe": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "lance",
+                    "label": "枪",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "weapons": {
+                                    "lance": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "bow",
+                    "label": "弓",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "weapons": {
+                                    "bow": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "fists",
+                    "label": "拳",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "weapons": {
+                                    "fists": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "hammer",
+                    "label": "锤",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "weapons": {
+                                    "hammer": true
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "MenasAppraisalStats": {
+            "type": "input",
+            "label": "白值下限（包含等于）",
+            "description": "比较结果页中的实际攻击、魔力数值，0表示该项不参与判断。",
+            "inputs": [
+                {
+                    "name": "attack_min",
+                    "label": "攻击下限（0＝不限制）",
+                    "default": "0",
+                    "pipeline_type": "int",
+                    "verify": "^(0|[1-9][0-9]{0,3})$",
+                    "pattern_msg": "请输入0～9999"
+                },
+                {
+                    "name": "magic_min",
+                    "label": "魔力下限（0＝不限制）",
+                    "default": "0",
+                    "pipeline_type": "int",
+                    "verify": "^(0|[1-9][0-9]{0,3})$",
+                    "pattern_msg": "请输入0～9999"
+                }
+            ],
+            "pipeline_override": {
+                "MenasAppraisal": {
+                    "custom_action_param": {
+                        "attack_min": "{attack_min}",
+                        "magic_min": "{magic_min}"
+                    }
+                }
+            }
+        },
+        "MenasAppraisalStatMode": {
+            "type": "select",
+            "label": "攻击与魔力如何组合",
+            "default_case": "any",
+            "cases": [
+                {
+                    "name": "all",
+                    "label": "设置的下限全部达标",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "stat_mode": "all"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "any",
+                    "label": "设置的下限任意一项达标",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "stat_mode": "any"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "MenasAppraisalAffixMode": {
+            "type": "select",
+            "label": "所选词条如何组合",
+            "default_case": "all",
+            "cases": [
+                {
+                    "name": "all",
+                    "label": "必须同时具有全部所选词条",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affix_mode": "all"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "any",
+                    "label": "具有任意一个所选词条即可",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affix_mode": "any"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "MenasAppraisalConditionMode": {
+            "type": "select",
+            "label": "白值与词条如何组合",
+            "default_case": "all",
+            "cases": [
+                {
+                    "name": "all",
+                    "label": "白值条件和词条条件同时满足",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "condition_mode": "all"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "any",
+                    "label": "满足白值条件或词条条件即可",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "condition_mode": "any"
+                            }
+                        }
+                    }
+                }
+            ],
+            "description": "未设置的一组不参与判断；武器类型始终需要符合。"
+        },
+        "MenasAppraisalAffixes": {
+            "type": "checkbox",
+            "label": "目标词条（可多选）",
+            "default_case": [],
+            "description": "实测3批、75把，共30种。使用放大镜详情的完整名称；样本不代表完整词条池。不勾选时不限制词条。",
+            "cases": [
+                {
+                    "name": "all_stats_20",
+                    "label": "全状态20UP",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "all_stats_20": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "element_attack_25",
+                    "label": "全属性攻击力+25%",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "element_attack_25": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "critical_damage_40",
+                    "label": "暴击威力+40%",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "critical_damage_40": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "full_hp_damage_25",
+                    "label": "HP最大时伤害+25%",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "full_hp_damage_25": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "poison_damage_30",
+                    "label": "中毒时强化+30%",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "poison_damage_30": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "pain_damage_30",
+                    "label": "疼痛时强化+30%",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "pain_damage_30": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "combo_rate",
+                    "label": "连击倍率强化",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "combo_rate": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "victory_af_20",
+                    "label": "胜利时回复20%AnotherForce",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "victory_af_20": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "normal_attack_all",
+                    "label": "一般攻击全体化",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "normal_attack_all": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "normal_attack_heal",
+                    "label": "将一般攻击变成自我回复",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "normal_attack_heal": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "regeneration",
+                    "label": "随时治愈",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "regeneration": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "experience",
+                    "label": "自身获得的经验值",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "experience": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "git_up",
+                    "label": "获得Git数量UP",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "git_up": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "light_shadow_power",
+                    "label": "天冥强化力量UP",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "light_shadow_power": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "light_shadow_intelligence",
+                    "label": "天冥强化智慧UP",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "light_shadow_intelligence": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "light_shadow_speed",
+                    "label": "天冥强化速度UP",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "light_shadow_speed": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "light_shadow_endurance",
+                    "label": "天冥强化耐久UP",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "light_shadow_endurance": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "light_shadow_spirit",
+                    "label": "天冥强化精神UP",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "light_shadow_spirit": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "light_shadow_luck",
+                    "label": "天冥强化幸运UP",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "light_shadow_luck": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "resist_all",
+                    "label": "全属性耐性",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "resist_all": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "resist_fire",
+                    "label": "火属性耐性",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "resist_fire": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "resist_water",
+                    "label": "水属性耐性",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "resist_water": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "resist_earth",
+                    "label": "地属性耐性",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "resist_earth": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "resist_wind",
+                    "label": "风属性耐性",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "resist_wind": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "resist_thunder",
+                    "label": "雷属性耐性",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "resist_thunder": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "resist_shadow",
+                    "label": "阴属性耐性",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "resist_shadow": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "resist_crystal",
+                    "label": "晶属性耐性",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "resist_crystal": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "resist_slash",
+                    "label": "斩耐性",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "resist_slash": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "resist_pierce",
+                    "label": "突耐性",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "resist_pierce": true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "resist_blunt",
+                    "label": "打耐性",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "affixes": {
+                                    "resist_blunt": true
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "MenasAppraisalExtraAffixes": {
+            "type": "input",
+            "label": "其他目标词条（选填）",
+            "description": "填游戏放大镜详情中的完整词条名，多个词条用分号分隔；与上面的勾选共同参与词条判断。",
+            "inputs": [
+                {
+                    "name": "extra_affixes",
+                    "label": "完整词条名；完整词条名",
+                    "default": "",
+                    "verify": "^[\\s\\S]{0,1000}$",
+                    "pattern_msg": "最多1000个字符"
+                }
+            ],
+            "pipeline_override": {
+                "MenasAppraisal": {
+                    "custom_action_param": {
+                        "extra_affixes": "{extra_affixes}"
+                    }
+                }
+            }
+        },
+        "MenasAppraisalRuleMode": {
+            "type": "select",
+            "label": "锁定规则",
+            "default_case": "poison_pain",
+            "description": "默认：杖的魔力／其他武器攻击大于210，且同时具有毒痛增伤，或具有毒痛之一并具有满血伤害、暴击威力、全属性攻击力中的至少两种。",
+            "cases": [
+                {
+                    "name": "poison_pain",
+                    "label": "毒痛增伤组合（默认）",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "rule_mode": "poison_pain"
+                            }
+                        }
+                    },
+                    "option": [
+                        "MenasAppraisalPrimaryStat",
+                        "MenasAppraisalWeapons"
+                    ]
+                },
+                {
+                    "name": "custom",
+                    "label": "自定义白值与词条",
+                    "pipeline_override": {
+                        "MenasAppraisal": {
+                            "custom_action_param": {
+                                "rule_mode": "custom"
+                            }
+                        }
+                    },
+                    "option": [
+                        "MenasAppraisalWeapons",
+                        "MenasAppraisalStats",
+                        "MenasAppraisalStatMode",
+                        "MenasAppraisalAffixMode",
+                        "MenasAppraisalConditionMode",
+                        "MenasAppraisalAffixes",
+                        "MenasAppraisalExtraAffixes"
+                    ]
+                }
+            ]
+        },
+        "MenasAppraisalPrimaryStat": {
+            "type": "input",
+            "label": "默认组合的白值要求",
+            "description": "严格大于：默认210不合格，211开始合格。词条必须为双毒痛，或单毒／痛加三种增伤中的至少两种。",
+            "inputs": [
+                {
+                    "name": "primary_above",
+                    "label": "杖魔力／其他武器攻击须大于",
+                    "default": "210",
+                    "pipeline_type": "int",
+                    "verify": "^(0|[1-9][0-9]{0,3})$",
+                    "pattern_msg": "请输入0～9999"
+                }
+            ],
+            "pipeline_override": {
+                "MenasAppraisal": {
+                    "custom_action_param": {
+                        "primary_above": "{primary_above}"
+                    }
+                }
+            }
         }
     }
 }

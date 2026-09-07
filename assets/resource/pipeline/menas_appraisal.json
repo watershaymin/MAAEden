@@ -1,0 +1,429 @@
+{
+    "MenasAppraisal": {
+        "action": "Custom",
+        "custom_action": "MenasAppraisal",
+        "custom_action_param": {
+            "batches": 1,
+            "rule_mode": "poison_pain",
+            "primary_above": 210,
+            "attack_min": 0,
+            "magic_min": 0,
+            "stat_mode": "any",
+            "affix_mode": "all",
+            "condition_mode": "all",
+            "affixes": {},
+            "weapons": {},
+            "auto_lock": true
+        },
+        "next": [
+            "MenasAppraisalComplete"
+        ]
+    },
+    "MenasAppraisalComplete": {
+        "desc": "Custom 已确认所有已鉴定武器均读取、符合规则者锁定，停在鉴定道具页。"
+    },
+    "MenasAppraisalHome": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "MenasAppraisal/Title.png",
+                "roi": [
+                    595,
+                    0,
+                    90,
+                    38
+                ],
+                "threshold": 0.95,
+                "method": 10001
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "MenasAppraisal/Home.png",
+                "roi": [
+                    248,
+                    61,
+                    132,
+                    47
+                ],
+                "threshold": 0.95,
+                "method": 10001
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "MenasAppraisal/Auto.png",
+                "roi": [
+                    718,
+                    621,
+                    138,
+                    61
+                ],
+                "threshold": 0.95,
+                "method": 10001
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    289,
+                    163,
+                    71,
+                    37
+                ],
+                "expected": [
+                    "^谜晶$"
+                ]
+            }
+        ]
+    },
+    "MenasAppraisalConfirm": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "MenasAppraisal/Confirm.png",
+                "roi": [
+                    509,
+                    148,
+                    252,
+                    44
+                ],
+                "threshold": 0.95,
+                "method": 10001
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    438,
+                    271,
+                    60,
+                    37
+                ],
+                "expected": [
+                    "^谜晶$"
+                ]
+            }
+        ]
+    },
+    "MenasAppraisalResults": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "MenasAppraisal/Title.png",
+                "roi": [
+                    595,
+                    0,
+                    90,
+                    38
+                ],
+                "threshold": 0.95,
+                "method": 10001
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "MenasAppraisal/Continue.png",
+                "roi": [
+                    60,
+                    619,
+                    136,
+                    57
+                ],
+                "threshold": 0.95,
+                "method": 10001
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "MenasAppraisal/Finish.png",
+                "roi": [
+                    325,
+                    619,
+                    88,
+                    58
+                ],
+                "threshold": 0.95,
+                "method": 10001
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "MenasAppraisal/Effects.png",
+                "roi": [
+                    33,
+                    321,
+                    100,
+                    56
+                ],
+                "threshold": 0.95,
+                "method": 10001
+            }
+        ]
+    },
+    "MenasAppraisalDetail": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "MenasAppraisal/DetailClose.png",
+                "roi": [
+                    595,
+                    495,
+                    87,
+                    62
+                ],
+                "threshold": 0.95,
+                "method": 10001
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "MenasAppraisal/Ability.png",
+                "roi": [
+                    535,
+                    277,
+                    79,
+                    41
+                ],
+                "threshold": 0.95,
+                "method": 10001
+            }
+        ]
+    },
+    "MenasAppraisalLockNotice": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "OCR",
+                "roi": [
+                    576,
+                    280,
+                    132,
+                    40
+                ],
+                "expected": [
+                    "^已锁定[。.]?$"
+                ]
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    480,
+                    317,
+                    325,
+                    38
+                ],
+                "expected": [
+                    "被锁定的装备无法卖出"
+                ]
+            }
+        ]
+    },
+    "MenasAppraisalUnlocked": {
+        "recognition": "TemplateMatch",
+        "template": "MenasAppraisal/Unlocked.png",
+        "roi": [
+            435,
+            251,
+            34,
+            48
+        ],
+        "threshold": 0.97,
+        "method": 10001
+    },
+    "MenasAppraisalLocked": {
+        "recognition": "TemplateMatch",
+        "template": "MenasAppraisal/Locked.png",
+        "roi": [
+            435,
+            251,
+            34,
+            48
+        ],
+        "threshold": 0.97,
+        "method": 10001
+    },
+    "MenasAppraisalReadStock": {
+        "recognition": "OCR",
+        "roi": [
+            289,
+            230,
+            168,
+            40
+        ]
+    },
+    "MenasAppraisalReadQuantity": {
+        "recognition": "OCR",
+        "roi": [
+            826,
+            266,
+            76,
+            40
+        ]
+    },
+    "MenasAppraisalReadMain": {
+        "recognition": "OCR",
+        "roi": [
+            62,
+            61,
+            418,
+            181
+        ]
+    },
+    "MenasAppraisalReadAffixes": {
+        "recognition": "OCR",
+        "roi": [
+            538,
+            313,
+            461,
+            147
+        ]
+    },
+    "MenasAppraisalEnter": {
+        "action": "Click",
+        "target": [
+            1043,
+            670
+        ],
+        "post_wait_freezes": {
+            "time": 600,
+            "target": [
+                236,
+                61,
+                810,
+                521
+            ],
+            "threshold": 0.98,
+            "timeout": 6000
+        }
+    },
+    "MenasAppraisalAuto": {
+        "action": "Click",
+        "target": [
+            786,
+            650
+        ],
+        "post_wait_freezes": {
+            "time": 600,
+            "target": [
+                509,
+                148,
+                391,
+                167
+            ],
+            "threshold": 0.98,
+            "timeout": 6000
+        }
+    },
+    "MenasAppraisalSubmit": {
+        "action": "Click",
+        "target": [
+            780,
+            576
+        ]
+    },
+    "MenasAppraisalSelect": {
+        "action": "Click",
+        "target": [
+            652,
+            128
+        ],
+        "post_wait_freezes": {
+            "time": 600,
+            "target": [
+                25,
+                56,
+                471,
+                438
+            ],
+            "threshold": 0.98,
+            "timeout": 6000
+        }
+    },
+    "MenasAppraisalInspect": {
+        "action": "Click",
+        "target": [
+            240,
+            279
+        ],
+        "post_wait_freezes": {
+            "time": 600,
+            "target": [
+                535,
+                190,
+                465,
+                270
+            ],
+            "threshold": 0.98,
+            "timeout": 6000
+        }
+    },
+    "MenasAppraisalCloseDetail": {
+        "action": "Click",
+        "target": [
+            640,
+            527
+        ],
+        "post_wait_freezes": {
+            "time": 600,
+            "target": [
+                30,
+                57,
+                461,
+                430
+            ],
+            "threshold": 0.98,
+            "timeout": 6000
+        }
+    },
+    "MenasAppraisalLock": {
+        "action": "Click",
+        "target": [
+            451,
+            279
+        ],
+        "post_wait_freezes": {
+            "time": 600,
+            "target": [
+                475,
+                272,
+                330,
+                180
+            ],
+            "threshold": 0.98,
+            "timeout": 6000
+        }
+    },
+    "MenasAppraisalAcknowledgeLock": {
+        "action": "Click",
+        "target": [
+            640,
+            425
+        ],
+        "post_wait_freezes": {
+            "time": 600,
+            "target": [
+                30,
+                57,
+                461,
+                430
+            ],
+            "threshold": 0.98,
+            "timeout": 6000
+        }
+    },
+    "MenasAppraisalContinue": {
+        "action": "Click",
+        "target": [
+            127,
+            650
+        ],
+        "post_wait_freezes": {
+            "time": 600,
+            "target": [
+                236,
+                61,
+                810,
+                521
+            ],
+            "threshold": 0.98,
+            "timeout": 6000
+        }
+    }
+}

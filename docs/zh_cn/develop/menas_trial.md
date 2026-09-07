@@ -4,6 +4,8 @@
 流程位于 `assets/resource/pipeline/menas_trial.json`，模板位于 `assets/resource/image/MenasTrial/`。
 `agent/menas_trial.py` 负责参数、入场券读取和逐场计数，已接入 Agent 与命令行注册。
 
+右下角的谜晶鉴定另由[梅纳斯谜晶鉴定](./menas_appraisal.md)任务处理，支持白值、词条筛选和自动锁定。
+
 ## 使用方式
 
 先运行“启动并登录”，或手动进入可操作的游戏主界面，再运行“梅纳斯试炼”。
