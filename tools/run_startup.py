@@ -13,6 +13,7 @@ from maa.toolkit import Toolkit
 
 
 TASKS = {
+    "MonthlyTrialDungeons": ("MonthlyTrialDungeonsComplete", 1860, "monthly-trial-dungeons-run", "本期可跳过的副本任务已处理，停留试炼页；略过原因见日志。"),
     "MonthlyStarTrial": ("MonthlyStarTrialComplete", 10860, "monthly-star-trial-run", "本月星天200胜试炼已完成，停留试炼页。"),
     "DungeonSkip": ("DungeonSkipComplete", 900, "dungeon-skip-run", "已完成指定次数跳过并返回蓝门。"),
     "DungeonEntrance": ("DungeonMenuReady", 180, "dungeon-entrance-run", "已到达平行迷宫选图界面。"),
@@ -58,13 +59,19 @@ def main() -> int:
         return 1
 
     resource = Resource()
+    if args.task == "MonthlyTrialDungeons":
+        sys.path.insert(0, str(root / "agent"))
+        from monthly_dungeons import register
+        if not register(resource):
+            print("月度副本动作注册失败。", file=sys.stderr)
+            return 1
     if args.task == "MonthlyStarTrial":
         sys.path.insert(0, str(root / "agent"))
         from monthly_trial import register
         if not register(resource):
             print("月度试炼动作注册失败。", file=sys.stderr)
             return 1
-    if args.task.startswith("Dungeon"):
+    if args.task.startswith("Dungeon") or args.task == "MonthlyTrialDungeons":
         sys.path.insert(0, str(root / "agent"))
         from dungeons import register
         if not register(resource):

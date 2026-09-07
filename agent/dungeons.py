@@ -18,6 +18,10 @@ CATEGORIES = {"古代": (85, 110), "现代": (200, 110), "未来": (325, 110),
               "???": (450, 110), "虚时层": (580, 110), "封域": (1050, 110), "异境": (1190, 110)}
 
 
+class DungeonSkipUnavailable(RuntimeError):
+    """已核对目标队伍页，但当前跳过按钮未启用。"""
+
+
 def normalize(text):
     return re.sub(r"\s+", "", text).translate(str.maketrans({"（": "(", "）": ")", "，": ","}))
 
@@ -277,7 +281,7 @@ class DungeonNavigator(Navigator):
         if not verify_party(text, target):
             raise RuntimeError(f"副本、难度或票数核对失败：{text}")
         if not self.reco("DungeonSkipActive", frame):
-            raise RuntimeError("跳过按钮未启用；不会改为正常进入副本")
+            raise DungeonSkipUnavailable("跳过按钮未启用；不会改为正常进入副本")
 
     def refill(self, target, source_action, text):
         if not proof_refill_allowed(text, target["ticket"]):

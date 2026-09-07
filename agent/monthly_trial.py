@@ -248,7 +248,7 @@ class MonthlyNavigator(Navigator):
         LOG.warning("MonthlyStarTrial 移动 %s %sms: %s -> %s", direction, duration, previous, position)
         return position
 
-    def read_progress(self):
+    def open_trials(self):
         # 菜单本身不暂停明雷：逐页识别，点击后若开战则先结算再恢复导航。
         transitions = 0
         pending = None
@@ -298,6 +298,9 @@ class MonthlyNavigator(Navigator):
         else:
             raise RuntimeError("无法在遇敌间隙打开记录菜单")
         self.wait("MonthlyTrialsReady")
+
+    def read_progress(self):
+        self.open_trials()
         period = parse_period(self.rows("MonthlyReadPeriod", self.frame()))
         previous = None
         for _ in range(18):

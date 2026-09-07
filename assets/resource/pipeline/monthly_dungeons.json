@@ -1,0 +1,59 @@
+{
+    "MonthlyTrialDungeons": {
+        "desc": "OCR 读取本期三个副本目标，匹配现有目录，每个未达成且可跳过的目标执行一次并复核。",
+        "action": "Custom",
+        "custom_action": "MonthlyTrialDungeons",
+        "custom_action_param": {
+            "max_minutes": 30
+        },
+        "next": [
+            "MonthlyTrialDungeonsComplete"
+        ]
+    },
+    "MonthlyTrialDungeonsComplete": {
+        "recognition": "And",
+        "all_of": [
+            "MonthlyTrialsReady"
+        ],
+        "desc": "自定义动作已确认可处理项目完成，其余项目已记录略过原因，停留试炼页。"
+    },
+    "MonthlyDungeonScrollUp": {
+        "action": "Swipe",
+        "begin": [
+            880,
+            350
+        ],
+        "end": [
+            880,
+            475
+        ],
+        "duration": 600,
+        "post_delay": 500,
+        "desc": "沿试炼卡片中央向上翻页，连续两次文字和位置不变确认顶部。"
+    },
+    "MonthlyDungeonScrollDown": {
+        "action": "Swipe",
+        "begin": [
+            880,
+            500
+        ],
+        "end": [
+            880,
+            390
+        ],
+        "duration": 600,
+        "post_delay": 500,
+        "desc": "短距离滚动并保留卡片重叠区域，避免标题或状态被裁切导致漏读。"
+    },
+    "MonthlyDungeonCloseMenu": {
+        "recognition": "Custom",
+        "custom_recognition": "DungeonMenuReady",
+        "action": "Click",
+        "target": [
+            1248,
+            21
+        ],
+        "post_delay": 300,
+        "desc": "仅在关闭队伍、详情、二级地图并确认平行迷宫选图页后关闭，回到主界面。"
+    }
+}

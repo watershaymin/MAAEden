@@ -18,6 +18,8 @@
 
 新增[星天试炼·每月200胜](docs/zh_cn/develop/monthly_trial.md)：读取本月已有胜场，前往晓之塔魔物巢穴补足剩余进度，完成后停留试炼页。需要预先配置能够持续通关的队伍。
 
+[星天试炼·指定副本](docs/zh_cn/develop/monthly_dungeons.md)：OCR 读取本期三个副本任务，与现有跳过目录匹配；未达成且可跳过的各执行一次，回到试炼页核对完成状态，其余略过。副本每月变化无需修改配置。
+
 **当前 GUI 验证状态：** 已修复 Agent 通信初始化的 ZeroMQ 错误；Windows x64 构建、Agent 握手与模块注册、正常退出均通过验证。GUI 已连接 MuMu，成功执行“启动并登录”并进入游戏主界面；消耗票券的任务尚未通过 GUI 验证。详见 [GUI 构建与排错](docs/zh_cn/develop/gui.md)。
 
 ## 构建
