@@ -44,7 +44,7 @@ try {
         Invoke-WebRequest @download
     }
     Invoke-Checked $Python @('-c','import sys; assert sys.version_info[:2] == (3,12), "构建需要 Python 3.12"')
-    Invoke-Checked $Python @((Join-Path $PSScriptRoot 'configure.py'))
+    Invoke-Checked $Python @('-X','utf8',(Join-Path $PSScriptRoot 'configure.py'))
     Invoke-Checked $Python @('-m','pip','install','--upgrade','--target',(Join-Path $repoRoot 'deps/gui-python-packages'),'-r',(Join-Path $PSScriptRoot 'gui-requirements.txt'))
     $agentPatch = Join-Path $PSScriptRoot 'patches/gui-agent-temp.patch'
     Invoke-Checked git @('-C',$sourceRoot,'apply','--check',$agentPatch)
@@ -54,7 +54,7 @@ try {
     } finally {
         Invoke-Checked git @('-C',$sourceRoot,'apply','--reverse',$agentPatch)
     }
-    Invoke-Checked $Python @((Join-Path $PSScriptRoot 'package_gui.py'),'--output',$publishRoot)
+    Invoke-Checked $Python @('-X','utf8',(Join-Path $PSScriptRoot 'package_gui.py'),'--output',$publishRoot)
     Invoke-Checked (Join-Path $publishRoot 'python/python.exe') @('-X','utf8',(Join-Path $PSScriptRoot 'check_gui_agent.py'),'--package',$publishRoot)
     if ($Run) { Start-Process -FilePath (Join-Path $publishRoot 'MFAAvalonia.exe') -WorkingDirectory $publishRoot }
 } finally {

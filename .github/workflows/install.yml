@@ -23,6 +23,9 @@ on:
 permissions:
   contents: read
 
+env:
+  PYTHONUTF8: "1"
+
 jobs:
   install:
     name: Build Windows x64
