@@ -7,6 +7,7 @@ $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path $PSScriptRoot -Parent
 $sourceRoot = Join-Path $repoRoot 'deps/MFAAvalonia'
 $publishRoot = Join-Path $repoRoot 'install'
+$applicationIcon = Join-Path $repoRoot 'assets/logo.ico'
 $guiCommit = '4f11c8122de4f43eafc818a368c9956e3b06249c'
 function Invoke-Checked([string]$Program, [string[]]$Arguments) {
     & $Program @Arguments
@@ -40,7 +41,7 @@ try {
     Invoke-Checked git @('-C',$sourceRoot,'apply','--check',$agentPatch)
     Invoke-Checked git @('-C',$sourceRoot,'apply',$agentPatch)
     try {
-        Invoke-Checked dotnet @('publish',(Join-Path $sourceRoot 'MFAAvalonia.Desktop/MFAAvalonia.Desktop.csproj'),'-c','Release','-r','win-x64','--self-contained','true','-o',$publishRoot,'-p:Version=2.16.1','-p:FileVersion=2.16.1.0','-p:AssemblyVersion=2.16.1.0','-p:InformationalVersion=2.16.1','--nologo')
+        Invoke-Checked dotnet @('publish',(Join-Path $sourceRoot 'MFAAvalonia.Desktop/MFAAvalonia.Desktop.csproj'),'-c','Release','-r','win-x64','--self-contained','true','-o',$publishRoot,"-p:ApplicationIcon=$applicationIcon",'-p:Version=2.16.1','-p:FileVersion=2.16.1.0','-p:AssemblyVersion=2.16.1.0','-p:InformationalVersion=2.16.1','--nologo')
     } finally {
         Invoke-Checked git @('-C',$sourceRoot,'apply','--reverse',$agentPatch)
     }

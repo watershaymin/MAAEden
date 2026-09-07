@@ -33,6 +33,17 @@ python tools/package_gui.py
 
 打包后的 `interface.json` 将 Agent 解释器指向包内 `python/python.exe`；源文件中的开发环境配置不受影响。
 
+## 项目图标
+
+MAAEden 使用猫可可的 Q 版图标，定稿保存在 [`assets/logo.png`](../../../assets/logo.png)，保持白色背景；Windows 图标为 [`assets/logo.ico`](../../../assets/logo.ico)，包含 16、24、32、48、64、128、256 像素版本。
+
+- `assets/interface.json` 的 `icon` 指向同目录的 `logo.png`，供 GUI 界面、窗口和托盘使用。
+- `build_gui.ps1` 通过 `ApplicationIcon` 将 `assets/logo.ico` 嵌入 Windows 程序文件；更换此文件后需要完整重建。
+- `package_gui.py` 和 CI 使用的 `install.py` 都会将两种图标放到运行包根目录，并保留 `assets/logo.png` 供随包 README 展示。
+- 现有 CI 下载预编译的 MFAAvalonia，只更换运行时图标；程序文件自身的图标由上述本地 Windows 构建写入。
+
+更新图标时先替换 PNG，再生成对应的多尺寸 ICO。仅更新运行时 PNG 可重新打包并重启 GUI；Windows 程序文件图标需要完整构建，资源管理器的图标缓存也可能延迟刷新。
+
 ## 本机验证记录（2026-09-05）
 
 - Windows x64 Release 自包含编译成功，GUI 已启动，加载全部 8 个任务及对应选项。

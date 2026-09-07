@@ -112,6 +112,8 @@ def install_resource():
         working_dir / "assets" / "interface.json",
         install_path,
     )
+    for name in ("logo.png", "logo.ico"):
+        shutil.copy2(working_dir / "assets" / name, install_path / name)
 
     with open(install_path / "interface.json", "r", encoding="utf-8") as f:
         interface = jsonc.load(f)
@@ -123,6 +125,9 @@ def install_resource():
 
 
 def install_chores():
+    (install_path / "assets").mkdir(exist_ok=True)
+    for name in ("logo.png", "logo.ico"):
+        shutil.copy2(working_dir / "assets" / name, install_path / "assets" / name)
     shutil.copy2(
         working_dir / "README.md",
         install_path,

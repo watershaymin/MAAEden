@@ -1,5 +1,9 @@
 # MAAEden
 
+<p align="center">
+  <img src="assets/logo.png" alt="MAAEden 猫可可图标" width="256" height="256">
+</p>
+
 基于 [MaaFramework](https://github.com/MaaXYZ/MaaFramework) 的《另一个伊甸》自动化工具，GUI 使用与 M9A 同生态的 [MFAAvalonia](https://github.com/MaaXYZ/MFAAvalonia)。当前适配 16:9 横屏安卓模拟器。
 
 ## GUI 运行

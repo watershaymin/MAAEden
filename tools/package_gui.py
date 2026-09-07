@@ -34,6 +34,10 @@ def package(output):
     interface['agent']['child_exec'] = '{PROJECT_DIR}/python/python.exe'
     interface['agent']['child_args'] = ['-X', 'utf8', '{PROJECT_DIR}/agent/main.py']
     (output / 'interface.json').write_text(json.dumps(interface, ensure_ascii=False, indent=4) + '\n', encoding='utf-8')
+    (output / 'assets').mkdir(exist_ok=True)
+    for name in ('logo.png', 'logo.ico'):
+        shutil.copy2(ROOT / 'assets' / name, output / name)
+        shutil.copy2(ROOT / 'assets' / name, output / 'assets' / name)
     for name in ('README.md', 'LICENSE', 'rules.md'):
         shutil.copy2(ROOT / name, output / name)
     shutil.copytree(ROOT / 'docs/zh_cn/develop', output / 'docs/zh_cn/develop', dirs_exist_ok=True, ignore=ignore)

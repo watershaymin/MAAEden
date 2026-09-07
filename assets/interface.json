@@ -1,6 +1,7 @@
 {
     "interface_version": 2,
     "name": "MAAEden",
+    "icon": "logo.png",
     "description": "另一个伊甸自动化助手",
     "license": "MIT",
     "welcome": "请先在模拟器中手动完成账号登录，再运行启动并登录任务。",
