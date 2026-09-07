@@ -53,6 +53,7 @@ def package(output):
     manifest = {'gui':'MFAAvalonia v2.16.1', 'gui_commit':GUI_COMMIT, 'framework':'5.12.3',
                 'python':'3.12.10', 'platform':'win-x64', 'self_contained_dotnet':True,
                 'gui_patches':['gui-agent-temp.patch'],
+                'project_version':interface['version'],
                 'project_commit':subprocess.check_output(['git','rev-parse','HEAD'], cwd=ROOT, text=True).strip()}
     (output / 'build-info.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
     print(f'运行包已生成：{output / "MFAAvalonia.exe"}')

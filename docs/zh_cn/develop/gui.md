@@ -15,7 +15,7 @@ GUI 源码取自 <https://github.com/MaaXYZ/MFAAvalonia>，构建时应用 `tool
 
 ## 一键构建
 
-构建机需要 Git、.NET 10 SDK 和 Python 3.12。先准备 OCR 模型 `assets/resource/model/ocr/det.onnx`、`rec.onnx`、`keys.txt`。
+构建机需要 Git、.NET 10 SDK 和 Python 3.12。先运行 `git submodule update --init assets/MaaCommonAssets`；构建脚本会从该固定子模块配置 OCR 模型。
 
 ```powershell
 ./tools/build_gui.ps1 -Python python -Run
@@ -33,14 +33,27 @@ python tools/package_gui.py
 
 打包后的 `interface.json` 将 Agent 解释器指向包内 `python/python.exe`；源文件中的开发环境配置不受影响。
 
+## 发布 Windows Release
+
+正式发布使用全新目录，避免混入本机配置、日志和旧资源。`-Output` 指定的目录必须为空；不指定时仍使用 `install/` 并保留本机配置。
+
+```powershell
+./tools/build_gui.ps1 -Python python -Output build/package
+python -X utf8 tools/create_release.py --package build/package --output build/artifacts --version v1.0.0
+```
+
+打包器核对标签、接口版本和构建提交，检查 GUI、.NET、Python、OCR 与许可证文件，并生成 ZIP 和 `.zip.sha256`。压缩包中排除配置、备份、截图日志、临时目录和 Python 缓存。应先提交源代码，再构建待发布的包，使 `build-info.json` 的提交号对应实际发布代码。
+
+`.github/workflows/install.yml` 使用同一套脚本：先校验资源、Schema 和单元测试，再编译、执行原生 Agent 通信检查、封装产物。普通分支及 PR 只上传 Actions artifact；推送 `v*` 标签后自动发布 GitHub Release。标签必须匹配 `assets/interface.json` 的版本，并存在 `docs/zh_cn/releases/<标签>.md` 发布说明。当前正式分发目标为 Windows x64。
+
 ## 项目图标
 
 MAAEden 使用猫可可的 Q 版图标，定稿保存在 [`assets/logo.png`](../../../assets/logo.png)，保持白色背景；Windows 图标为 [`assets/logo.ico`](../../../assets/logo.ico)，包含 16、24、32、48、64、128、256 像素版本。
 
 - `assets/interface.json` 的 `icon` 指向同目录的 `logo.png`，供 GUI 界面、窗口和托盘使用。
 - `build_gui.ps1` 通过 `ApplicationIcon` 将 `assets/logo.ico` 嵌入 Windows 程序文件；更换此文件后需要完整重建。
-- `package_gui.py` 和 CI 使用的 `install.py` 都会将两种图标放到运行包根目录，并保留 `assets/logo.png` 供随包 README 展示。
-- 现有 CI 下载预编译的 MFAAvalonia，只更换运行时图标；程序文件自身的图标由上述本地 Windows 构建写入。
+- `package_gui.py` 将两种图标放到运行包根目录，并保留 `assets/logo.png` 供随包 README 展示。
+- 本地与 CI 都从固定 GUI 源码执行 Windows x64 Release 编译，将图标写入程序文件。
 
 更新图标时先替换 PNG，再生成对应的多尺寸 ICO。仅更新运行时 PNG 可重新打包并重启 GUI；Windows 程序文件图标需要完整构建，资源管理器的图标缓存也可能延迟刷新。
 

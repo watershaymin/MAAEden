@@ -1,12 +1,20 @@
 param(
     [string]$Python = 'python',
     [string]$Proxy = '',
+    [string]$Output = '',
     [switch]$Run
 )
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path $PSScriptRoot -Parent
 $sourceRoot = Join-Path $repoRoot 'deps/MFAAvalonia'
 $publishRoot = Join-Path $repoRoot 'install'
+if ($Output) {
+    $publishRoot = if ([System.IO.Path]::IsPathRooted($Output)) { $Output } else { Join-Path $repoRoot $Output }
+    $publishRoot = [System.IO.Path]::GetFullPath($publishRoot)
+    if ((Test-Path -LiteralPath $publishRoot) -and (Get-ChildItem -LiteralPath $publishRoot -Force)) {
+        throw '指定的输出目录必须为空，请为发布构建选择新目录。'
+    }
+}
 $applicationIcon = Join-Path $repoRoot 'assets/logo.ico'
 $guiCommit = '4f11c8122de4f43eafc818a368c9956e3b06249c'
 function Invoke-Checked([string]$Program, [string[]]$Arguments) {
@@ -36,6 +44,7 @@ try {
         Invoke-WebRequest @download
     }
     Invoke-Checked $Python @('-c','import sys; assert sys.version_info[:2] == (3,12), "构建需要 Python 3.12"')
+    Invoke-Checked $Python @((Join-Path $PSScriptRoot 'configure.py'))
     Invoke-Checked $Python @('-m','pip','install','--upgrade','--target',(Join-Path $repoRoot 'deps/gui-python-packages'),'-r',(Join-Path $PSScriptRoot 'gui-requirements.txt'))
     $agentPatch = Join-Path $PSScriptRoot 'patches/gui-agent-temp.patch'
     Invoke-Checked git @('-C',$sourceRoot,'apply','--check',$agentPatch)
