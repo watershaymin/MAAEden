@@ -7,11 +7,13 @@ import my_action
 import my_reco
 import navigation
 import dungeons
+import monthly_trial
 
 AgentServer.custom_action("NavigationMove")(navigation.NavigationMove)
 AgentServer.custom_action("NavigationBaruokiRoute")(navigation.NavigationBaruokiRoute)
 AgentServer.custom_action("DungeonSkip")(dungeons.DungeonSkip)
 AgentServer.custom_action("DungeonDismissDetail")(dungeons.DungeonDismissDetail)
+AgentServer.custom_action("MonthlyStarTrial")(monthly_trial.MonthlyStarTrial)
 AgentServer.custom_recognition("DungeonMenuReady")(dungeons.DungeonMenuRecognition)
 
 

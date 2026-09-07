@@ -1,0 +1,830 @@
+{
+    "MonthlyStarTrial": {
+        "desc": "读取本月星天200胜进度，前往晓之塔魔物巢穴补足剩余胜场并复核。",
+        "action": "Custom",
+        "custom_action": "MonthlyStarTrial",
+        "custom_action_param": {
+            "max_minutes": 180
+        },
+        "next": [
+            "MonthlyStarTrialComplete"
+        ]
+    },
+    "MonthlyStarTrialComplete": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "OCR",
+                "roi": [
+                    560,
+                    0,
+                    160,
+                    40
+                ],
+                "expected": [
+                    "^勋章$"
+                ]
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    35,
+                    465,
+                    325,
+                    83
+                ],
+                "expected": [
+                    "报酬收取日期"
+                ]
+            }
+        ],
+        "desc": "仅由自定义动作核验本月200/200后进入，停留试炼页避免继续遇敌。"
+    },
+    "MonthlyOpenMenu": {
+        "desc": "菜单与地图按钮同时可见才完成；亮度敏感匹配排除弹窗遮罩下的背景按钮。",
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMenu.png",
+                "roi": [
+                    25,
+                    625,
+                    120,
+                    78
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMap.png",
+                "roi": [
+                    235,
+                    630,
+                    85,
+                    73
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            }
+        ],
+        "action": "Click",
+        "target": [
+            83,
+            660
+        ],
+        "post_delay": 0,
+        "next": [
+            "MonthlyOpenRecords"
+        ],
+        "timeout": 30000,
+        "max_hit": 1,
+        "pre_delay": 0
+    },
+    "MonthlyOpenRecords": {
+        "recognition": "TemplateMatch",
+        "template": "MonthlyTrial/RecordsButton.png",
+        "roi": [
+            625,
+            550,
+            122,
+            120
+        ],
+        "method": 10001,
+        "threshold": 0.9,
+        "action": "Click",
+        "target": [
+            684,
+            618
+        ],
+        "post_delay": 0,
+        "next": [
+            "MonthlyOpenMedals"
+        ],
+        "timeout": 30000,
+        "max_hit": 1,
+        "pre_delay": 0
+    },
+    "MonthlyOpenMedals": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "OCR",
+                "roi": [
+                    550,
+                    0,
+                    180,
+                    45
+                ],
+                "expected": [
+                    "^记录$"
+                ]
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "MonthlyTrial/MedalsButton.png",
+                "roi": [
+                    850,
+                    575,
+                    170,
+                    105
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            }
+        ],
+        "action": "Click",
+        "target": [
+            940,
+            627
+        ],
+        "post_delay": 0,
+        "next": [
+            "MonthlySelectTrials"
+        ],
+        "timeout": 30000,
+        "max_hit": 1,
+        "pre_delay": 0
+    },
+    "MonthlySelectTrials": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "OCR",
+                "roi": [
+                    560,
+                    0,
+                    160,
+                    40
+                ],
+                "expected": [
+                    "^勋章$"
+                ]
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    977,
+                    134,
+                    90,
+                    42
+                ],
+                "expected": [
+                    "^试炼$"
+                ]
+            }
+        ],
+        "action": "Click",
+        "target": [
+            1029,
+            148
+        ],
+        "post_delay": 0,
+        "next": [
+            "MonthlyTrialsReady"
+        ],
+        "timeout": 30000,
+        "max_hit": 1,
+        "pre_delay": 0
+    },
+    "MonthlyTrialsReady": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "OCR",
+                "roi": [
+                    560,
+                    0,
+                    160,
+                    40
+                ],
+                "expected": [
+                    "^勋章$"
+                ]
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    35,
+                    465,
+                    325,
+                    83
+                ],
+                "expected": [
+                    "报酬收取日期"
+                ]
+            }
+        ]
+    },
+    "MonthlyReadRows": {
+        "recognition": "OCR",
+        "roi": [
+            388,
+            195,
+            821,
+            500
+        ],
+        "expected": [
+            ".+"
+        ]
+    },
+    "MonthlyReadPeriod": {
+        "recognition": "OCR",
+        "roi": [
+            35,
+            465,
+            325,
+            83
+        ],
+        "expected": [
+            ".+"
+        ]
+    },
+    "MonthlyScrollTrials": {
+        "action": "Swipe",
+        "begin": [
+            880,
+            602
+        ],
+        "end": [
+            880,
+            377
+        ],
+        "duration": 600,
+        "post_delay": 500
+    },
+    "MonthlyScrollTrialsUp": {
+        "action": "Swipe",
+        "begin": [
+            880,
+            350
+        ],
+        "end": [
+            880,
+            475
+        ],
+        "duration": 600,
+        "post_delay": 500
+    },
+    "MonthlyCloseTrials": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "OCR",
+                "roi": [
+                    560,
+                    0,
+                    160,
+                    40
+                ],
+                "expected": [
+                    "^勋章$"
+                ]
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    35,
+                    465,
+                    325,
+                    83
+                ],
+                "expected": [
+                    "报酬收取日期"
+                ]
+            }
+        ],
+        "action": "Click",
+        "target": [
+            1248,
+            21
+        ],
+        "post_delay": 300
+    },
+    "MonthlyAttack": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "MenasTrial/Attack.png",
+                "roi": [
+                    1080,
+                    545,
+                    185,
+                    165
+                ],
+                "threshold": 0.85,
+                "method": 5
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "MenasTrial/BattleStatus.png",
+                "roi": [
+                    20,
+                    15,
+                    155,
+                    55
+                ],
+                "threshold": 0.9,
+                "method": 10001
+            }
+        ],
+        "action": "Click",
+        "target": [
+            1169,
+            622
+        ]
+    },
+    "MonthlyRewards": {
+        "recognition": "TemplateMatch",
+        "template": "MenasTrial/Rewards.png",
+        "roi": [
+            0,
+            15,
+            205,
+            80
+        ],
+        "threshold": 0.85,
+        "action": "Click",
+        "target": [
+            630,
+            420,
+            20,
+            20
+        ]
+    },
+    "MonthlyClick": {
+        "action": "Click",
+        "target": true,
+        "post_delay": 300
+    },
+    "MonthlyReadMap": {
+        "recognition": "OCR",
+        "roi": [
+            400,
+            8,
+            240,
+            55
+        ],
+        "expected": [
+            ".+"
+        ]
+    },
+    "MonthlyOpenWorldMap": {
+        "desc": "菜单与地图按钮同时可见才完成；亮度敏感匹配排除弹窗遮罩下的背景按钮。",
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMenu.png",
+                "roi": [
+                    25,
+                    625,
+                    120,
+                    78
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Startup/WorldMap.png",
+                "roi": [
+                    235,
+                    630,
+                    85,
+                    73
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            }
+        ],
+        "action": "Click",
+        "target": [
+            275,
+            670
+        ],
+        "post_delay": 0,
+        "next": [
+            "MonthlySelectHollow"
+        ],
+        "timeout": 30000,
+        "max_hit": 1,
+        "pre_delay": 0
+    },
+    "MonthlySelectHollow": {
+        "recognition": "TemplateMatch",
+        "template": "Navigation/WorldMapTitle.png",
+        "roi": [
+            560,
+            0,
+            170,
+            40
+        ],
+        "method": 10001,
+        "threshold": 0.9,
+        "action": "Click",
+        "target": [
+            580,
+            113
+        ],
+        "post_delay": 300,
+        "next": [
+            "MonthlySelectCatWorld",
+            "MonthlyOpenHollowWide"
+        ],
+        "timeout": 30000,
+        "max_hit": 1
+    },
+    "MonthlySelectCatWorld": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Navigation/WorldMapTitle.png",
+                "roi": [
+                    560,
+                    0,
+                    170,
+                    40
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    200,
+                    230,
+                    900,
+                    360
+                ],
+                "expected": [
+                    "猫人世界"
+                ]
+            }
+        ],
+        "box_index": 1,
+        "action": "Click",
+        "target": true,
+        "post_delay": 300,
+        "next": [
+            "MonthlyCatMapReady"
+        ],
+        "timeout": 30000,
+        "max_hit": 1
+    },
+    "MonthlyCatMapReady": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Navigation/WorldMapTitle.png",
+                "roi": [
+                    560,
+                    0,
+                    170,
+                    40
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "MonthlyTrial/WideMap.png",
+                "roi": [
+                    1128,
+                    595,
+                    140,
+                    115
+                ],
+                "threshold": 0.85,
+                "method": 5
+            }
+        ]
+    },
+    "MonthlyWorldMap": {
+        "recognition": "TemplateMatch",
+        "template": "Navigation/WorldMapTitle.png",
+        "roi": [
+            560,
+            0,
+            170,
+            40
+        ],
+        "method": 10001,
+        "threshold": 0.9
+    },
+    "MonthlyPanCatMap": {
+        "action": "Swipe",
+        "begin": [
+            450,
+            330
+        ],
+        "end": [
+            1040,
+            540
+        ],
+        "duration": 900,
+        "post_delay": 500
+    },
+    "MonthlyTowerLabel": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Navigation/WorldMapTitle.png",
+                "roi": [
+                    560,
+                    0,
+                    170,
+                    40
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    0,
+                    170,
+                    1280,
+                    550
+                ],
+                "expected": [
+                    "晓之塔"
+                ]
+            }
+        ],
+        "box_index": 1
+    },
+    "MonthlyConfirmTower": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "OCR",
+                "roi": [
+                    420,
+                    275,
+                    475,
+                    85
+                ],
+                "expected": [
+                    "即将移动到晓之塔"
+                ]
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    420,
+                    275,
+                    475,
+                    85
+                ],
+                "expected": [
+                    "图里亚尔瓦"
+                ]
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "Navigation/ConfirmYes.png",
+                "roi": [
+                    660,
+                    385,
+                    250,
+                    85
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            }
+        ],
+        "box_index": 2,
+        "action": "Click",
+        "target": [
+            781,
+            428
+        ],
+        "post_delay": 300
+    },
+    "MonthlyTowerPortal": {
+        "recognition": "TemplateMatch",
+        "template": "MonthlyTrial/TowerPortal.png",
+        "roi": [
+            500,
+            390,
+            260,
+            145
+        ],
+        "method": 5,
+        "threshold": 0.9,
+        "action": "Click",
+        "target": true
+    },
+    "MonthlyLocalMap": {
+        "recognition": "TemplateMatch",
+        "template": "Navigation/LocalMapDecoration.png",
+        "roi": [
+            0,
+            40,
+            780,
+            60
+        ],
+        "method": 10001,
+        "threshold": 0.85
+    },
+    "MonthlyNestDoor": {
+        "recognition": "TemplateMatch",
+        "template": "MonthlyTrial/NestDoor.png",
+        "roi": [
+            20,
+            180,
+            750,
+            210
+        ],
+        "method": 5,
+        "threshold": 0.92,
+        "action": "Click"
+    },
+    "MonthlyTowerMapTitle": {
+        "recognition": "TemplateMatch",
+        "template": "MonthlyTrial/TowerName.png",
+        "roi": [
+            10,
+            8,
+            155,
+            58
+        ],
+        "threshold": 0.85,
+        "method": 5
+    },
+    "MonthlyPlayer": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "Navigation/PlayerRingLarge.png",
+            "Navigation/PlayerRingSmall.png",
+            "Navigation/PlayerIdle.png",
+            "Navigation/PlayerRingMedium.png",
+            "MonthlyTrial/PlayerRing.png",
+            "MonthlyTrial/PlayerAtExit.png",
+            "MonthlyTrial/PlayerAtExitLarge.png",
+            "MonthlyTrial/PlayerRightLarge.png",
+            "MonthlyTrial/PlayerRightSmall.png"
+        ],
+        "roi": [
+            230,
+            140,
+            840,
+            450
+        ],
+        "method": 5,
+        "threshold": 0.85
+    },
+    "MonthlyOpenHollowWide": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Navigation/WorldMapTitle.png",
+                "roi": [
+                    560,
+                    0,
+                    170,
+                    40
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "MonthlyTrial/WideMap.png",
+                "roi": [
+                    1128,
+                    595,
+                    140,
+                    115
+                ],
+                "threshold": 0.85,
+                "method": 5
+            }
+        ],
+        "action": "Click",
+        "target": [
+            1196,
+            646
+        ],
+        "max_hit": 1,
+        "next": [
+            "MonthlySelectCatWorld"
+        ],
+        "timeout": 30000
+    },
+    "MonthlyCloseWorldMap": {
+        "recognition": "TemplateMatch",
+        "template": "Navigation/WorldMapTitle.png",
+        "roi": [
+            560,
+            0,
+            170,
+            40
+        ],
+        "method": 10001,
+        "threshold": 0.9,
+        "action": "Click",
+        "target": [
+            1248,
+            21
+        ]
+    },
+    "MonthlyCloseLocalMap": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Navigation/LocalMapDecoration.png",
+                "roi": [
+                    0,
+                    40,
+                    780,
+                    60
+                ],
+                "method": 10001,
+                "threshold": 0.85
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "MonthlyTrial/TowerName.png",
+                "roi": [
+                    10,
+                    8,
+                    155,
+                    58
+                ],
+                "threshold": 0.85,
+                "method": 5
+            }
+        ],
+        "action": "Click",
+        "target": [
+            1150,
+            140
+        ],
+        "pre_delay": 0,
+        "post_delay": 0,
+        "post_wait_freezes": {
+            "time": 300,
+            "target": [
+                50,
+                650,
+                70,
+                36
+            ],
+            "timeout": 3000
+        }
+    },
+    "MonthlyToggleLocalMap": {
+        "action": "Click",
+        "target": [
+            1150,
+            140
+        ],
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "MonthlySwipe": {
+        "action": "Swipe",
+        "begin": [
+            200,
+            450
+        ],
+        "end": [
+            20,
+            450
+        ],
+        "duration": 600
+    },
+    "MonthlyFloorArrived": {
+        "recognition": "TemplateMatch",
+        "template": "MonthlyTrial/FloorMiniMap.png",
+        "roi": [
+            1035,
+            10,
+            95,
+            95
+        ],
+        "method": 5,
+        "threshold": 0.9
+    },
+    "MonthlyNestArrived": {
+        "recognition": "TemplateMatch",
+        "template": "MonthlyTrial/NestPortalTop.png",
+        "roi": [
+            55,
+            110,
+            245,
+            200
+        ],
+        "method": 5,
+        "threshold": 0.9
+    }
+}
