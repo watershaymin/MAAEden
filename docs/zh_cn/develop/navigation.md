@@ -2,6 +2,7 @@
 
 当前提供三个独立入口，识别与点击定义在 `assets/resource/pipeline/navigation.json`，
 位置校验和路点推进在 `agent/navigation.py`。
+这三个辅助任务已从默认客户端任务列表隐藏，Pipeline 与下述命令行调试入口保留。
 
 | 入口 | 行为与成功条件 |
 | --- | --- |

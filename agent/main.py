@@ -6,12 +6,14 @@ from maa.toolkit import Toolkit
 import my_action
 import my_reco
 import navigation
+import menas_trial
 import dungeons
 import monthly_trial
 import monthly_dungeons
 import cat_diary
 
 AgentServer.custom_action("NavigationMove")(navigation.NavigationMove)
+AgentServer.custom_action("MenasTrial")(menas_trial.MenasTrial)
 AgentServer.custom_action("NavigationBaruokiRoute")(navigation.NavigationBaruokiRoute)
 AgentServer.custom_action("DungeonSkip")(dungeons.DungeonSkip)
 AgentServer.custom_action("DungeonDismissDetail")(dungeons.DungeonDismissDetail)

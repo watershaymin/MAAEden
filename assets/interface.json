@@ -33,7 +33,10 @@
             "name": "MenasTrial",
             "label": "梅纳斯试炼",
             "entry": "MenasTrial",
-            "description": "从游戏主界面进入活动 → 梅纳斯试炼 → STAGE SS，消耗 1 张入场券完成一场挑战。战斗仅点击攻击，自动推进结算并返回主界面。请玩家提前设置队伍和技能预设；本任务不切换队伍，不购买入场券。"
+            "description": "挑战 STAGE SS，每场消耗 1 张梅纳斯入场券。可指定次数，0 表示用完本次开始时持有的全部入场券；票不足时停止，不购买。战斗仅点击攻击，确认结算后计数并返回主界面。请提前设置队伍和技能预设。",
+            "option": [
+                "MenasTrialCount"
+            ]
         },
         {
             "name": "MonthlyStarTrial",
@@ -63,40 +66,16 @@
             ]
         },
         {
-            "name": "NavigationMove",
-            "label": "基础移动",
-            "entry": "NavigationMove",
-            "description": "从可操作主界面滑动一步，通过展开区域地图核对实际位移；撞墙或无法定位时失败停止。仅适配 16:9 横屏。",
-            "option": [
-                "NavigationDirection"
-            ]
-        },
-        {
-            "name": "NavigationTeleport",
-            "label": "传送至巴尔沃基",
-            "entry": "NavigationTeleport",
-            "description": "打开世界地图，选择现代与巴尔沃基，核对确认弹窗，传送后验证区域地图名称。"
-        },
-        {
-            "name": "NavigationBaruokiRoute",
-            "label": "巴尔沃基寻路示例",
-            "entry": "NavigationBaruokiRoute",
-            "description": "先运行传送至巴尔沃基；从落点沿主路向左，在路口转向北侧道路，逐步读取区域地图定位。起点不符会停止。"
-        },
-        {
-            "name": "DungeonEntrance",
-            "label": "前往副本蓝门",
-            "entry": "DungeonEntrance",
-            "description": "独立前置：传送至次元夹缝，向左找到蓝门并交互，确认进入平行迷宫选图页。已在选图页时直接完成。"
-        },
-        {
             "name": "DungeonSkip",
             "label": "副本跳过",
             "entry": "DungeonSkip",
-            "description": "进入次元夹缝蓝门，核对副本、难度和入场券后跳过指定次数。每次消耗入场券和猫掌特急券；红绿票不足时可使用导证之力补充，猫掌券不足则停止。禁止使用克洛诺斯之石。选项仅包含实机确认启用跳过的入口。",
+            "description": "自动前往次元夹缝蓝门，核对副本、难度和入场券后跳过指定次数。红票、绿票和猫掌券不足时，可分别选择是否使用星天之证的导证之力补充，默认不补充；未允许补充或额度不足时停止。禁止使用克洛诺斯之石。选项仅包含实机确认启用跳过的入口。",
             "option": [
                 "DungeonTarget",
-                "DungeonCount"
+                "DungeonCount",
+                "DungeonRefillRed",
+                "DungeonRefillGreen",
+                "DungeonRefillCat"
             ]
         }
     ],
@@ -107,6 +86,27 @@
         ]
     },
     "option": {
+        "MenasTrialCount": {
+            "type": "input",
+            "label": "挑战次数",
+            "inputs": [
+                {
+                    "name": "count",
+                    "label": "次数（0＝全部入场券）",
+                    "default": "0",
+                    "pipeline_type": "int",
+                    "verify": "^(0|[1-9][0-9]{0,2})$",
+                    "pattern_msg": "请输入 0～999 的整数，0 表示用完全部入场券"
+                }
+            ],
+            "pipeline_override": {
+                "MenasTrial": {
+                    "custom_action_param": {
+                        "count": "{count}"
+                    }
+                }
+            }
+        },
         "CatDiaryTimeLimit": {
             "type": "select",
             "label": "寻猫运行上限",
@@ -702,6 +702,93 @@
                     }
                 }
             }
+        },
+        "DungeonRefillRed": {
+            "type": "select",
+            "label": "红票不足时使用星天之证补充",
+            "default_case": "No",
+            "cases": [
+                {
+                    "name": "No",
+                    "label": "不补充，票不足时停止",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "refill_red": false
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Yes",
+                    "label": "使用导证之力补充",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "refill_red": true
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "DungeonRefillGreen": {
+            "type": "select",
+            "label": "绿票不足时使用星天之证补充",
+            "default_case": "No",
+            "cases": [
+                {
+                    "name": "No",
+                    "label": "不补充，票不足时停止",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "refill_green": false
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Yes",
+                    "label": "使用导证之力补充",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "refill_green": true
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "DungeonRefillCat": {
+            "type": "select",
+            "label": "猫掌券不足时使用星天之证补充",
+            "default_case": "No",
+            "cases": [
+                {
+                    "name": "No",
+                    "label": "不补充，票不足时停止",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "refill_cat": false
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Yes",
+                    "label": "使用导证之力补充",
+                    "pipeline_override": {
+                        "DungeonSkip": {
+                            "custom_action_param": {
+                                "refill_cat": true
+                            }
+                        }
+                    }
+                }
+            ]
         }
     }
 }

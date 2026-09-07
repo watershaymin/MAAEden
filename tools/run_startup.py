@@ -34,10 +34,17 @@ def main() -> int:
     parser.add_argument("--task", choices=list(TASKS), default="StartUp")
     parser.add_argument("--direction", choices=["left", "right", "up", "down"], default="left")
     parser.add_argument("--dungeon", default="snake_damak_vh")
-    parser.add_argument("--count", type=int, default=1)
+    parser.add_argument("--count", type=int, help="梅纳斯默认 0（全部入场券），副本跳过默认 1")
+    parser.add_argument("--refill-red", action="store_true", help="红票不足时使用星天之证的导证之力补充")
+    parser.add_argument("--refill-green", action="store_true", help="绿票不足时使用星天之证的导证之力补充")
+    parser.add_argument("--refill-cat", action="store_true", help="猫掌券不足时使用星天之证的导证之力补充")
     args = parser.parse_args()
+    if args.count is None:
+        args.count = 0 if args.task == "MenasTrial" else 1
     if args.task == "DungeonSkip" and not 1 <= args.count <= 999:
         parser.error("--count 必须为 1～999")
+    if args.task == "MenasTrial" and not 0 <= args.count <= 999:
+        parser.error("梅纳斯 --count 必须为 0～999，0 表示全部入场券")
     if not args.adb_path.is_file():
         parser.error("--adb-path 必须指向 adb 可执行文件")
 
@@ -74,6 +81,13 @@ def main() -> int:
         return 1
 
     resource = Resource()
+    if args.task == "MenasTrial":
+        sys.path.insert(0, str(root / "agent"))
+        from menas_trial import register
+        if not register(resource):
+            print("梅纳斯动作注册失败。", file=sys.stderr)
+            return 1
+        time_limit = 180 + (args.count or 999) * 900
     if args.task == "CatDiary":
         sys.path.insert(0, str(root / "agent"))
         from cat_diary import register
@@ -115,8 +129,13 @@ def main() -> int:
         return 1
 
     override = {}
+    if args.task == "MenasTrial":
+        override = {"MenasTrial": {"custom_action_param": {"count": args.count}}}
     if args.task == "DungeonSkip":
-        override = {"DungeonSkip": {"custom_action_param": {"target": args.dungeon, "count": args.count}}}
+        override = {"DungeonSkip": {"custom_action_param": {
+            "target": args.dungeon, "count": args.count,
+            "refill_red": args.refill_red, "refill_green": args.refill_green, "refill_cat": args.refill_cat,
+        }}}
     if args.task == "NavigationMove":
         override = {"NavigationMove": {"custom_action_param": {"direction": args.direction, "duration": 600}}}
     job = tasker.post_task(args.task, override)

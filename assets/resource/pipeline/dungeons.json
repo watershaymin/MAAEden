@@ -423,7 +423,10 @@
         "custom_action": "DungeonSkip",
         "custom_action_param": {
             "target": "snake_damak_vh",
-            "count": 1
+            "count": 1,
+            "refill_red": false,
+            "refill_green": false,
+            "refill_cat": false
         },
         "next": [
             "DungeonSkipComplete"
@@ -573,7 +576,7 @@
                     65
                 ],
                 "expected": [
-                    "^回复[红绿]色解锁卡$"
+                    "^回复([红绿]色解锁卡|猫掌特急券)$"
                 ]
             },
             {
@@ -585,7 +588,7 @@
                     65
                 ],
                 "expected": [
-                    "要使用1次导证之力.*回复[红绿]色解锁卡吗"
+                    "要使用1次导证之力.*回复([红绿]色解锁卡|猫掌特急券)吗"
                 ]
             },
             {

@@ -159,6 +159,8 @@ class FlowTests(unittest.TestCase):
             self.assertEqual([c.args[0]["name"] for c in ctor.return_value.skip.call_args_list],
                              ["时层回廊", "次元战舰"])
             self.assertEqual([c.args[1] for c in ctor.return_value.skip.call_args_list], [1, 1])
+            self.assertTrue(all(c.args[2] == {"red": True, "green": True, "cat": False}
+                                for c in ctor.return_value.skip.call_args_list))
         self.assertEqual(nav.close_progress.call_count, 2)
 
     def test_completed_rerun_has_no_inputs(self):

@@ -1,11 +1,13 @@
 {
     "MenasTrial": {
-        "desc": "完成一场梅纳斯试炼 STAGE SS，从主界面、活动列表或试炼选关页进入。",
-        "timeout": 120000,
+        "desc": "按次数挑战 STAGE SS；0 表示用完本次开始时持有的入场券。",
+        "action": "Custom",
+        "custom_action": "MenasTrial",
+        "custom_action_param": {
+            "count": 0
+        },
         "next": [
-            "MenasTrialSelectSS",
-            "MenasTrialOpenTrial",
-            "MenasTrialOpenActivities"
+            "MenasTrialComplete"
         ]
     },
     "MenasTrialOpenActivities": {
@@ -42,7 +44,7 @@
         "max_hit": 3,
         "timeout": 60000,
         "next": [
-            "MenasTrialSelectSS",
+            "MenasTrialStagesReady",
             "MenasTrialOpenTrial"
         ]
     },
@@ -218,5 +220,75 @@
                 "threshold": 0.9
             }
         ]
+    },
+    "MenasTrialOpen": {
+        "desc": "进入梅纳斯选关页，停在选择 SS 之前读取入场券数量。",
+        "timeout": 120000,
+        "next": [
+            "MenasTrialStagesReady",
+            "MenasTrialOpenTrial",
+            "MenasTrialOpenActivities"
+        ]
+    },
+    "MenasTrialStagesReady": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "MenasTrial/Title.png",
+                "roi": [
+                    550,
+                    0,
+                    185,
+                    40
+                ],
+                "threshold": 0.9,
+                "method": 10001
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "MenasTrial/StageSS.png",
+                "roi": [
+                    935,
+                    155,
+                    215,
+                    130
+                ],
+                "threshold": 0.9,
+                "method": 5
+            }
+        ],
+        "box_index": 1
+    },
+    "MenasTrialReadTickets": {
+        "recognition": "OCR",
+        "roi": [
+            125,
+            545,
+            205,
+            42
+        ],
+        "expected": [
+            "入场券持有量"
+        ],
+        "desc": "基于真实选关页左下的入场券持有量，Python 严格解析数量/上限。"
+    },
+    "MenasTrialRunOnce": {
+        "desc": "入场券核对后执行一场挑战，复用原有战斗和结算链。",
+        "next": [
+            "MenasTrialSelectSS"
+        ]
+    },
+    "MenasTrialClose": {
+        "desc": "入场券为零时关闭已确认的选关页，返回主界面。",
+        "action": "Click",
+        "target": [
+            1245,
+            20
+        ],
+        "next": [
+            "MenasTrialComplete"
+        ],
+        "timeout": 15000
     }
 }

@@ -16,6 +16,7 @@ from navigation import Navigator
 LOG = logging.getLogger(__name__)
 CATEGORIES = {"古代": (85, 110), "现代": (200, 110), "未来": (325, 110),
               "???": (450, 110), "虚时层": (580, 110), "封域": (1050, 110), "异境": (1190, 110)}
+TICKETS = {"red": "红色解锁卡", "green": "绿色解锁卡", "cat": "猫掌特急券"}
 
 
 class DungeonSkipUnavailable(RuntimeError):
@@ -55,15 +56,35 @@ def verify_party(text, target):
     return cost in text and destination in text and "克洛诺斯" not in text
 
 
+def parse_refill_policy(params):
+    if not isinstance(params, dict):
+        raise ValueError("补票参数必须是对象")
+    policy = {}
+    for ticket in TICKETS:
+        value = params.get("refill_" + ticket, False)
+        if type(value) is not bool:
+            raise ValueError(f"refill_{ticket} 必须为布尔值")
+        policy[ticket] = value
+    return policy
+
+
+def refill_ticket(text):
+    """只有完整补充询问才判定票券不足，奖励加成文字不算补票弹窗。"""
+    offers = re.findall(r"回复(红色解锁卡|绿色解锁卡|猫掌特急券)吗", normalize(text))
+    if len(offers) != 1:
+        return None
+    return next(key for key, label in TICKETS.items() if label == offers[0])
+
+
 def proof_refill_allowed(text, ticket=None):
     """补票必须正向识别允许消耗的道具；石头优先否决。"""
     text = normalize(text)
     if "克洛诺斯" in text or "之石" in text:
         return False
-    offer = re.search(r"要使用1次导证之力,?回复([红绿])色解锁卡吗", text)
-    remaining = re.search(r"导证之力[:：]?剩余([0-9]+)次", text)
-    return bool(offer and remaining and int(remaining[1]) > 0
-                and (ticket is None or offer[1] == {"red": "红", "green": "绿"}[ticket]))
+    offer = re.findall(r"要使用1次导证之力,?回复(红色解锁卡|绿色解锁卡|猫掌特急券)吗", text)
+    remaining = re.findall(r"导证之力[:：]?剩余([0-9]+)次", text)
+    return bool(len(offer) == 1 and len(remaining) == 1 and int(remaining[0]) > 0
+                and (ticket is None or offer[0] == TICKETS.get(ticket)))
 
 
 def blank_map_point(rows):
@@ -283,19 +304,19 @@ class DungeonNavigator(Navigator):
         if not self.reco("DungeonSkipActive", frame):
             raise DungeonSkipUnavailable("跳过按钮未启用；不会改为正常进入副本")
 
-    def refill(self, target, source_action, text):
-        if not proof_refill_allowed(text, target["ticket"]):
+    def refill(self, target, source_action, text, ticket):
+        if ticket not in (target["ticket"], "cat") or not proof_refill_allowed(text, ticket):
             raise RuntimeError("补票项目、票种或导证之力剩余次数未通过核对")
-        LOG.warning("DungeonSkip %s: 申请使用 1 次导证之力补充 %s 票", target["id"], target["ticket"])
+        LOG.warning("DungeonSkip %s: 申请使用 1 次导证之力补充 %s", target["id"], TICKETS[ticket])
         self.action("DungeonProofRefill")
-        color = {"red": "红", "green": "绿"}[target["ticket"]]
-        override = {"DungeonProofReceived": {"expected": [f"^获得了{color}色解锁卡[1-9][0-9]*个.*$"]}}
+        unit = "(?:张|个)" if ticket == "cat" else "个"
+        override = {"DungeonProofReceived": {"expected": [f"^获得了{TICKETS[ticket]}[1-9][0-9]*{unit}.*$"]}}
         deadline = time.monotonic() + 20
         while not self.reco("DungeonProofReceived", self.frame(), override):
             if time.monotonic() >= deadline:
-                raise RuntimeError("使用导证之力后未确认获得对应解锁卡")
+                raise RuntimeError("使用导证之力后未确认获得对应票券")
         self.action("DungeonProofReceived")
-        LOG.warning("DungeonSkip %s: 已确认 %s 票补充到账", target["id"], target["ticket"])
+        LOG.warning("DungeonSkip %s: 已确认 %s 补充到账", target["id"], TICKETS[ticket])
         # 补票会返回此前的队伍/继续页面，本身不会执行下一次跳过。
         self.wait(source_action, 15)
         if source_action == "DungeonSkipActive" and not self.party_matches(target):
@@ -310,11 +331,13 @@ class DungeonNavigator(Navigator):
             if time.monotonic() >= deadline:
                 raise RuntimeError("继续跳过后页面未离开，停止避免重复提交")
 
-    def skip(self, target, count):
+    def skip(self, target, count, refill_policy=None):
+        if refill_policy is None:
+            refill_policy = parse_refill_policy({})
         self.choose(target)
         self.action("DungeonSkipActive")
         source_action = "DungeonSkipActive"
-        refills_for_run = 0
+        refills_for_run = set()
         completed = 0
         cycle_deadline = time.monotonic() + 90
         while completed < count:
@@ -323,18 +346,21 @@ class DungeonNavigator(Navigator):
             text = " ".join(v.text for v in rows)
             if "克洛诺斯" in text and any(v in text for v in ("消耗", "补充", "使用", "回复")):
                 raise RuntimeError("检测到克洛诺斯之石补票窗口，停止且不确认")
-            if "回复猫掌特急券" in normalize(text):
-                raise RuntimeError(f"猫掌特急券不足，已完成 {completed}/{count} 次；仅自动补充红绿解锁卡")
-            if self.reco("DungeonProofRefill", frame):
-                if refills_for_run >= 1:
-                    raise RuntimeError("本次跳过补票后仍再次要求补票，停止")
-                self.refill(target, source_action, text)
-                refills_for_run += 1
+            ticket = refill_ticket(text)
+            if ticket:
+                if not refill_policy.get(ticket, False):
+                    raise RuntimeError(f"{TICKETS[ticket]}不足，已完成 {completed}/{count} 次；未启用星天之证补充，停止")
+                if ticket in refills_for_run:
+                    raise RuntimeError(f"本次跳过补票后仍再次要求补票（{TICKETS[ticket]}），停止")
+                if not self.reco("DungeonProofRefill", frame):
+                    raise RuntimeError(f"补票弹窗未通过核对，已完成 {completed}/{count} 次")
+                self.refill(target, source_action, text, ticket)
+                refills_for_run.add(ticket)
                 cycle_deadline = time.monotonic() + 90
                 continue
             if self.reco("DungeonContinuePage", frame):
                 completed += 1
-                refills_for_run = 0
+                refills_for_run.clear()
                 LOG.warning("DungeonSkip %s: 已完成 %s/%s", target["id"], completed, count)
                 if completed == count:
                     self.action("DungeonEndSkip")
@@ -358,14 +384,17 @@ class DungeonSkip(CustomAction):
     def run(self, context, argv):
         try:
             catalog = json.loads((Path(__file__).parent / "data" / "dungeons.json").read_text(encoding="utf-8"))
-            target, count = parse_request(json.loads(argv.custom_action_param), catalog)
+            params = json.loads(argv.custom_action_param)
+            target, count = parse_request(params, catalog)
+            refill_policy = parse_refill_policy(params)
             nav = DungeonNavigator(context)
             if not nav.party_matches(target):
                 entrance = context.run_task("DungeonEntrance")
-                if not entrance or not entrance.nodes or entrance.nodes[-1].name != "DungeonMenuReady":
+                if (not entrance or not entrance.status.succeeded or not entrance.nodes
+                        or entrance.nodes[-1].name != "DungeonMenuReady"):
                     raise RuntimeError("蓝门前置未完成")
             nav.deadline = time.monotonic() + 600 + count * 90
-            return nav.skip(target, count) == count
+            return nav.skip(target, count, refill_policy) == count
         except Exception:
             LOG.exception("DungeonSkip 失败")
             return False

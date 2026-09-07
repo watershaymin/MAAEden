@@ -216,7 +216,7 @@ class TrialDungeonNavigator(MonthlyNavigator):
             dungeon.deadline = self.deadline
             completed_key = card.key
             try:
-                if dungeon.skip(target, 1) != 1:
+                if dungeon.skip(target, 1, {"red": True, "green": True, "cat": False}) != 1:
                     raise RuntimeError("副本跳过未确认单次结算")
             except DungeonSkipUnavailable:
                 # 仅吞掉已核对目标页但按钮未启用这一种结果；其他识别、资源错误照常失败。

@@ -36,7 +36,7 @@ def check(package):
             actions = client.custom_action_list
             recognitions = client.custom_recognition_list
             assert {'NavigationMove', 'NavigationBaruokiRoute', 'DungeonSkip',
-                    'DungeonDismissDetail', 'MonthlyStarTrial', 'MonthlyTrialDungeons', 'CatDiary'} <= set(actions), actions
+                    'DungeonDismissDetail', 'MenasTrial', 'MonthlyStarTrial', 'MonthlyTrialDungeons', 'CatDiary'} <= set(actions), actions
             assert 'DungeonMenuReady' in recognitions, recognitions
             print(f'Agent 握手及注册通过：{actions}, {recognitions}', flush=True)
             assert client.disconnect(), 'Agent 断开失败'
