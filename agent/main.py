@@ -9,6 +9,7 @@ import navigation
 import dungeons
 import monthly_trial
 import monthly_dungeons
+import cat_diary
 
 AgentServer.custom_action("NavigationMove")(navigation.NavigationMove)
 AgentServer.custom_action("NavigationBaruokiRoute")(navigation.NavigationBaruokiRoute)
@@ -16,6 +17,7 @@ AgentServer.custom_action("DungeonSkip")(dungeons.DungeonSkip)
 AgentServer.custom_action("DungeonDismissDetail")(dungeons.DungeonDismissDetail)
 AgentServer.custom_action("MonthlyStarTrial")(monthly_trial.MonthlyStarTrial)
 AgentServer.custom_action("MonthlyTrialDungeons")(monthly_dungeons.MonthlyTrialDungeons)
+AgentServer.custom_action("CatDiary")(cat_diary.CatDiary)
 AgentServer.custom_recognition("DungeonMenuReady")(dungeons.DungeonMenuRecognition)
 
 

@@ -13,6 +13,7 @@ from maa.toolkit import Toolkit
 
 
 TASKS = {
+    "CatDiary": ("CatDiaryComplete", 2760, "cat-diary-run", "本轮猫咪日记已全部完成，停留日记页。"),
     "MonthlyTrialDungeons": ("MonthlyTrialDungeonsComplete", 1860, "monthly-trial-dungeons-run", "本期可跳过的副本任务已处理，停留试炼页；略过原因见日志。"),
     "MonthlyStarTrial": ("MonthlyStarTrialComplete", 10860, "monthly-star-trial-run", "本月星天200胜试炼已完成，停留试炼页。"),
     "DungeonSkip": ("DungeonSkipComplete", 900, "dungeon-skip-run", "已完成指定次数跳过并返回蓝门。"),
@@ -43,11 +44,25 @@ def main() -> int:
     root = Path(__file__).resolve().parents[1]
     completion_node, time_limit, log_dir, success_message = TASKS[args.task]
     Toolkit.init_option(root / "debug" / log_dir)
+    capture = MaaAdbScreencapMethodEnum.Encode
+    input_method = MaaAdbInputMethodEnum.AdbShell
+    config = {}
+    if args.task == "CatDiary":
+        # 移动目标需要及时截图。仅复用明确匹配用户所选地址的模拟器配置。
+        devices = [device for device in Toolkit.find_adb_devices() if device.address == args.address
+                   and device.adb_path.resolve() == args.adb_path.resolve()]
+        capture = MaaAdbScreencapMethodEnum.Encode | MaaAdbScreencapMethodEnum.RawWithGzip
+        input_method = MaaAdbInputMethodEnum.Default
+        if len(devices) == 1:
+            capture = devices[0].screencap_methods
+            input_method = devices[0].input_methods
+            config = devices[0].config
     controller = AdbController(
         args.adb_path,
         args.address,
-        screencap_methods=MaaAdbScreencapMethodEnum.Encode,
-        input_methods=MaaAdbInputMethodEnum.AdbShell,
+        screencap_methods=capture,
+        input_methods=input_method,
+        config=config,
     )
     if not controller.post_connection().wait().succeeded:
         print("ADB 连接失败，请检查模拟器地址。", file=sys.stderr)
@@ -59,6 +74,12 @@ def main() -> int:
         return 1
 
     resource = Resource()
+    if args.task == "CatDiary":
+        sys.path.insert(0, str(root / "agent"))
+        from cat_diary import register
+        if not register(resource):
+            print("猫咪日记动作注册失败。", file=sys.stderr)
+            return 1
     if args.task == "MonthlyTrialDungeons":
         sys.path.insert(0, str(root / "agent"))
         from monthly_dungeons import register

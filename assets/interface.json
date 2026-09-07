@@ -54,6 +54,15 @@
             "description": "从主界面进入菜单和信箱，逐封领取未开封邮件的附件，确认没有未读邮件后返回主界面。已开封邮件会保留。"
         },
         {
+            "name": "CatDiary",
+            "label": "猫咪日记",
+            "entry": "CatDiary",
+            "description": "读取日记里的三只猫线索，传送到对应地点，通过区域地图追踪移动中的羽毛图例并交互。每次交互后重读日记，继续处理新地点，直到三只猫均结束；陌生地图、未解锁传送点或无法确认的状态会报告原因并停止。适用于1280×720横屏截图。",
+            "option": [
+                "CatDiaryTimeLimit"
+            ]
+        },
+        {
             "name": "NavigationMove",
             "label": "基础移动",
             "entry": "NavigationMove",
@@ -98,6 +107,46 @@
         ]
     },
     "option": {
+        "CatDiaryTimeLimit": {
+            "type": "select",
+            "label": "寻猫运行上限",
+            "default_case": "45",
+            "cases": [
+                {
+                    "name": "15",
+                    "label": "15分钟",
+                    "pipeline_override": {
+                        "CatDiary": {
+                            "custom_action_param": {
+                                "max_minutes": 15
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "45",
+                    "label": "45分钟",
+                    "pipeline_override": {
+                        "CatDiary": {
+                            "custom_action_param": {
+                                "max_minutes": 45
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "90",
+                    "label": "90分钟",
+                    "pipeline_override": {
+                        "CatDiary": {
+                            "custom_action_param": {
+                                "max_minutes": 90
+                            }
+                        }
+                    }
+                }
+            ]
+        },
         "NavigationDirection": {
             "type": "select",
             "label": "移动方向",

@@ -1,0 +1,494 @@
+{
+    "CatDiary": {
+        "action": "Custom",
+        "custom_action": "CatDiary",
+        "custom_action_param": {
+            "max_minutes": 45,
+            "max_steps": 240
+        },
+        "next": [
+            "CatDiaryComplete"
+        ]
+    },
+    "CatDiaryComplete": {
+        "recognition": "And",
+        "all_of": [
+            "CatDiaryTitle",
+            "CatDiaryPanel",
+            "CatDiaryCloseButton",
+            {
+                "recognition": "TemplateMatch",
+                "template": "CatDiary/SlotDone.png",
+                "roi": [
+                    390,
+                    180,
+                    54,
+                    48
+                ],
+                "threshold": 0.88,
+                "method": 10001
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "CatDiary/SlotDone.png",
+                "roi": [
+                    390,
+                    288,
+                    54,
+                    48
+                ],
+                "threshold": 0.88,
+                "method": 10001
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "CatDiary/SlotDone.png",
+                "roi": [
+                    390,
+                    396,
+                    54,
+                    48
+                ],
+                "threshold": 0.88,
+                "method": 10001
+            }
+        ],
+        "desc": "日记标题、面板和三只猫的红色完成爪印同时可见。"
+    },
+    "CatDiaryOpen": {
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/Open.png",
+        "roi": [
+            583,
+            620,
+            98,
+            87
+        ],
+        "threshold": 0.85,
+        "action": "Click",
+        "target": [
+            634,
+            660
+        ]
+    },
+    "CatDiaryTitle": {
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/Title.png",
+        "roi": [
+            580,
+            0,
+            130,
+            36
+        ],
+        "threshold": 0.85
+    },
+    "CatDiaryPanel": {
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/Panel.png",
+        "roi": [
+            120,
+            324,
+            174,
+            192
+        ],
+        "threshold": 0.9,
+        "method": 10001
+    },
+    "CatDiaryReadClue": {
+        "recognition": "OCR",
+        "roi": [
+            435,
+            145,
+            494,
+            72
+        ],
+        "expected": [
+            ".+"
+        ]
+    },
+    "CatDiarySlotDone": {
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/SlotDone.png",
+        "roi": [
+            390,
+            180,
+            54,
+            48
+        ],
+        "threshold": 0.88,
+        "method": 10001
+    },
+    "CatDiaryRewardToast": {
+        "recognition": "OCR",
+        "roi": [
+            485,
+            94,
+            435,
+            59
+        ],
+        "expected": [
+            "获得"
+        ]
+    },
+    "CatDiaryDismissToast": {
+        "action": "Click",
+        "target": [
+            641,
+            499
+        ]
+    },
+    "CatDiaryClose": {
+        "action": "Click",
+        "target": [
+            1248,
+            22
+        ],
+        "desc": "确认日记页后点击右上关闭按钮。"
+    },
+    "CatDiaryClick": {
+        "action": "Click",
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "CatDiaryMarker": {
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/Marker.png",
+        "roi": [
+            165,
+            140,
+            955,
+            470
+        ],
+        "threshold": 0.82
+    },
+    "CatDiaryInteract": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "CatDiary/Feather18.png",
+            "CatDiary/Feather20.png",
+            "CatDiary/Feather21.png",
+            "CatDiary/Feather22.png",
+            "CatDiary/Feather24.png",
+            "CatDiary/Feather26.png",
+            "CatDiary/Feather28.png",
+            "CatDiary/Feather30.png",
+            "CatDiary/Feather33.png",
+            "CatDiary/Feather36.png",
+            "CatDiary/Feather40.png",
+            "CatDiary/Feather43.png"
+        ],
+        "roi": [
+            0,
+            100,
+            1280,
+            480
+        ],
+        "threshold": 0.9
+    },
+    "CatDiaryMapIcons": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "CatDiary/Fish.png",
+            "CatDiary/Heart.png",
+            "CatDiary/Merchant.png",
+            "CatDiary/OrdinaryCat.png",
+            "CatDiary/Swords.png",
+            "CatDiary/Exit.png",
+            "CatDiary/Hand.png",
+            "CatDiary/Beer.png"
+        ],
+        "roi": [
+            165,
+            140,
+            955,
+            470
+        ],
+        "threshold": 0.78
+    },
+    "CatDiaryPlayer": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "Navigation/PlayerRingLarge.png",
+            "Navigation/PlayerRingSmall.png",
+            "Navigation/PlayerIdle.png",
+            "Navigation/PlayerRingMedium.png",
+            "CatDiary/PlayerRight.png"
+        ],
+        "roi": [
+            165,
+            140,
+            955,
+            470
+        ],
+        "threshold": 0.85
+    },
+    "CatDiarySwipe": {
+        "action": "Swipe",
+        "begin": [
+            200,
+            450
+        ],
+        "end": [
+            380,
+            450
+        ],
+        "duration": 600,
+        "post_delay": 200
+    },
+    "CatDiaryWorldMap": {
+        "recognition": "TemplateMatch",
+        "template": "Navigation/WorldMapTitle.png",
+        "roi": [
+            560,
+            0,
+            170,
+            40
+        ],
+        "threshold": 0.9,
+        "method": 10001
+    },
+    "CatDiarySelectEra": {
+        "action": "Click",
+        "target": [
+            203,
+            115
+        ],
+        "post_wait_freezes": {
+            "time": 300,
+            "target": [
+                680,
+                200,
+                420,
+                380
+            ],
+            "timeout": 8000
+        }
+    },
+    "CatDiaryDomain": {
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/Domain.png",
+        "roi": [
+            1130,
+            585,
+            128,
+            125
+        ],
+        "threshold": 0.85
+    },
+    "CatDiaryRegionMap": {
+        "recognition": "And",
+        "all_of": [
+            "CatDiaryWorldMap",
+            {
+                "recognition": "OCR",
+                "roi": [
+                    0,
+                    200,
+                    1280,
+                    390
+                ],
+                "expected": [
+                    "大陆"
+                ]
+            }
+        ]
+    },
+    "CatDiarySelectRegion": {
+        "action": "Click",
+        "target": [
+            1078,
+            377
+        ],
+        "post_delay": 1000
+    },
+    "CatDiaryDestination": {
+        "recognition": "OCR",
+        "roi": [
+            0,
+            182,
+            1280,
+            538
+        ],
+        "expected": [
+            "(?!)"
+        ]
+    },
+    "CatDiarySubmenu": {
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/Submenu.png",
+        "roi": [
+            660,
+            200,
+            60,
+            115
+        ],
+        "threshold": 0.85
+    },
+    "CatDiarySubDestination": {
+        "recognition": "OCR",
+        "roi": [
+            688,
+            208,
+            543,
+            440
+        ],
+        "expected": [
+            "(?!)"
+        ]
+    },
+    "CatDiaryConfirmText": {
+        "recognition": "OCR",
+        "roi": [
+            200,
+            282,
+            880,
+            40
+        ],
+        "expected": [
+            ".+"
+        ],
+        "color_filter": "CatDiaryWhiteText"
+    },
+    "CatDiaryConfirmYes": {
+        "recognition": "TemplateMatch",
+        "template": "Navigation/ConfirmYes.png",
+        "roi": [
+            660,
+            385,
+            250,
+            85
+        ],
+        "threshold": 0.9,
+        "method": 10001
+    },
+    "CatDiaryPan": {
+        "action": "Swipe",
+        "begin": [
+            1100,
+            430
+        ],
+        "end": [
+            420,
+            430
+        ],
+        "duration": 500,
+        "post_wait_freezes": {
+            "time": 300,
+            "target": [
+                680,
+                200,
+                420,
+                380
+            ],
+            "timeout": 8000
+        },
+        "post_delay": 600
+    },
+    "CatDiaryRegionLabels": {
+        "recognition": "OCR",
+        "roi": [
+            0,
+            200,
+            1280,
+            390
+        ],
+        "expected": [
+            "^.*大陆$"
+        ]
+    },
+    "CatDiaryDialogue": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "OCR",
+                "roi": [
+                    1130,
+                    15,
+                    140,
+                    45
+                ],
+                "expected": [
+                    "对话记录"
+                ]
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "CatDiary/DialogueBorder.png",
+                "roi": [
+                    0,
+                    515,
+                    135,
+                    28
+                ],
+                "threshold": 0.88
+            }
+        ],
+        "action": "Click",
+        "target": [
+            320,
+            665
+        ],
+        "post_delay": 150
+    },
+    "CatDiaryConfirmQuestion": {
+        "recognition": "OCR",
+        "roi": [
+            540,
+            324,
+            194,
+            35
+        ],
+        "expected": [
+            "^是否确定[?？]?$"
+        ]
+    },
+    "CatDiaryEraSelected": {
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/EraPointer.png",
+        "roi": [
+            303,
+            40,
+            44,
+            35
+        ],
+        "threshold": 0.86
+    },
+    "CatDiaryRemaining": {
+        "recognition": "OCR",
+        "roi": [
+            550,
+            107,
+            190,
+            30
+        ],
+        "expected": [
+            "剩余"
+        ]
+    },
+    "CatDiaryCloseButton": {
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/Close.png",
+        "roi": [
+            1190,
+            0,
+            90,
+            45
+        ],
+        "threshold": 0.9,
+        "method": 10001
+    },
+    "CatDiaryWhiteText": {
+        "recognition": "ColorMatch",
+        "method": 4,
+        "lower": [
+            170,
+            170,
+            170
+        ],
+        "upper": [
+            255,
+            255,
+            255
+        ]
+    }
+}

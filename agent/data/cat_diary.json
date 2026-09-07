@@ -1,0 +1,1046 @@
+{
+    "source": "用户提供的猫咪日记地点对照表，2026-09-07；2026-09-07～08 实机补充线索变体、传送别名和地图名。分区与路线验证范围见开发文档。",
+    "locations": [
+        {
+            "id": "cat_01",
+            "era": "古代",
+            "region": "本土大陆",
+            "location": "火之村 拉托尔",
+            "teleport": "拉托尔",
+            "clues": [
+                "不愧是火之村落"
+            ],
+            "world_names": [
+                "拉托尔",
+                "火之村 拉托尔"
+            ]
+        },
+        {
+            "id": "cat_02",
+            "era": "古代",
+            "region": "本土大陆",
+            "location": "佐尔平原",
+            "teleport": "佐尔平原",
+            "clues": [
+                "这个平原的一切都好大"
+            ],
+            "world_names": [
+                "佐尔平原"
+            ]
+        },
+        {
+            "id": "cat_03",
+            "era": "古代",
+            "region": "本土大陆",
+            "location": "瓦修山岭",
+            "teleport": "瓦修山岭",
+            "clues": [
+                "越爬越热的山"
+            ],
+            "world_names": [
+                "瓦修山岭"
+            ]
+        },
+        {
+            "id": "cat_04",
+            "era": "古代",
+            "region": "本土大陆",
+            "location": "纳达拉火山",
+            "teleport": "纳达拉火山",
+            "clues": [
+                "岩浆喷",
+                "光是在走这里都觉得快要被烤熟"
+            ],
+            "world_names": [
+                "纳达拉火山"
+            ]
+        },
+        {
+            "id": "cat_05",
+            "era": "古代",
+            "region": "本土大陆",
+            "location": "缇连湖滨大道",
+            "teleport": "缇连湖滨大道",
+            "clues": [
+                "居然在湖面上造出石制的道路"
+            ],
+            "world_names": [
+                "缇连湖滨大道"
+            ]
+        },
+        {
+            "id": "cat_06",
+            "era": "古代",
+            "region": "本土大陆",
+            "location": "阿克托尔",
+            "teleport": "阿克托尔",
+            "clues": [
+                "湖上居然有城镇"
+            ],
+            "world_names": [
+                "阿克托尔",
+                "水之都阿克托尔"
+            ]
+        },
+        {
+            "id": "cat_07",
+            "era": "古代",
+            "region": "本土大陆",
+            "location": "帕萨法尔宫殿",
+            "teleport": "帕萨法尔宫殿",
+            "clues": [
+                "宫殿里有好多好漂亮的花",
+                "宫殿里有好多"
+            ],
+            "world_names": [
+                "帕萨法尔宫殿"
+            ]
+        },
+        {
+            "id": "cat_08",
+            "era": "古代",
+            "region": "本土大陆",
+            "location": "酸性沼泽",
+            "teleport": "酸性沼泽",
+            "clues": [
+                "竟然摆着书和花瓶"
+            ],
+            "world_names": [
+                "酸性沼泽"
+            ]
+        },
+        {
+            "id": "cat_09",
+            "era": "古代",
+            "region": "本土大陆",
+            "location": "克鲁利大道",
+            "teleport": "克鲁利大道",
+            "clues": [
+                "伫立在路旁的独台",
+                "燃烧的样子真令人毛骨悚然"
+            ],
+            "world_names": [
+                "克鲁利大道"
+            ]
+        },
+        {
+            "id": "cat_10",
+            "era": "古代",
+            "region": "本土大陆",
+            "location": "时之塔7F",
+            "teleport": "时之塔",
+            "clues": [
+                "真是令喵毛骨悚然的时钟",
+                "随便乱动的话感觉会被骂"
+            ],
+            "world_names": [
+                "时之塔",
+                "时之塔7F"
+            ]
+        },
+        {
+            "id": "cat_11",
+            "era": "古代",
+            "region": "本土大陆",
+            "location": "科林达平原",
+            "teleport": "科林达平原",
+            "clues": [
+                "发光的孢子飘舞在空中"
+            ],
+            "world_names": [
+                "科林达平原"
+            ]
+        },
+        {
+            "id": "cat_12",
+            "era": "古代",
+            "region": "本土大陆",
+            "location": "星之塔",
+            "teleport": "星之塔",
+            "clues": [
+                "塔里的墙壁开开关关的"
+            ],
+            "world_names": [
+                "星之塔"
+            ]
+        },
+        {
+            "id": "cat_13",
+            "era": "古代",
+            "region": "本土大陆",
+            "location": "萨露帕",
+            "teleport": "萨露帕",
+            "clues": [
+                "圆圆的门和彩色的布"
+            ],
+            "world_names": [
+                "萨露帕",
+                "萨鲁帕"
+            ],
+            "map_names": [
+                "萨露帕"
+            ]
+        },
+        {
+            "id": "cat_14",
+            "era": "古代",
+            "region": "本土大陆",
+            "location": "夏洛尔草原",
+            "teleport": "夏洛尔草原",
+            "clues": [
+                "草原里有个超级大的瀑布"
+            ],
+            "world_names": [
+                "夏洛尔草原"
+            ]
+        },
+        {
+            "id": "cat_15",
+            "era": "古代",
+            "region": "本土大陆",
+            "location": "炼狱界",
+            "teleport": "炼狱界",
+            "clues": [
+                "快把我送回去",
+                "这里不是生者该来的世界"
+            ],
+            "world_names": [
+                "炼狱界"
+            ]
+        },
+        {
+            "id": "cat_16",
+            "era": "古代",
+            "region": "本土大陆",
+            "location": "克鲁利大道",
+            "teleport": "克鲁利大道",
+            "clues": [
+                "火焰燃烧形状很奇怪"
+            ],
+            "world_names": [
+                "克鲁利大道"
+            ]
+        },
+        {
+            "id": "cat_17",
+            "era": "现代",
+            "region": "本土大陆",
+            "location": "努阿鲁平原",
+            "teleport": "努阿鲁平原",
+            "clues": [
+                "这片平原感觉真舒服"
+            ],
+            "world_names": [
+                "努阿鲁平原"
+            ]
+        },
+        {
+            "id": "cat_18",
+            "era": "现代",
+            "region": "本土大陆",
+            "location": "月影之森",
+            "teleport": "月影之森",
+            "clues": [
+                "今晚映照在池子上的月亮又大又圆"
+            ],
+            "world_names": [
+                "月影之森"
+            ]
+        },
+        {
+            "id": "cat_19",
+            "era": "现代",
+            "region": "本土大陆",
+            "location": "巴尔沃基",
+            "teleport": "巴尔沃基",
+            "clues": [
+                "这个宁静的村子里竟然有这么宏伟的雕像"
+            ],
+            "world_names": [
+                "巴尔沃基"
+            ]
+        },
+        {
+            "id": "cat_20",
+            "era": "现代",
+            "region": "本土大陆",
+            "location": "卡雷克湿地",
+            "teleport": "卡雷克湿地",
+            "clues": [
+                "这里有紫色蔬菜的怪物",
+                "这里有紫色蔬菜",
+                "因为他在湿地"
+            ],
+            "world_names": [
+                "卡雷克湿地"
+            ]
+        },
+        {
+            "id": "cat_21",
+            "era": "现代",
+            "region": "本土大陆",
+            "location": "王都尤尼冈",
+            "teleport": "尤尼冈",
+            "clues": [
+                "不愧是王城"
+            ],
+            "world_names": [
+                "尤尼冈",
+                "王都尤尼冈"
+            ]
+        },
+        {
+            "id": "cat_22",
+            "era": "现代",
+            "region": "本土大陆",
+            "location": "米格兰斯城2F",
+            "teleport": "米格兰斯城",
+            "clues": [
+                "富丽堂皇的王城竟然变成这副模样"
+            ],
+            "world_names": [
+                "米格兰斯城",
+                "米格兰斯城2F"
+            ]
+        },
+        {
+            "id": "cat_23",
+            "era": "现代",
+            "region": "本土大陆",
+            "location": "魔兽城王座",
+            "teleport": "魔兽城",
+            "clues": [
+                "好美的彩色玻璃"
+            ],
+            "world_names": [
+                "魔兽城",
+                "魔兽城王座"
+            ]
+        },
+        {
+            "id": "cat_24",
+            "era": "现代",
+            "region": "本土大陆",
+            "location": "露希纳沙漠",
+            "teleport": "露希纳沙漠",
+            "clues": [
+                "走到哪里到处都是沙尘"
+            ],
+            "world_names": [
+                "露希纳沙漠"
+            ]
+        },
+        {
+            "id": "cat_25",
+            "era": "现代",
+            "region": "本土大陆",
+            "location": "扎博",
+            "teleport": "扎博",
+            "clues": [
+                "飞扬的沙尘让我好想闭上眼睛"
+            ],
+            "world_names": [
+                "扎博"
+            ]
+        },
+        {
+            "id": "cat_26",
+            "era": "现代",
+            "region": "本土大陆",
+            "location": "古战场遗址",
+            "teleport": "古战场遗址",
+            "clues": [
+                "这里曾经有过战争"
+            ],
+            "world_names": [
+                "古战场遗址"
+            ]
+        },
+        {
+            "id": "cat_27",
+            "era": "现代",
+            "region": "本土大陆",
+            "location": "魔兽村柯尼姆",
+            "teleport": "魔兽村柯尼姆",
+            "clues": [
+                "看来是被抓去玩鬼抓人跑到都没力气了"
+            ],
+            "world_names": [
+                "魔兽村柯尼姆"
+            ]
+        },
+        {
+            "id": "cat_28",
+            "era": "现代",
+            "region": "本土大陆",
+            "location": "蛇背加巴拉齐",
+            "teleport": "蛇背加巴拉齐",
+            "clues": [
+                "蛇背上有猪在狂奔"
+            ],
+            "world_names": [
+                "蛇背加巴拉齐"
+            ]
+        },
+        {
+            "id": "cat_29",
+            "era": "现代",
+            "region": "本土大陆",
+            "location": "蛇头梅兹基塔",
+            "teleport": "蛇头梅兹基塔",
+            "clues": [
+                "好美的夕阳"
+            ],
+            "world_names": [
+                "蛇头梅兹基塔"
+            ]
+        },
+        {
+            "id": "cat_30",
+            "era": "现代",
+            "region": "本土大陆",
+            "location": "蛇肝达马克",
+            "teleport": "蛇肝达马克",
+            "clues": [
+                "这颗不可思议的球"
+            ],
+            "world_names": [
+                "蛇肝达马克"
+            ]
+        },
+        {
+            "id": "cat_31",
+            "era": "现代",
+            "region": "本土大陆",
+            "location": "蛇首伊戈玛",
+            "teleport": "蛇首伊戈玛",
+            "clues": [
+                "蛇颈有个岩石拱桥"
+            ],
+            "world_names": [
+                "蛇首伊戈玛"
+            ]
+        },
+        {
+            "id": "cat_32",
+            "era": "现代",
+            "region": "本土大陆",
+            "location": "米格兰斯城2F",
+            "teleport": "米格兰斯城",
+            "clues": [
+                "敌人的城两族之争"
+            ],
+            "world_names": [
+                "米格兰斯城",
+                "米格兰斯城2F"
+            ]
+        },
+        {
+            "id": "cat_33",
+            "era": "未来",
+            "region": "本土大陆",
+            "location": "埃尔吉昂·伽玛区",
+            "teleport": "曙光都市埃尔吉昂",
+            "clues": [
+                "这里是最先进的都市"
+            ],
+            "world_names": [
+                "曙光都市埃尔吉昂",
+                "埃尔吉昂·伽玛区"
+            ]
+        },
+        {
+            "id": "cat_34",
+            "era": "未来",
+            "region": "本土大陆",
+            "location": "埃尔吉昂·机场",
+            "teleport": "曙光都市埃尔吉昂",
+            "clues": [
+                "铁箱子在空中飞来飞去的"
+            ],
+            "world_names": [
+                "曙光都市埃尔吉昂",
+                "埃尔吉昂·机场"
+            ]
+        },
+        {
+            "id": "cat_35",
+            "era": "未来",
+            "region": "本土大陆",
+            "location": "劳拉巨蛋城",
+            "teleport": "劳拉巨蛋城",
+            "clues": [
+                "这里有一片美丽的金黄色麦田"
+            ],
+            "world_names": [
+                "劳拉巨蛋城"
+            ]
+        },
+        {
+            "id": "cat_36",
+            "era": "未来",
+            "region": "本土大陆",
+            "location": "浮空城 尼尔瓦",
+            "teleport": "尼尔瓦",
+            "clues": [
+                "真是视野极佳的一座城镇"
+            ],
+            "world_names": [
+                "尼尔瓦",
+                "浮空城 尼尔瓦",
+                "浮游城尼尔瓦"
+            ],
+            "map_names": [
+                "浮空城尼尔瓦"
+            ]
+        },
+        {
+            "id": "cat_37",
+            "era": "未来",
+            "region": "本土大陆",
+            "location": "最终之岛",
+            "teleport": "最终之岛",
+            "clues": [
+                "宁静又美丽的海岸"
+            ],
+            "world_names": [
+                "最终之岛"
+            ]
+        },
+        {
+            "id": "cat_38",
+            "era": "未来",
+            "region": "本土大陆",
+            "location": "工业都市废墟（连接通道）",
+            "teleport": "工业都市废墟",
+            "clues": [
+                "这里明明有一堆机器"
+            ],
+            "world_names": [
+                "工业都市废墟",
+                "工业都市废墟（连接通道）"
+            ]
+        },
+        {
+            "id": "cat_39",
+            "era": "未来",
+            "region": "本土大陆",
+            "location": "废道公路99",
+            "teleport": "废道公路99",
+            "clues": [
+                "前方道路崩塌",
+                "要是太过胡闹可能会有危险"
+            ],
+            "world_names": [
+                "废道公路99"
+            ]
+        },
+        {
+            "id": "cat_40",
+            "era": "未来",
+            "region": "本土大陆",
+            "location": "托托梦幻乐园（正门）",
+            "teleport": "托托的梦幻乐园",
+            "clues": [
+                "荒废的游乐园"
+            ],
+            "world_names": [
+                "托托的梦幻乐园",
+                "托托梦幻乐园（正门）"
+            ]
+        },
+        {
+            "id": "cat_41",
+            "era": "未来",
+            "region": "本土大陆",
+            "location": "马克米纳尔图书馆（图书馆区域）",
+            "teleport": "马克米纳尔图书馆",
+            "clues": [
+                "博物馆里有好多书"
+            ],
+            "world_names": [
+                "马克米纳尔图书馆",
+                "马克米纳尔图书馆（图书馆区域）"
+            ]
+        },
+        {
+            "id": "cat_42",
+            "era": "未来",
+            "region": "本土大陆",
+            "location": "异次元控制所",
+            "teleport": "异次元控制所",
+            "clues": [
+                "人类都在这个比都市还要更高"
+            ],
+            "world_names": [
+                "异次元控制所"
+            ]
+        },
+        {
+            "id": "cat_43",
+            "era": "冥峡界",
+            "region": "本土大陆",
+            "location": "影之镇 纳兹里克",
+            "teleport": "影之镇纳兹里克",
+            "clues": [
+                "真是一座充满着混沌气息的城镇"
+            ],
+            "world_names": [
+                "影之镇纳兹里克",
+                "影之镇 纳兹里克"
+            ]
+        },
+        {
+            "id": "cat_44",
+            "era": "冥峡界",
+            "region": "本土大陆",
+            "location": "冻时领域-西",
+            "teleport": "冻时领域",
+            "clues": [
+                "远处可见的那个建筑物",
+                "圣堂吗"
+            ],
+            "world_names": [
+                "冻时领域",
+                "冻时领域-西"
+            ]
+        },
+        {
+            "id": "cat_45",
+            "era": "冥峡界",
+            "region": "本土大陆",
+            "location": "冻时领域-东",
+            "teleport": "冻时领域",
+            "clues": [
+                "那些飘落的亮晶晶的东西",
+                "晶晶的东西是雪吗"
+            ],
+            "world_names": [
+                "冻时领域",
+                "冻时领域-东"
+            ]
+        },
+        {
+            "id": "cat_46",
+            "era": "古代",
+            "region": "东方",
+            "location": "山之国 加达洛",
+            "teleport": "加达洛",
+            "clues": [
+                "清爽的山风配上风车的声音"
+            ],
+            "world_names": [
+                "加达洛",
+                "山之国 加达洛"
+            ]
+        },
+        {
+            "id": "cat_47",
+            "era": "古代",
+            "region": "东方",
+            "location": "海之国 佐见",
+            "teleport": "佐见",
+            "clues": [
+                "竟然到处都是稻草人"
+            ],
+            "world_names": [
+                "佐见",
+                "海之国 佐见"
+            ]
+        },
+        {
+            "id": "cat_48",
+            "era": "古代",
+            "region": "东方",
+            "location": "祭偶窟",
+            "teleport": "祭偶窟",
+            "clues": [
+                "昏暗的洞窟里充满了恐怖的土偶"
+            ],
+            "world_names": [
+                "祭偶窟"
+            ]
+        },
+        {
+            "id": "cat_49",
+            "era": "古代",
+            "region": "东方",
+            "location": "塔尔加纳山道",
+            "teleport": "塔尔加纳山道",
+            "clues": [
+                "山路旁的",
+                "挂着不可思议的装饰"
+            ],
+            "world_names": [
+                "塔尔加纳山道"
+            ]
+        },
+        {
+            "id": "cat_50",
+            "era": "古代",
+            "region": "东方",
+            "location": "龙神池",
+            "teleport": "龙神池",
+            "clues": [
+                "乌一飞走落就被堵住了",
+                "真是不可思议的池子"
+            ],
+            "world_names": [
+                "龙神池"
+            ]
+        },
+        {
+            "id": "cat_51",
+            "era": "古代",
+            "region": "东方",
+            "location": "浩奇星森林",
+            "teleport": "浩奇星森林",
+            "clues": [
+                "这是座色彩缤纷的森林"
+            ],
+            "world_names": [
+                "浩奇星森林"
+            ]
+        },
+        {
+            "id": "cat_52",
+            "era": "古代",
+            "region": "东方",
+            "location": "库尔奇海湾",
+            "teleport": "库尔奇海湾",
+            "clues": [
+                "海湾的前方有艘腐朽的船"
+            ],
+            "world_names": [
+                "库尔奇海湾"
+            ]
+        },
+        {
+            "id": "cat_53",
+            "era": "古代",
+            "region": "东方",
+            "location": "船墓",
+            "teleport": "船墓",
+            "clues": [
+                "相当旧的船"
+            ],
+            "world_names": [
+                "船墓"
+            ]
+        },
+        {
+            "id": "cat_54",
+            "era": "古代",
+            "region": "东方",
+            "location": "古树村 帕德列",
+            "teleport": "帕德列",
+            "clues": [
+                "树上有好多巨大的人"
+            ],
+            "world_names": [
+                "帕德列",
+                "古树村 帕德列",
+                "古代树之村 帕德列"
+            ],
+            "map_names": [
+                "帕德列"
+            ],
+            "road_map": "古代树之村帕德列"
+        },
+        {
+            "id": "cat_55",
+            "era": "古代",
+            "region": "东方",
+            "location": "古树野",
+            "teleport": "古树野",
+            "clues": [
+                "这些巨大的树下有阴影"
+            ],
+            "world_names": [
+                "古树野"
+            ]
+        },
+        {
+            "id": "cat_56",
+            "era": "古代",
+            "region": "东方",
+            "location": "鬼火洞",
+            "teleport": "鬼火洞",
+            "clues": [
+                "我听说这个洞窟里面有个很巨大的门"
+            ],
+            "world_names": [
+                "鬼火洞"
+            ]
+        },
+        {
+            "id": "cat_57",
+            "era": "现代",
+            "region": "东方",
+            "location": "巳之国 伊刹那",
+            "teleport": "伊刹那",
+            "clues": [
+                "好雄伟的灯笼"
+            ],
+            "world_names": [
+                "伊刹那",
+                "巳之国 伊刹那"
+            ]
+        },
+        {
+            "id": "cat_58",
+            "era": "现代",
+            "region": "东方",
+            "location": "稻鸣高原",
+            "teleport": "稻鸣高原",
+            "clues": [
+                "随风摇曳的整片芒草"
+            ],
+            "world_names": [
+                "稻鸣高原"
+            ]
+        },
+        {
+            "id": "cat_59",
+            "era": "现代",
+            "region": "东方",
+            "location": "荒废寺",
+            "teleport": "荒废寺",
+            "clues": [
+                "破破烂烂的大殿"
+            ],
+            "world_names": [
+                "荒废寺"
+            ]
+        },
+        {
+            "id": "cat_60",
+            "era": "现代",
+            "region": "东方",
+            "location": "猫神神社",
+            "teleport": "猫神神社",
+            "clues": [
+                "这里对我们猫咪来说感觉是个舒服自在的神社"
+            ],
+            "world_names": [
+                "猫神神社"
+            ]
+        },
+        {
+            "id": "cat_61",
+            "era": "现代",
+            "region": "东方",
+            "location": "怨丹之原",
+            "teleport": "怨丹之原",
+            "clues": [
+                "走在这片原野上就能感受到这里曾经繁荣一时"
+            ],
+            "world_names": [
+                "怨丹之原"
+            ]
+        },
+        {
+            "id": "cat_62",
+            "era": "现代",
+            "region": "东方",
+            "location": "温泉",
+            "teleport": "伊刹那",
+            "clues": [
+                "舒服舒服",
+                "这个水温刚刚好"
+            ],
+            "world_names": [
+                "伊刹那",
+                "温泉"
+            ]
+        },
+        {
+            "id": "cat_63",
+            "era": "现代",
+            "region": "东方",
+            "location": "贽殿之乡",
+            "teleport": "贽殿之乡",
+            "clues": [
+                "这个村子里面有好多好吃的食物"
+            ],
+            "world_names": [
+                "贽殿之乡"
+            ]
+        },
+        {
+            "id": "cat_64",
+            "era": "现代",
+            "region": "东方",
+            "location": "红叶街道",
+            "teleport": "红叶街道",
+            "clues": [
+                "火红的红叶"
+            ],
+            "world_names": [
+                "红叶街道"
+            ]
+        },
+        {
+            "id": "cat_65",
+            "era": "现代",
+            "region": "东方",
+            "location": "辰之国 那古萨无",
+            "teleport": "那古萨无",
+            "clues": [
+                "真是风光明媚的国家"
+            ],
+            "world_names": [
+                "那古萨无",
+                "辰之国 那古萨无"
+            ]
+        },
+        {
+            "id": "cat_66",
+            "era": "现代",
+            "region": "东方",
+            "location": "昆仑山脉",
+            "teleport": "昆仑山脉",
+            "clues": [
+                "一片雪景"
+            ],
+            "world_names": [
+                "昆仑山脉"
+            ]
+        },
+        {
+            "id": "cat_67",
+            "era": "现代",
+            "region": "东方",
+            "location": "妖魔殿",
+            "teleport": "妖魔殿",
+            "clues": [
+                "没想到雪山上面竟然有这么气派的宅邸"
+            ],
+            "world_names": [
+                "妖魔殿"
+            ]
+        },
+        {
+            "id": "cat_68",
+            "era": "现代",
+            "region": "东方",
+            "location": "隐居村落 伊杜依斯",
+            "teleport": "伊杜依斯",
+            "clues": [
+                "这个村落也太冷了"
+            ],
+            "world_names": [
+                "伊杜依斯",
+                "隐居村落 伊杜依斯"
+            ]
+        },
+        {
+            "id": "cat_69",
+            "era": "现代",
+            "region": "东方",
+            "location": "妖魔皇宫",
+            "teleport": "妖魔皇宫",
+            "clues": [
+                "这座皇宫到处都硬邦邦的"
+            ],
+            "world_names": [
+                "妖魔皇宫"
+            ]
+        },
+        {
+            "id": "cat_70",
+            "era": "现代",
+            "region": "东方",
+            "location": "破晓之岛",
+            "teleport": "破晓之岛",
+            "clues": [
+                "那个长得像眼球的东西是什么"
+            ],
+            "world_names": [
+                "破晓之岛"
+            ]
+        },
+        {
+            "id": "cat_71",
+            "era": "未来",
+            "region": "东方",
+            "location": "再生村落 安格尔",
+            "teleport": "安格尔",
+            "clues": [
+                "这个时代也有生活在地上的人类村落"
+            ],
+            "world_names": [
+                "安格尔",
+                "再生村落 安格尔"
+            ]
+        },
+        {
+            "id": "cat_72",
+            "era": "未来",
+            "region": "东方",
+            "location": "沉淀之地",
+            "teleport": "沉淀之地",
+            "clues": [
+                "这里真是荒废得很彻底"
+            ],
+            "world_names": [
+                "沉淀之地"
+            ]
+        },
+        {
+            "id": "cat_73",
+            "era": "未来",
+            "region": "东方",
+            "location": "污秽坑道",
+            "teleport": "污秽坑道",
+            "clues": [
+                "朝着被污染的土地底下不断前进"
+            ],
+            "world_names": [
+                "污秽坑道"
+            ]
+        },
+        {
+            "id": "cat_74",
+            "era": "未来",
+            "region": "东方",
+            "location": "猫神神社遗址",
+            "teleport": "猫神神社遗址",
+            "clues": [
+                "想到那座神社竟然会落得如此田地"
+            ],
+            "world_names": [
+                "猫神神社遗址"
+            ]
+        },
+        {
+            "id": "cat_75",
+            "era": "未来",
+            "region": "东方",
+            "location": "空中城郭 伊斯亚",
+            "teleport": "伊斯亚",
+            "clues": [
+                "坐在长椅上就能一览空中的城镇"
+            ],
+            "world_names": [
+                "伊斯亚",
+                "空中城郭 伊斯亚"
+            ]
+        },
+        {
+            "id": "cat_76",
+            "era": "未来",
+            "region": "东方",
+            "location": "莎蒂拉体育场",
+            "teleport": "莎蒂拉体育场",
+            "clues": [
+                "这里可以感受到好多人的热情",
+                "这里可以感受到好多人们的热情",
+                "真是座热闹的体育场"
+            ],
+            "world_names": [
+                "莎蒂拉体育场"
+            ]
+        }
+    ]
+}
