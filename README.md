@@ -4,7 +4,7 @@
   <img src="assets/logo.png" alt="MAAEden 猫可可图标" width="256" height="256">
 </p>
 
-基于 [MaaFramework](https://github.com/MaaXYZ/MaaFramework) 的猫游自动化工具，GUI 使用与 M9A 同生态的 [MFAAvalonia](https://github.com/MaaXYZ/MFAAvalonia)。当前适配 16:9 横屏安卓模拟器。
+基于 [MaaFramework](https://github.com/MaaXYZ/MaaFramework) 的猫游（另一个伊甸：超越时空的猫）自动化工具，GUI 使用与 M9A 同生态的 [MFAAvalonia](https://github.com/MaaXYZ/MFAAvalonia)。当前适配 16:9 横屏安卓模拟器。
 只适用于国服
 
 ## GUI 运行
