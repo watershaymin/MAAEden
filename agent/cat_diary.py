@@ -57,7 +57,8 @@ class DiaryState:
 
 def count_stamps(frame):
     count = 0
-    for x in (387, 462, 538, 614, 690, 766):
+    # 第七枚盖在礼物图案上；下一次找到猫会从新卡第一枚开始。
+    for x in (387, 462, 538, 614, 690, 766, 868):
         patch = frame[514:566, x - 29:x + 30].astype(np.int16)
         b, g, r = patch[:, :, 0], patch[:, :, 1], patch[:, :, 2]
         if np.count_nonzero((r > 130) & (r - g > 65) & (r - b > 65)) > 220:
@@ -66,7 +67,7 @@ def count_stamps(frame):
 
 
 def verify_change(before, after):
-    if after.stamps < before.stamps:
+    if after.stamps < before.stamps and (before.stamps, after.stamps) != (7, 1):
         raise RuntimeError("日记印章减少，可能跨过刷新时间；停止本轮")
     if after == before:
         raise RuntimeError("交互后日记任务和印章均未变化，不能确认找到猫")
@@ -97,13 +98,22 @@ class RoadMap:
     scale = 4
 
     @classmethod
-    def from_segments(cls, segments):
+    def from_segments(cls, segments, horizontal_slopes=()):
         road = cls.__new__(cls)
         mask = np.zeros((720, 1280), dtype=bool)
         for x1, y1, x2, y2 in segments:
             if x1 != x2 and y1 != y2:
                 raise ValueError("地图中心线只接受轴向路段")
             mask[min(y1, y2) - 6:max(y1, y2) + 7, min(x1, x2) - 6:max(x1, x2) + 7] = True
+        slope_mask = np.zeros_like(mask)
+        for x1, y1, x2, y2 in horizontal_slopes:
+            if x1 == x2 or abs(y2 - y1) > abs(x2 - x1) * 0.5:
+                raise ValueError("横向斜坡须由实际横移验证，且坡度不超过 1:2")
+            for x in range(min(x1, x2), max(x1, x2) + 1):
+                y = round(y1 + (x - x1) * (y2 - y1) / (x2 - x1))
+                slope_mask[y - 6:y + 7, x - 6:x + 7] = True
+        mask |= slope_mask
+        road.slope_mask = slope_mask
         road.raw = mask.reshape(180, 4, 320, 4).mean(axis=(1, 3)) >= 0.5
         road.grid = road.raw
         road.clearance = road.grid.astype(np.int16) + erode(road.grid, 1)
@@ -199,6 +209,19 @@ class RoadMap:
         path = self.path(position, goal)
         if len(path) < 2 or math.dist(position, goal) <= 10:
             return None
+        # 纳兹里克的已标定斜坡由左右输入通过；像素路径在坡面上的阶梯形
+        # 折线不能触发上下换道。仅合并本段已标定斜坡，真实纵向连接路仍单独处理。
+        slope_mask = getattr(self, "slope_mask", None)
+        if slope_mask is not None:
+            slope_end = path[0]
+            for point in path:
+                if not slope_mask[point[1], point[0]]:
+                    break
+                slope_end = point
+            slope_dx = slope_end[0] - path[0][0]
+            slope_dy = slope_end[1] - path[0][1]
+            if abs(slope_dx) >= 12 and abs(slope_dx) > abs(slope_dy):
+                return "right" if slope_dx > 0 else "left", max(150, min(600, round(abs(slope_end[0] - position[0]) * 18)))
         # 忽略距离起点很近的投影抖动；只走本条轴向道路，转弯后重新截图。
         origin = path[0]
         segment = path[1]
@@ -219,6 +242,20 @@ class RoadMap:
                     if (point[0] - segment[0], point[1] - segment[1]) != (dx, dy):
                         break
                     segment = point
+        elif dx and abs(segment[0] - position[0]) <= 8:
+            # 破晓之岛的最短横移也有约 14px，不能用它校正路口处 4～8px
+            # 的误差。只有下一段确实是纵向连接路时才直接换道，排除路宽内
+            # 几像素的投影折线；实机从 x=551 向上会自动对齐 x=547 的路口。
+            turn = path.index(segment)
+            if turn + 1 < len(path) and path[turn + 1][0] == segment[0]:
+                following = path[turn + 1]
+                next_dy = following[1] - segment[1]
+                for point in path[turn + 2:]:
+                    if (point[0] - following[0], point[1] - following[1]) != (0, next_dy):
+                        break
+                    following = point
+                if abs(following[1] - segment[1]) > 8:
+                    segment, dx, dy = following, 0, next_dy
         direction = ("right" if dx > 0 else "left") if dx else ("down" if dy > 0 else "up")
         distance = abs(segment[0] - position[0]) if dx else abs(segment[1] - position[1])
         return direction, max(150, min(600, round(distance * 18)))
@@ -263,7 +300,11 @@ class CatDiaryRunner(Navigator):
         self.deadline = time.monotonic() + max_minutes * 60
         self.max_steps = max_steps
         self.catalog = load_catalog()
-        self.maps = json.loads(DATA.with_name("cat_diary_maps.json").read_text(encoding="utf-8"))["maps"]
+        map_data = json.loads(DATA.with_name("cat_diary_maps.json").read_text(encoding="utf-8"))
+        self.maps = map_data["maps"]
+        self.search_points = map_data.get("search_points", {})
+        self.horizontal_slopes = map_data.get("horizontal_slopes", {})
+        self.map_anchors = map_data.get("anchors", {})
         self.round_deadline = None
 
     def check(self):
@@ -277,7 +318,10 @@ class CatDiaryRunner(Navigator):
     def click(self, result):
         self.check()
         box = result.box
-        action = self.context.run_action("CatDiaryClick", box=(box.x, box.y, box.w, box.h))
+        # MaaFramework 会在矩形内随机取点。OCR 框可能包含按钮外的留白，
+        # 如破晓之岛标签高 86px 而实际按钮不足 50px，需限定到识别框中心。
+        point = (round(box.x + box.w / 2), round(box.y + box.h / 2), 1, 1)
+        action = self.context.run_action("CatDiaryClick", box=point)
         if not action or not action.success:
             raise RuntimeError("猫咪日记点击失败")
 
@@ -286,6 +330,11 @@ class CatDiaryRunner(Navigator):
         if not result:
             return ""
         rows = [r for r in result.all_results if r.score >= 0.8]
+        if single_line and rows:
+            # 埃尔吉昂确认句末的句号会单独 OCR 成小号“2”。仅保留与正文同字号的框，
+            # 不直接删除数字，避免把真正不同的目的地归并成同一名称。
+            height = max(r.box[3] for r in rows)
+            rows = [r for r in rows if r.box[3] >= height * 0.5]
         order = (lambda r: r.box[0]) if single_line else (lambda r: (r.box[1], r.box[0]))
         return "".join(r.text for r in sorted(rows, key=order))
 
@@ -383,7 +432,7 @@ class CatDiaryRunner(Navigator):
                         expires = time.monotonic() + ttl
                         self.round_deadline = min(self.round_deadline or expires, expires)
                         self.check()
-                    LOG.warning("CatDiary 日记 %s，印章 %s/6", state.targets, state.stamps)
+                    LOG.warning("CatDiary 日记 %s，印章 %s/7", state.targets, state.stamps)
                     return state
                 last = state
             except ValueError as exc:
@@ -420,21 +469,24 @@ class CatDiaryRunner(Navigator):
         self.wait("CatDiaryDomain")
         # 大陆切换顺序根据实际世界地图：时代 -> 广域 -> 大陆 -> 地点。
         era = entry["era"]
-        if era == "冥峡界":
-            raise RuntimeError(f"{entry['location']} 的冥峡界分区入口尚未标定")
-        era_x = {"古代": 82, "现代": 203, "未来": 325}[era]
+        # 冥峡界属于“???”时代下的广域分区。
+        era_x = {"古代": 82, "现代": 203, "未来": 325, "冥峡界": 447}[era]
+        selected_roi = {"CatDiaryEraSelected": {"roi": [era_x - 22, 40, 44, 35]}}
         for _ in range(3):
+            # 当前时代图标有透明区域，重复点击可能穿过图标选中后方的城镇标签。
+            if self.reco("CatDiaryEraSelected", self.frame(), selected_roi):
+                break
             self.action("CatDiarySelectEra", {"CatDiarySelectEra": {"target": [era_x, 115]}})
             selected_until = min(self.deadline, time.monotonic() + 3)
             while time.monotonic() < selected_until:
-                if self.reco("CatDiaryEraSelected", self.frame(), {"CatDiaryEraSelected": {"roi": [era_x - 22, 40, 44, 35]}}):
+                if self.reco("CatDiaryEraSelected", self.frame(), selected_roi):
                     break
             else:
                 continue
             break
         else:
             raise RuntimeError(f"世界地图未切换到{era}")
-        self.select_region(entry["region"])
+        self.select_region("冥峡界" if era == "冥峡界" else entry["region"])
         target = entry["teleport"]
         names = entry.get("world_names", [target])
         expected = "^(?:" + "|".join(r"\s*".join(re.escape(c) for c in compact(name)) for name in names) + ")$"
@@ -474,13 +526,20 @@ class CatDiaryRunner(Navigator):
         if not button:
             raise RuntimeError("未识别广域入口")
         self.click(button)
-        self.wait("CatDiaryRegionMap")
-        labels = self.reco("CatDiaryRegionLabels", self.frame())
-        prefix = "嘉路" if region == "东方" else "米古"
-        matches = [r for r in labels.filtered_results if compact(r.text).startswith(prefix)] if labels else []
-        if len(matches) != 1:
-            raise RuntimeError(f"广域地图中无法唯一识别{region}大陆")
-        self.action("CatDiarySelectRegion", {"CatDiarySelectRegion": {"target": matches[0].box}})
+        if region == "冥峡界":
+            self.wait("CatDiaryUnderworldRegion")
+            label = self.reco("CatDiaryUnderworldRegion", self.frame())
+            if not label:
+                raise RuntimeError("广域地图中未识别冥峡界入口")
+            self.click(label)
+        else:
+            self.wait("CatDiaryRegionMap")
+            labels = self.reco("CatDiaryRegionLabels", self.frame())
+            prefix = "嘉路" if region == "东方" else "米古"
+            matches = [r for r in labels.filtered_results if compact(r.text).startswith(prefix)] if labels else []
+            if len(matches) != 1:
+                raise RuntimeError(f"广域地图中无法唯一识别{region}大陆")
+            self.action("CatDiarySelectRegion", {"CatDiarySelectRegion": {"target": matches[0].box}})
         self.wait("CatDiaryDomain")
 
     def wait_confirm(self, target, expected, names=None):
@@ -511,13 +570,29 @@ class CatDiaryRunner(Navigator):
             frame = self.frame()
             if not self.reco("NavigationLocalMap", frame):
                 continue
-            name = compact(self.text("NavigationMapName", frame))
+            name = compact(self.text("CatDiaryMapName", frame, single_line=True))
             # 日记地点中可带城镇前缀，落地名称须包含传送标签。
             aliases = expected.get("map_names", [expected["teleport"], expected["location"]])
             if not name or not any(compact(alias) in name for alias in aliases):
                 reason = f"地图名不符：预期 {expected['location']}，识别 {name or '空白'}"
                 time.sleep(0.1)
                 continue
+            map_key = name if name in self.maps else compact(expected.get("road_map", expected["location"]))
+            known_road = (RoadMap.from_segments(self.maps[map_key], self.horizontal_slopes.get(map_key, []))
+                          if map_key in self.maps else None)
+            offset = (0, 0)
+            anchor_config = self.map_anchors.get(map_key)
+            if anchor_config:
+                # 纳兹里克的区域图随坡面高度整体纵移，固定图例用于恢复标定坐标。
+                anchor = self.reco(anchor_config["node"], frame)
+                if not anchor:
+                    reason = f"{name} 未识别地图定位锚点"
+                    continue
+                anchor_position = marker_position(anchor)
+                offset = tuple(a - b for a, b in zip(anchor_position, anchor_config["point"]))
+                if abs(offset[0]) > 8 or abs(offset[1]) > 45:
+                    reason = f"{name} 地图锚点偏移超出已验证范围：{offset}"
+                    continue
             marker = self.reco("CatDiaryMarker", frame)
             player = self.reco("CatDiaryPlayer", frame)
             position = None
@@ -528,11 +603,22 @@ class CatDiaryRunner(Navigator):
                     pass
             if position is None:
                 excluded = [r.box for r in marker.filtered_results] if marker else []
-                position = player_ring(frame, previous, excluded, 135 if movement in ("up", "down") else 65)
+                screen_previous = tuple(a + b for a, b in zip(previous, offset)) if previous else None
+                position = player_ring(frame, screen_previous, excluded, 135 if movement in ("up", "down") else 65)
             if position is None:
                 reason = f"{name} 未能确认角色标记"
                 time.sleep(0.1)
                 continue
+            screen_position = position
+            position = tuple(a - b for a, b in zip(position, offset))
+            if known_road is not None:
+                try:
+                    known_road.nearest(position)
+                except RuntimeError:
+                    # 伊杜依斯的背景灯笼可短暂命中角色环；已标定地图要求角色在道路附近。
+                    reason = f"{name} 角色候选不在已确认道路附近：{position}"
+                    time.sleep(0.1)
+                    continue
             if previous is not None and math.dist(previous, position) > 70:
                 # 上下连接道路会自动换道，600ms 滑动可跨过整段约 85px 的连接路。
                 if movement not in ("up", "down") or abs(position[0] - previous[0]) > 12 or abs(position[1] - previous[1]) > 135:
@@ -540,14 +626,13 @@ class CatDiaryRunner(Navigator):
             obstructions = self.reco("CatDiaryMapIcons", frame)
             boxes = [r.box for r in obstructions.filtered_results] if obstructions else []
             boxes += [r.box for r in marker.filtered_results] if marker else []
-            boxes.append([round(position[0] - 40), round(position[1] - 32), 80, 64])
-            map_key = name if name in self.maps else compact(expected.get("road_map", expected["location"]))
-            road = RoadMap.from_segments(self.maps[map_key]) if map_key in self.maps else RoadMap(base, frame, boxes, position)
+            boxes.append([round(screen_position[0] - 40), round(screen_position[1] - 32), 80, 64])
+            road = known_road if known_road is not None else RoadMap(base, frame, boxes, position)
             targets = []
             if marker:
                 for match in marker.filtered_results:
                     x, y, w, h = match.box
-                    point = (x + w / 2, y + h / 2 + 18)
+                    point = (x + w / 2 - offset[0], y + h / 2 + 18 - offset[1])
                     if not any(math.dist(point, other) < 12 for other in targets):
                         targets.append(point)
             self.action("NavigationToggleLocalMap")
@@ -585,6 +670,8 @@ class CatDiaryRunner(Navigator):
         last_step = None
         last_road = None
         missing = stalled = 0
+        map_key = compact(entry.get("road_map", entry["location"]))
+        search_points = list(self.search_points.get(map_key, [])) if map_key in self.maps else []
         for step_index in range(self.max_steps):
             self.check()
             if self.interact():
@@ -599,19 +686,30 @@ class CatDiaryRunner(Navigator):
                 stalled = stalled + 1 if displacement < 3 else 0
                 if stalled >= 3:
                     raise RuntimeError(f"连续三步没有预期位移，可能撞墙或路口未对齐：{name} {position}")
+            searching = not targets and bool(search_points)
             if not targets:
-                missing += 1
-                if missing >= 4:
-                    raise RuntimeError(f"{name} 连续四帧没有日记图例；可能位于其他楼层/区域")
-                previous, last_step = position, None
-                continue
+                # 角色环与羽毛重叠时地图模板会漏识别，但场景内仍可交互。
+                if self.interact():
+                    return
+                if searching:
+                    # 仅沿实际标定的道路访问已观察到羽毛被遮挡的位置；不是找到猫的证据。
+                    targets = [search_points[0]]
+                    LOG.warning("CatDiary %s 暂未识别羽毛，沿已确认道路检查 %s", name, targets[0])
+                else:
+                    missing += 1
+                    if missing >= 4:
+                        raise RuntimeError(f"{name} 连续四帧没有日记图例；可能位于其他楼层/区域")
+                    previous, last_step = position, None
+                    continue
             missing = 0
             paths = []
-            # 同一张区域图的道路不会随猫和角色移动。若当前图例重叠挡住道路，
-            # 可以复用上一帧已经走出预期位移的道路；目标位置仍取本帧。
-            candidates = [road]
+            # 同一张区域图的道路不会随猫和角色移动。优先复用已经走出预期
+            # 位移的道路，防止角色环遮住路口时改走另一条绕路、离开后又折返。
+            # 旧道路无法规划或实际移动受阻时再使用本帧；猫的位置仍取本帧。
+            candidates = []
             if last_road is not None and stalled == 0:
                 candidates.append(last_road)
+            candidates.append(road)
             for candidate in candidates:
                 for target in targets:
                     try:
@@ -626,6 +724,13 @@ class CatDiaryRunner(Navigator):
             target = min(paths)[1]
             next_step = road.step(position, target)
             if next_step is None:
+                # 展开/关闭地图期间猫还会移动，关闭后必须重新确认刚出现的交互按钮。
+                if self.interact():
+                    return
+                if searching:
+                    search_points.pop(0)
+                    previous, last_step = position, None
+                    continue
                 raise RuntimeError("已接近日记图例但未发现交互按钮")
             direction, duration = next_step
             dx, dy = DIRECTIONS[direction]

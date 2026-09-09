@@ -152,7 +152,10 @@
     },
     "CatDiaryMarker": {
         "recognition": "TemplateMatch",
-        "template": "CatDiary/Marker.png",
+        "template": [
+            "CatDiary/Marker.png",
+            "CatDiary/MarkerNazrik.png"
+        ],
         "roi": [
             165,
             140,
@@ -273,7 +276,45 @@
             128,
             125
         ],
-        "threshold": 0.85
+        "threshold": 0.8,
+        "method": 10001
+    },
+    "CatDiaryUnderworldRegion": {
+        "recognition": "OCR",
+        "roi": [
+            890,
+            400,
+            330,
+            95
+        ],
+        "expected": [
+            "^冥\\s*峡\\s*界$"
+        ],
+        "color_filter": "CatDiaryWhiteText"
+    },
+    "CatDiaryNazrikAnchor": {
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/NazrikHeart.png",
+        "roi": [
+            910,
+            170,
+            70,
+            110
+        ],
+        "threshold": 0.9
+    },
+    "CatDiaryMapName": {
+        "recognition": "OCR",
+        "roi": [
+            15,
+            10,
+            640,
+            53
+        ],
+        "expected": [
+            ".+"
+        ],
+        "color_filter": "CatDiaryWhiteText"
     },
     "CatDiaryRegionMap": {
         "recognition": "And",
@@ -451,7 +492,8 @@
             44,
             35
         ],
-        "threshold": 0.86
+        "threshold": 0.86,
+        "method": 10001
     },
     "CatDiaryRemaining": {
         "recognition": "OCR",
