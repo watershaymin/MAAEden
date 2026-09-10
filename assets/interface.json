@@ -6,7 +6,7 @@
     "license": "MIT",
     "welcome": "请先在模拟器中手动完成账号登录，再运行启动并登录任务。",
     "github": "https://github.com/watershaymin/MAAEden",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "controller": [
         {
             "name": "安卓端",
