@@ -1255,7 +1255,40 @@
             "skip_verified": false,
             "evidence": [
                 "tree-62bf548296b3-vh"
-            ]
+            ],
+            "skip_routes": [
+                {
+                    "id": "route_bd3bb5a677",
+                    "name": "天雷要塞（非常困难）"
+                },
+                {
+                    "id": "route_66f9c4a2c3",
+                    "name": "白金之塔（非常困难）"
+                },
+                {
+                    "id": "route_a95c371e5d",
+                    "name": "选定之塔（非常困难）"
+                },
+                {
+                    "id": "route_746338201a",
+                    "name": "吕之国（非常困难）"
+                },
+                {
+                    "id": "route_c2f8f97288",
+                    "name": "福音之岛（非常困难）"
+                },
+                {
+                    "id": "route_c9adde3182",
+                    "name": "尘埃市（非常困难）"
+                },
+                {
+                    "id": "route_45c9899a79",
+                    "name": "狂乱螺旋科克雷亚（非常困难）"
+                }
+            ],
+            "default_route": "route_bd3bb5a677",
+            "route_evidence": "routes-0910/dungeon_e20106a12d3a-routes*.png",
+            "route_scroll": true
         },
         {
             "id": "dungeon_7051f7a81af3",
@@ -1846,7 +1879,40 @@
             "skip_verified": false,
             "evidence": [
                 "tree-2ee6ef56205b-vh"
-            ]
+            ],
+            "skip_routes": [
+                {
+                    "id": "route_bd3bb5a677",
+                    "name": "天雷要塞（非常困难）"
+                },
+                {
+                    "id": "route_66f9c4a2c3",
+                    "name": "白金之塔（非常困难）"
+                },
+                {
+                    "id": "route_a95c371e5d",
+                    "name": "选定之塔（非常困难）"
+                },
+                {
+                    "id": "route_746338201a",
+                    "name": "吕之国（非常困难）"
+                },
+                {
+                    "id": "route_c2f8f97288",
+                    "name": "福音之岛（非常困难）"
+                },
+                {
+                    "id": "route_c9adde3182",
+                    "name": "尘埃市（非常困难）"
+                },
+                {
+                    "id": "route_45c9899a79",
+                    "name": "狂乱螺旋科克雷亚（非常困难）"
+                }
+            ],
+            "default_route": "route_bd3bb5a677",
+            "route_evidence": "routes-0910/dungeon_c701afe5aae3-routes*.png",
+            "route_scroll": true
         },
         {
             "id": "dungeon_38b739261ddb",
@@ -1956,7 +2022,23 @@
             "skip_verified": false,
             "evidence": [
                 "tree-8665a78e4ab1-h"
-            ]
+            ],
+            "skip_routes": [
+                {
+                    "id": "route_ea6727bb31",
+                    "name": "污染坑道"
+                },
+                {
+                    "id": "route_d53c7018b8",
+                    "name": "监狱船 加尔法弦"
+                },
+                {
+                    "id": "route_427a955a7d",
+                    "name": "KMS东方分部"
+                }
+            ],
+            "default_route": "route_ea6727bb31",
+            "route_evidence": "routes-0910/dungeon_e516a9cf2584-routes.png"
         },
         {
             "id": "dungeon_d7a84c97a9ce",
@@ -1974,7 +2056,23 @@
             "skip_verified": false,
             "evidence": [
                 "tree-a87e339e4746-h"
-            ]
+            ],
+            "skip_routes": [
+                {
+                    "id": "route_918e6bd595",
+                    "name": "玻璃灵庙"
+                },
+                {
+                    "id": "route_aa98b93f76",
+                    "name": "幻想游乐园"
+                },
+                {
+                    "id": "route_1c13d737d1",
+                    "name": "剑之馆"
+                }
+            ],
+            "default_route": "route_918e6bd595",
+            "route_evidence": "routes-0910/dungeon_d7a84c97a9ce-routes.png"
         },
         {
             "id": "dungeon_ccf8c3a95a12",
@@ -1992,7 +2090,23 @@
             "skip_verified": false,
             "evidence": [
                 "tree-c5b6c4a67faf-h"
-            ]
+            ],
+            "skip_routes": [
+                {
+                    "id": "route_7974bdcb31",
+                    "name": "鬼火洞"
+                },
+                {
+                    "id": "route_25a37ccddf",
+                    "name": "次元大圣堂"
+                },
+                {
+                    "id": "route_4d6c618652",
+                    "name": "黄泉方舟"
+                }
+            ],
+            "default_route": "route_7974bdcb31",
+            "route_evidence": "routes-0910/dungeon_ccf8c3a95a12-routes.png"
         },
         {
             "id": "dungeon_19a630653d8c",
@@ -2010,7 +2124,23 @@
             "skip_verified": false,
             "evidence": [
                 "tree-38db42440043-h"
-            ]
+            ],
+            "skip_routes": [
+                {
+                    "id": "route_88d2068d63",
+                    "name": "机种空洞"
+                },
+                {
+                    "id": "route_f06242bf1b",
+                    "name": "生命工厂"
+                },
+                {
+                    "id": "route_7a5f1df711",
+                    "name": "时空之树"
+                }
+            ],
+            "default_route": "route_88d2068d63",
+            "route_evidence": "routes-0910/dungeon_19a630653d8c-routes.png"
         },
         {
             "id": "dungeon_4b3317dc6d85",
@@ -2028,7 +2158,23 @@
             "skip_verified": false,
             "evidence": [
                 "tree-5ba002b15adf-h"
-            ]
+            ],
+            "skip_routes": [
+                {
+                    "id": "route_75113760ae",
+                    "name": "变异战舰"
+                },
+                {
+                    "id": "route_4ac91f2406",
+                    "name": "蚀时之树"
+                },
+                {
+                    "id": "route_d2e20d4c2b",
+                    "name": "蚀时异元晶控制所"
+                }
+            ],
+            "default_route": "route_75113760ae",
+            "route_evidence": "routes-0910/dungeon_4b3317dc6d85-routes.png"
         },
         {
             "id": "dungeon_d6bebfdd633b",
@@ -2043,10 +2189,28 @@
             "can_skip": true,
             "ticket": "green",
             "ticket_cost": 2,
-            "skip_verified": false,
+            "skip_verified": true,
             "evidence": [
-                "tree-de4c2f7d6fe0-h"
-            ]
+                "tree-de4c2f7d6fe0-h",
+                "split-0910/green-final.log"
+            ],
+            "verified_count": 2,
+            "skip_routes": [
+                {
+                    "id": "route_585fa1c165",
+                    "name": "皱囊虫遗迹"
+                },
+                {
+                    "id": "route_7994332185",
+                    "name": "死亡迷宫"
+                },
+                {
+                    "id": "route_d598d9e837",
+                    "name": "晓之塔 图里亚尔瓦"
+                }
+            ],
+            "default_route": "route_585fa1c165",
+            "route_evidence": "routes-0910/dungeon_d6bebfdd633b-routes.png"
         },
         {
             "id": "dungeon_21b0fdd37620",
@@ -2218,7 +2382,40 @@
             "skip_verified": false,
             "evidence": [
                 "tree-3274a38b8b25-vh"
-            ]
+            ],
+            "skip_routes": [
+                {
+                    "id": "route_bd3bb5a677",
+                    "name": "天雷要塞（非常困难）"
+                },
+                {
+                    "id": "route_66f9c4a2c3",
+                    "name": "白金之塔（非常困难）"
+                },
+                {
+                    "id": "route_a95c371e5d",
+                    "name": "选定之塔（非常困难）"
+                },
+                {
+                    "id": "route_746338201a",
+                    "name": "吕之国（非常困难）"
+                },
+                {
+                    "id": "route_c2f8f97288",
+                    "name": "福音之岛（非常困难）"
+                },
+                {
+                    "id": "route_c9adde3182",
+                    "name": "尘埃市（非常困难）"
+                },
+                {
+                    "id": "route_45c9899a79",
+                    "name": "狂乱螺旋科克雷亚（非常困难）"
+                }
+            ],
+            "default_route": "route_bd3bb5a677",
+            "route_evidence": "routes-0910/dungeon_65b4bf69bf67-routes*.png",
+            "route_scroll": true
         },
         {
             "id": "dungeon_95ad376be06f",
@@ -2574,7 +2771,40 @@
             "skip_verified": false,
             "evidence": [
                 "tree-e5f948b538e5-vh"
-            ]
+            ],
+            "skip_routes": [
+                {
+                    "id": "route_bd3bb5a677",
+                    "name": "天雷要塞（非常困难）"
+                },
+                {
+                    "id": "route_66f9c4a2c3",
+                    "name": "白金之塔（非常困难）"
+                },
+                {
+                    "id": "route_a95c371e5d",
+                    "name": "选定之塔（非常困难）"
+                },
+                {
+                    "id": "route_746338201a",
+                    "name": "吕之国（非常困难）"
+                },
+                {
+                    "id": "route_c2f8f97288",
+                    "name": "福音之岛（非常困难）"
+                },
+                {
+                    "id": "route_c9adde3182",
+                    "name": "尘埃市（非常困难）"
+                },
+                {
+                    "id": "route_45c9899a79",
+                    "name": "狂乱螺旋科克雷亚（非常困难）"
+                }
+            ],
+            "default_route": "route_bd3bb5a677",
+            "route_evidence": "routes-0910/dungeon_9772881c46d4-routes*.png",
+            "route_scroll": true
         },
         {
             "id": "dungeon_134359cdbbdd",

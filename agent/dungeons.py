@@ -17,6 +17,30 @@ LOG = logging.getLogger(__name__)
 CATEGORIES = {"古代": (85, 110), "现代": (200, 110), "未来": (325, 110),
               "???": (450, 110), "虚时层": (580, 110), "封域": (1050, 110), "异境": (1190, 110)}
 TICKETS = {"red": "红色解锁卡", "green": "绿色解锁卡", "cat": "猫掌特急券"}
+DEFAULT_TARGETS = {"red": "snake_damak_vh", "green": "moon_forest_h"}
+
+
+def read_interface_options(context, params, catalog):
+    """每个界面选项使用独立节点，避免 Maa 覆盖整个 custom_action_param。"""
+    if params.get("use_interface_options") is not True:
+        return params
+    names = ["DungeonTarget", "DungeonCount", "DungeonRedTarget", "DungeonRedCount",
+             "DungeonGreenTarget", "DungeonGreenCount", "DungeonRefillRed", "DungeonRefillGreen",
+             "DungeonRefillCat"]
+    names.extend("DungeonRoute_" + target["id"] for target in catalog["dungeons"] if target.get("skip_routes"))
+    merged = dict(params)
+    for name in names:
+        node = context.get_node_data("DungeonSkipOption_" + name)
+        if not node or not isinstance(node.get("attach"), dict):
+            raise ValueError(f"副本配置节点缺失或无效：{name}")
+        for key, value in node["attach"].items():
+            if key == "routes":
+                if not isinstance(value, dict):
+                    raise ValueError("副本路线参数 routes 必须是对象")
+                merged["routes"] = {**merged.get("routes", {}), **value}
+            else:
+                merged[key] = value
+    return merged
 
 
 class DungeonSkipUnavailable(RuntimeError):
@@ -44,6 +68,18 @@ def parse_request(params, catalog):
     if (target.get("ticket") not in ("red", "green")
             or type(target.get("ticket_cost")) is not int or target["ticket_cost"] <= 0):
         raise ValueError("缺少已验证的票种或票数")
+    routes = params.get("routes", {})
+    if not isinstance(routes, dict):
+        raise ValueError("副本路线参数 routes 必须是对象")
+    choices = target.get("skip_routes", [])
+    selected = routes.get(target["id"], target.get("default_route"))
+    if choices:
+        matched = [route for route in choices if route["id"] == selected]
+        if len(matched) != 1:
+            raise ValueError(f"{target['name']}的扫荡路线无效或未选择")
+        target = dict(target, skip_region=matched[0]["name"], skip_route_id=matched[0]["id"])
+    elif selected is not None:
+        raise ValueError(f"{target['name']}没有已验证的可选扫荡路线")
     return target, count
 
 
@@ -54,6 +90,31 @@ def verify_party(text, target):
     destination = "移动到" + normalize(target.get("confirmation_name", target["name"]))
     destination += "(" + target["difficulty"] + ")"
     return cost in text and destination in text and "克洛诺斯" not in text
+
+
+def parse_skip_plan(params, catalog):
+    """先校验完整计划；旧 target/count 覆盖仍只执行旧的单副本任务。"""
+    if not isinstance(params, dict):
+        raise ValueError("副本参数必须是对象")
+    if "target" in params or "count" in params:
+        return [parse_request({"target": DEFAULT_TARGETS["red"], **params}, catalog)]
+    plan = []
+    for ticket, default_target in DEFAULT_TARGETS.items():
+        count = params.get(ticket + "_count", 4)
+        if isinstance(count, str) and re.fullmatch(r"0|[1-9][0-9]{0,2}", count):
+            count = int(count)
+        if type(count) is not int or not 0 <= count <= 999:
+            raise ValueError(f"{TICKETS[ticket]}跳过次数必须是 0～999 的整数")
+        if count == 0:
+            continue
+        target, count = parse_request({
+            "target": params.get(ticket + "_target", default_target), "count": count,
+            "routes": params.get("routes", {}),
+        }, catalog)
+        if target["ticket"] != ticket:
+            raise ValueError(f"{TICKETS[ticket]}配置的副本使用了其他票种")
+        plan.append((target, count))
+    return plan
 
 
 def parse_refill_policy(params):
@@ -331,6 +392,54 @@ class DungeonNavigator(Navigator):
             if time.monotonic() >= deadline:
                 raise RuntimeError("继续跳过后页面未离开，停止避免重复提交")
 
+    def select_skip_region(self, target, frame):
+        region = target.get("skip_region")
+        if not region:
+            raise RuntimeError("该副本需要选择扫荡区域，但目录尚未配置已验证区域")
+        def locate(image):
+            if not self.reco("DungeonSkipRegionPrompt", image):
+                raise RuntimeError("选择路线前未确认区域选择弹窗")
+            result = self.reco("DungeonSkipRegionLabels", image)
+            # 大漩涡的难度后缀 OCR 分数略低；仍要求完整路线名称精确匹配。
+            rows = [v for v in result.all_results if v.score >= 0.85
+                    and v.box[1] >= 190 and v.box[1] + v.box[3] <= 545] if result else []
+            return self.label(rows, region, minimum_y=190), rows
+
+        deadline = time.monotonic() + 10
+        while True:
+            point, rows = locate(frame)
+            if point or (rows and target.get("route_scroll")):
+                break
+            if time.monotonic() >= deadline:
+                raise RuntimeError(f"未确认扫荡区域：{region}")
+            frame = self.frame()
+        if not point and target.get("route_scroll"):
+            # 可从保留滚动位置开始：先向上找至顶部，再向下遍历，均有边界和步数上限。
+            for begin, end in [([700, 240], [700, 500]), ([700, 500], [700, 240])]:
+                for _ in range(10):
+                    old = frame
+                    self.action("DungeonSkipRegionScroll", {"DungeonSkipRegionScroll": {"begin": begin, "end": end}})
+                    self.settle()
+                    frame = self.frame()
+                    point, _ = locate(frame)
+                    if point:
+                        break
+                    delta = np.abs(frame[190:550, 240:1040].astype(float) - old[190:550, 240:1040]).mean()
+                    if delta < 0.5:
+                        break
+                else:
+                    raise RuntimeError("扫荡路线列表超过滚动上限")
+                if point:
+                    break
+        if not point:
+            raise RuntimeError(f"遍历路线列表后未找到：{region}")
+        self.action("DungeonClick", {"DungeonClick": {"target": list(point)}})
+        deadline = time.monotonic() + 10
+        while self.reco("DungeonSkipRegionPrompt", self.frame()):
+            if time.monotonic() >= deadline:
+                raise RuntimeError("选择扫荡区域后弹窗未离开")
+        LOG.warning("DungeonSkip %s: 已选择扫荡区域 %s", target["id"], region)
+
     def skip(self, target, count, refill_policy=None):
         if refill_policy is None:
             refill_policy = parse_refill_policy({})
@@ -339,6 +448,7 @@ class DungeonNavigator(Navigator):
         source_action = "DungeonSkipActive"
         refills_for_run = set()
         completed = 0
+        region_selected = False
         cycle_deadline = time.monotonic() + 90
         while completed < count:
             frame = self.frame()
@@ -358,8 +468,14 @@ class DungeonNavigator(Navigator):
                 refills_for_run.add(ticket)
                 cycle_deadline = time.monotonic() + 90
                 continue
-            if self.reco("DungeonContinuePage", frame):
+            if "请选择区域" in normalize(text):
+                if region_selected:
+                    raise RuntimeError("同一场重复出现区域选择，停止避免重复提交")
+                self.select_skip_region(target, frame)
+                region_selected = True
+            elif self.reco("DungeonContinuePage", frame):
                 completed += 1
+                region_selected = False
                 refills_for_run.clear()
                 LOG.warning("DungeonSkip %s: 已完成 %s/%s", target["id"], completed, count)
                 if completed == count:
@@ -385,16 +501,24 @@ class DungeonSkip(CustomAction):
         try:
             catalog = json.loads((Path(__file__).parent / "data" / "dungeons.json").read_text(encoding="utf-8"))
             params = json.loads(argv.custom_action_param)
-            target, count = parse_request(params, catalog)
+            if isinstance(params, dict):
+                params = read_interface_options(context, params, catalog)
+            plan = parse_skip_plan(params, catalog)
             refill_policy = parse_refill_policy(params)
-            nav = DungeonNavigator(context)
-            if not nav.party_matches(target):
-                entrance = context.run_task("DungeonEntrance")
-                if (not entrance or not entrance.status.succeeded or not entrance.nodes
-                        or entrance.nodes[-1].name != "DungeonMenuReady"):
-                    raise RuntimeError("蓝门前置未完成")
-            nav.deadline = time.monotonic() + 600 + count * 90
-            return nav.skip(target, count, refill_policy) == count
+            for target, count in plan:
+                # 上一组结束后已回到主界面，每组重新进入蓝门并独立计数。
+                nav = DungeonNavigator(context)
+                if not nav.party_matches(target):
+                    entrance = context.run_task("DungeonEntrance")
+                    if (not entrance or not entrance.status.succeeded or not entrance.nodes
+                            or entrance.nodes[-1].name != "DungeonMenuReady"):
+                        raise RuntimeError("蓝门前置未完成")
+                nav.deadline = time.monotonic() + 600 + count * 90
+                LOG.warning("DungeonSkip %s: %s，计划 %s 次，消耗 %s 张入场券",
+                            TICKETS[target["ticket"]], target["id"], count, count * target["ticket_cost"])
+                if nav.skip(target, count, refill_policy) != count:
+                    raise RuntimeError(f"{TICKETS[target['ticket']]}未完成指定次数")
+            return True
         except Exception:
             LOG.exception("DungeonSkip 失败")
             return False

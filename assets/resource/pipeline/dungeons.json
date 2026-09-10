@@ -55,10 +55,86 @@
             110
         ],
         "next": [
-            "DungeonSelectRift"
+            "DungeonSelectRift",
+            "DungeonSelectPhantomRegion",
+            "DungeonWorldOpenWide"
         ],
         "timeout": 10000,
         "pre_delay": 1000
+    },
+    "DungeonWorldOpenWide": {
+        "desc": "世界地图保留冥峡界分区时，先展开广域，再选择次元夹缝所在的幻象界。",
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Navigation/WorldMapTitle.png",
+                "roi": [
+                    560,
+                    0,
+                    170,
+                    40
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "TemplateMatch",
+                "template": "CatDiary/Domain.png",
+                "roi": [
+                    1130,
+                    585,
+                    128,
+                    125
+                ],
+                "method": 10001,
+                "threshold": 0.8
+            }
+        ],
+        "box_index": 1,
+        "action": "Click",
+        "next": [
+            "DungeonSelectPhantomRegion",
+            "DungeonSelectRift"
+        ],
+        "timeout": 10000,
+        "max_hit": 1
+    },
+    "DungeonSelectPhantomRegion": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "Navigation/WorldMapTitle.png",
+                "roi": [
+                    560,
+                    0,
+                    170,
+                    40
+                ],
+                "method": 10001,
+                "threshold": 0.9
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    150,
+                    400,
+                    220,
+                    90
+                ],
+                "expected": [
+                    "^幻\\s*象\\s*界$"
+                ]
+            }
+        ],
+        "box_index": 1,
+        "action": "Click",
+        "next": [
+            "DungeonSelectRift"
+        ],
+        "timeout": 10000,
+        "max_hit": 1
     },
     "DungeonSelectRift": {
         "recognition": "And",
@@ -215,6 +291,8 @@
             "DungeonCloseDetail",
             "DungeonCloseNested",
             "DungeonMenuReady",
+            "DungeonInteractDoor",
+            "DungeonSelectUnknownEra",
             "DungeonOpenWorldMap"
         ],
         "timeout": 10000
@@ -224,6 +302,7 @@
         "custom_recognition": "DungeonMenuReady"
     },
     "DungeonInteractDoor": {
+        "desc": "以 78×107 门体模板定位，点击上方交互标志中心的 20×20 区域，避免原大范围随机点击落空。",
         "recognition": "And",
         "all_of": [
             {
@@ -271,10 +350,10 @@
         "box_index": 1,
         "action": "Click",
         "target_offset": [
-            0,
-            -120,
-            0,
-            0
+            29,
+            -77,
+            -58,
+            -87
         ],
         "next": [
             "DungeonMenuReady"
@@ -422,45 +501,56 @@
         "action": "Custom",
         "custom_action": "DungeonSkip",
         "custom_action_param": {
-            "target": "snake_damak_vh",
-            "count": 1,
+            "red_target": "snake_damak_vh",
+            "red_count": 4,
+            "green_target": "moon_forest_h",
+            "green_count": 4,
             "refill_red": false,
             "refill_green": false,
-            "refill_cat": false
+            "refill_cat": false,
+            "use_interface_options": true
         },
         "next": [
             "DungeonSkipComplete"
         ]
     },
     "DungeonSkipComplete": {
-        "desc": "菜单与地图按钮同时可见才完成；亮度敏感匹配排除弹窗遮罩下的背景按钮。",
-        "recognition": "And",
-        "all_of": [
-            {
-                "recognition": "TemplateMatch",
-                "template": "Startup/WorldMenu.png",
-                "roi": [
-                    25,
-                    625,
-                    120,
-                    78
-                ],
-                "method": 10001,
-                "threshold": 0.9
-            },
-            {
-                "recognition": "TemplateMatch",
-                "template": "Startup/WorldMap.png",
-                "roi": [
-                    235,
-                    630,
-                    85,
-                    73
-                ],
-                "method": 10001,
-                "threshold": 0.9
-            }
+        "desc": "Custom 动作逐组确认次数和返回主界面后才成功；两组均为 0 时原地完成。",
+        "recognition": "DirectHit"
+    },
+    "DungeonSkipRegionPrompt": {
+        "recognition": "OCR",
+        "roi": [
+            520,
+            55,
+            245,
+            55
+        ],
+        "expected": [
+            "请选择区域"
         ]
+    },
+    "DungeonSkipRegionLabels": {
+        "recognition": "OCR",
+        "roi": [
+            210,
+            170,
+            860,
+            420
+        ]
+    },
+    "DungeonSkipRegionScroll": {
+        "desc": "在区域选择弹窗的列表内部滚动，避开下方取消按钮。",
+        "action": "Swipe",
+        "begin": [
+            700,
+            500
+        ],
+        "end": [
+            700,
+            240
+        ],
+        "duration": 400
     },
     "DungeonContinueSkip": {
         "recognition": "And",
@@ -807,5 +897,81 @@
         ],
         "threshold": 0.85,
         "method": 10001
+    },
+    "DungeonSkipOption_DungeonTarget": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "DungeonSkipOption_DungeonCount": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "DungeonSkipOption_DungeonRefillRed": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "DungeonSkipOption_DungeonRefillGreen": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "DungeonSkipOption_DungeonRefillCat": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "DungeonSkipOption_DungeonRedTarget": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "DungeonSkipOption_DungeonRedCount": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "DungeonSkipOption_DungeonGreenTarget": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "DungeonSkipOption_DungeonGreenCount": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "DungeonSkipOption_DungeonRoute_dungeon_d7a84c97a9ce": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "DungeonSkipOption_DungeonRoute_dungeon_ccf8c3a95a12": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "DungeonSkipOption_DungeonRoute_dungeon_19a630653d8c": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "DungeonSkipOption_DungeonRoute_dungeon_4b3317dc6d85": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "DungeonSkipOption_DungeonRoute_dungeon_d6bebfdd633b": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "DungeonSkipOption_DungeonRoute_dungeon_e20106a12d3a": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "DungeonSkipOption_DungeonRoute_dungeon_c701afe5aae3": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "DungeonSkipOption_DungeonRoute_dungeon_e516a9cf2584": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "DungeonSkipOption_DungeonRoute_dungeon_65b4bf69bf67": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "DungeonSkipOption_DungeonRoute_dungeon_9772881c46d4": {
+        "action": "DoNothing",
+        "attach": {}
     }
 }

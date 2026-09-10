@@ -28,29 +28,68 @@ TASKS = {
 }
 
 
+def dungeon_params(args):
+    split = {"red_target": args.red_dungeon, "red_count": args.red_count,
+             "green_target": args.green_dungeon, "green_count": args.green_count}
+    split_routes = {"red": getattr(args, "red_route", None), "green": getattr(args, "green_route", None)}
+    legacy_route = getattr(args, "dungeon_route", None)
+    if args.dungeon is not None or args.count is not None or legacy_route is not None:
+        if any(value is not None for value in [*split.values(), *split_routes.values()]):
+            raise ValueError("旧 --dungeon/--count 不能与红绿票独立参数混用")
+        params = {"target": args.dungeon or "snake_damak_vh",
+                  "count": args.count if args.count is not None else 1}
+        if legacy_route is not None:
+            params["routes"] = {params["target"]: legacy_route}
+    else:
+        params = {key: value for key, value in split.items() if value is not None}
+        defaults = {"red": "snake_damak_vh", "green": "moon_forest_h"}
+        routes = {params.get(ticket + "_target", defaults[ticket]): route
+                  for ticket, route in split_routes.items() if route is not None}
+        if routes:
+            params["routes"] = routes
+    params.update(refill_red=args.refill_red, refill_green=args.refill_green, refill_cat=args.refill_cat)
+    return params
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--adb-path", required=True, type=Path)
     parser.add_argument("--address", required=True, help="例如 127.0.0.1:16384")
     parser.add_argument("--task", choices=list(TASKS), default="StartUp")
     parser.add_argument("--direction", choices=["left", "right", "up", "down"], default="left")
-    parser.add_argument("--dungeon", default="snake_damak_vh")
-    parser.add_argument("--count", type=int, help="梅纳斯默认 0（全部入场券），副本跳过默认 1")
+    parser.add_argument("--dungeon", help="兼容旧单副本模式，默认蛇肝达玛克非常困难")
+    parser.add_argument("--count", type=int, help="梅纳斯默认 0（全部入场券）；副本旧单副本模式默认 1")
+    parser.add_argument("--red-dungeon", help="红票副本 ID，默认 snake_damak_vh")
+    parser.add_argument("--green-dungeon", help="绿票副本 ID，默认 moon_forest_h")
+    parser.add_argument("--red-count", type=int, help="红票每次运行跳过场数，默认 4，0 为不执行")
+    parser.add_argument("--green-count", type=int, help="绿票每次运行跳过场数，默认 4，0 为不执行")
+    parser.add_argument("--red-route", help="红票副本扫荡路线 ID，见副本目录 skip_routes")
+    parser.add_argument("--green-route", help="绿票副本扫荡路线 ID，见副本目录 skip_routes")
+    parser.add_argument("--dungeon-route", help="旧单副本模式的扫荡路线 ID")
     parser.add_argument("--refill-red", action="store_true", help="红票不足时使用星天之证的导证之力补充")
     parser.add_argument("--refill-green", action="store_true", help="绿票不足时使用星天之证的导证之力补充")
     parser.add_argument("--refill-cat", action="store_true", help="猫掌券不足时使用星天之证的导证之力补充")
     parser.add_argument("--appraisal-config", type=Path, help="谜晶鉴定规则 JSON，字段与 Custom 参数一致")
     args = parser.parse_args()
+    root = Path(__file__).resolve().parents[1]
+    skip_params = None
+    if args.task == "DungeonSkip":
+        import json
+        sys.path.insert(0, str(root / "agent"))
+        from dungeons import parse_skip_plan
+        try:
+            skip_params = dungeon_params(args)
+            catalog = json.loads((root / "agent/data/dungeons.json").read_text(encoding="utf-8"))
+            skip_plan = parse_skip_plan(skip_params, catalog)
+        except ValueError as exc:
+            parser.error(str(exc))
     if args.count is None:
         args.count = 0 if args.task == "MenasTrial" else 1
-    if args.task == "DungeonSkip" and not 1 <= args.count <= 999:
-        parser.error("--count 必须为 1～999")
     if args.task == "MenasTrial" and not 0 <= args.count <= 999:
         parser.error("梅纳斯 --count 必须为 0～999，0 表示全部入场券")
     if not args.adb_path.is_file():
         parser.error("--adb-path 必须指向 adb 可执行文件")
 
-    root = Path(__file__).resolve().parents[1]
     appraisal_params = None
     if args.task == "MenasAppraisal":
         import json
@@ -136,7 +175,7 @@ def main() -> int:
             print("副本动作注册失败。", file=sys.stderr)
             return 1
         if args.task == "DungeonSkip":
-            time_limit = 600 + args.count * 90
+            time_limit = 60 + sum(600 + count * 90 for _, count in skip_plan)
     if args.task.startswith("Navigation"):
         sys.path.insert(0, str(root / "agent"))
         from navigation import register
@@ -157,10 +196,7 @@ def main() -> int:
     if args.task == "MenasTrial":
         override = {"MenasTrial": {"custom_action_param": {"count": args.count}}}
     if args.task == "DungeonSkip":
-        override = {"DungeonSkip": {"custom_action_param": {
-            "target": args.dungeon, "count": args.count,
-            "refill_red": args.refill_red, "refill_green": args.refill_green, "refill_cat": args.refill_cat,
-        }}}
+        override = {"DungeonSkip": {"custom_action_param": skip_params}}
     if args.task == "NavigationMove":
         override = {"NavigationMove": {"custom_action_param": {"direction": args.direction, "duration": 600}}}
     job = tasker.post_task(args.task, override)
