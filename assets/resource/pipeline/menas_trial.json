@@ -167,7 +167,7 @@
         ]
     },
     "MenasTrialCongratulations": {
-        "desc": "通过提示及逐条任务达成展示；只在 Congratulations 标题可见时继续。",
+        "desc": "标题可见后，等待中央任务列表和奖励弹层稳定再点击，避免动画期间空点耗尽单场上限。",
         "recognition": "TemplateMatch",
         "template": "MenasTrial/Congratulations.png",
         "roi": [
@@ -177,6 +177,18 @@
             150
         ],
         "threshold": 0.85,
+        "pre_wait_freezes": {
+            "time": 800,
+            "target": [
+                360,
+                235,
+                565,
+                335
+            ],
+            "threshold": 0.99,
+            "rate_limit": 100,
+            "timeout": 10000
+        },
         "action": "Click",
         "target": [
             630,
