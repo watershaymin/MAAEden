@@ -82,6 +82,23 @@ def remaining_seconds(text):
     return sum(int(value or 0) * unit for value, unit in zip(match.groups(), (3600, 60, 1)))
 
 
+def world_pan_points(pan, labels):
+    """保留扫描方向和距离，但避开会吞掉拖动的地点按钮及固定界面。"""
+    x1, y1, x2, y2 = pan
+    dx, dy = x2 - x1, y2 - y1
+    candidates = [(x1, y1)] + [(x, y) for y in range(240, 601, 30)
+                              for x in range(80, 1101, 30)]
+    valid = [(x, y) for x, y in candidates
+             if 80 <= x + dx <= 1100 and 240 <= y + dy <= 600
+             and not any(bx - 100 <= x <= bx + bw + 100
+                         and by - 25 <= y <= by + bh + 25
+                         for bx, by, bw, bh in labels)]
+    if not valid:
+        raise RuntimeError("世界地图没有可确认的拖动起点")
+    x, y = min(valid, key=lambda point: (point[0] - x1) ** 2 + (point[1] - y1) ** 2)
+    return [x, y], [x + dx, y + dy]
+
+
 def erode(mask, radius):
     padded = np.pad(mask, radius)
     result = mask.copy()
@@ -463,6 +480,15 @@ class CatDiaryRunner(Navigator):
         raise RuntimeError("日记奖励动画或关闭状态超时")
 
     def teleport(self, entry):
+        if entry.get("approach") == "xeno_research":
+            self.teleport({key: value for key, value in entry.items() if key != "approach"})
+            self.walk_xeno_research(entry)
+            return
+        if entry.get("approach") == "nazrik_east":
+            source = next(e for e in self.catalog if e["id"] == "cat_43")
+            self.teleport(source)
+            self.walk_nazrik_east(source)
+            return
         self.world()
         self.action("NavigationOpenWorldMap")
         self.wait("CatDiaryWorldMap")
@@ -490,6 +516,8 @@ class CatDiaryRunner(Navigator):
         target = entry["teleport"]
         names = entry.get("world_names", [target])
         expected = "^(?:" + "|".join(r"\s*".join(re.escape(c) for c in compact(name)) for name in names) + ")$"
+        outer_expected = ("^" + r"\s*".join(re.escape(c) for c in compact(entry["world_entry"])) + "$"
+                          if "world_entry" in entry else expected)
         # 往东、西、上下扫描已观察的世界地图可拖动区域；每次都重新 OCR。
         # 先到西北边界，再逐行扫描；只横扫一次会漏掉南北方向的城镇。
         left = (1100, 430, 420, 430)
@@ -505,9 +533,13 @@ class CatDiaryRunner(Navigator):
             frame = self.frame()
             if not self.reco("CatDiaryWorldMap", frame):
                 raise RuntimeError("选择目的地时世界地图不可见")
-            label = self.reco("CatDiaryDestination", frame, {"CatDiaryDestination": {"expected": [expected]}})
+            label = self.reco("CatDiaryDestination", frame, {"CatDiaryDestination": {"expected": [outer_expected]}})
             if label:
                 self.click(label)
+                if "world_entry" in entry:
+                    # 蛇骨岛先展开独立地图；入口名称不能作为最终传送目的地的别名。
+                    label = self.wait_world_destination(entry, expected)
+                    self.click(label)
                 selected = label.best_result.text
                 confirm = self.wait_confirm(selected, expected, names)
                 self.click(confirm)
@@ -515,13 +547,129 @@ class CatDiaryRunner(Navigator):
                 return
             if attempt == len(pans):
                 break
-            x1, y1, x2, y2 = pans[attempt]
-            self.action("CatDiaryPan", {"CatDiaryPan": {"begin": [x1, y1], "end": [x2, y2]}})
+            labels = self.reco("CatDiaryDestination", frame,
+                               {"CatDiaryDestination": {"expected": [".+"]}})
+            if not labels:
+                raise RuntimeError("世界地图标签不可读，无法选择拖动起点")
+            begin, end = world_pan_points(pans[attempt], [r.box for r in labels.all_results])
+            self.action("CatDiaryPan", {"CatDiaryPan": {"begin": begin, "end": end}})
         raise RuntimeError(f"世界地图未找到已解锁的传送点：{target}（{era}/{entry['region']}）")
+
+    def wait_world_destination(self, entry, expected):
+        until = min(self.deadline, time.monotonic() + 10)
+        while time.monotonic() < until:
+            frame = self.frame()
+            # 弹图展开时地形和标签陆续出现；同帧确认分区与最终标签后才点击。
+            if self.reco(entry["world_panel"], frame):
+                label = self.reco("CatDiaryDestination", frame,
+                                  {"CatDiaryDestination": {"expected": [expected]}})
+                if label:
+                    return label
+            time.sleep(0.1)
+        raise RuntimeError(f"{entry['world_entry']} 分区或传送点未就绪：{entry['teleport']}")
+
+    def crossing_map_name(self):
+        """跨图连接路可能没有小地图；已有地图但标题读不到时不能继续移动。"""
+        self.world()
+        self.action("NavigationToggleLocalMap")
+        until = min(self.deadline, time.monotonic() + 2)
+        visible = False
+        while time.monotonic() < until:
+            frame = self.frame()
+            if self.reco("NavigationLocalMap", frame):
+                visible = True
+                name = compact(self.text("CatDiaryMapName", frame, single_line=True))
+                if name:
+                    self.action("NavigationToggleLocalMap")
+                    self.world()
+                    return name
+            time.sleep(0.1)
+        if visible:
+            raise RuntimeError("跨区域地图标题无法确认，保留现场")
+        return None
+
+    def walk_nazrik_east(self, source):
+        self.check()
+        _, position, _, _ = self.locate(source)
+        if math.dist(position, (943, 284)) > 35:
+            raise RuntimeError(f"纳兹里克东侧路线起点不符：{position}")
+        # 实机验证此处沿右侧道路、斜坡和无小地图连接路到达冻时领域东侧。
+        # 路线限定起点；每步核验地图或连接路灯具，不将固定步数当成到达。
+        for step in range(19):
+            self.check()
+            name = self.crossing_map_name()
+            if name == "冻时领域":
+                LOG.warning("CatDiary 已从纳兹里克东侧进入冻时领域，移动 %s 步", step)
+                return
+            if name is not None and name not in ("影之镇纳兹里克", "影之镇纳茲里克"):
+                raise RuntimeError(f"纳兹里克东侧路线出现意外地图：{name}")
+            if name is None and not self.reco("CatDiaryNazrikEastPassage", self.world()):
+                raise RuntimeError("未确认纳兹里克东侧连接路，停止移动")
+            if step == 18:
+                break
+            self.action("CatDiarySwipe", {"CatDiarySwipe": {
+                "begin": [200, 450], "end": [380, 450], "duration": 600, "post_delay": 200,
+            }})
+        raise RuntimeError("纳兹里克东侧路线超过 18 步，未确认进入冻时领域")
+
+    def walk_xeno_research(self, entry):
+        stages = [
+            ("异元晶控制所入口", "异元晶控制所入口", (535, 412), (740, 309)),
+            ("异元晶控制所研究中心", "异元晶控制所研究中心下层", (564, 462), (760, 258)),
+        ]
+        for title, road_key, start, target in stages:
+            stage = dict(entry, map_names=[title], road_map=road_key)
+            previous = movement = None
+            stalled = 0
+            for step in range(40):
+                self.check()
+                name, position, _, road = self.locate(stage, previous, movement)
+                if name != title or (previous is None and math.dist(position, start) > 20):
+                    raise RuntimeError(f"异元晶控制所跨层起点不符：{name} {position}")
+                if math.dist(position, target) <= 10:
+                    break
+                if previous is not None:
+                    dx, dy = DIRECTIONS[movement]
+                    progress = (position[0] - previous[0]) * dx + (position[1] - previous[1]) * dy
+                    stalled = stalled + 1 if progress < 3 else 0
+                    if stalled >= 3:
+                        raise RuntimeError("异元晶控制所跨层连续三步没有预期位移")
+                next_step = road.step(position, target)
+                if next_step is None:
+                    raise RuntimeError("异元晶控制所尚未到达出口位置")
+                movement, duration = next_step
+                dx, dy = DIRECTIONS[movement]
+                LOG.warning("CatDiary 跨层 %s 第%s步：%s，%s %sms", road_key, step + 1, position, movement, duration)
+                self.action("CatDiarySwipe", {"CatDiarySwipe": {
+                    "begin": [200, 450], "end": [200 + dx * 180, 450 + dy * 180],
+                    "duration": duration, "post_delay": 1500 if dy else 200,
+                }})
+                previous = position
+            else:
+                raise RuntimeError(f"异元晶控制所跨层超过 40 步：{road_key}")
+            frame = self.wait("CatDiaryXenoDoor")
+            door = self.reco("CatDiaryXenoDoor", frame)
+            self.click(door)
+            self.wait_xeno_transition()
+        # 两层同名，必须核验扶梯后的独立落点；旧层出口不能视为跨层完成。
+        name, position, _, _ = self.locate(entry)
+        if name != "异元晶控制所研究中心" or math.dist(position, (498, 462)) > 20:
+            raise RuntimeError(f"未确认进入研究中心深处：{name} {position}")
+        LOG.warning("CatDiary 已确认进入异元晶控制所研究中心深处")
+
+    def wait_xeno_transition(self):
+        until = min(self.deadline, time.monotonic() + 10)
+        while time.monotonic() < until:
+            if not self.reco("StartUpWorldReady", self.frame()):
+                self.world()
+                return
+            time.sleep(0.1)
+        raise RuntimeError("控制所出口点击后未开始切换场景")
 
     def select_region(self, region):
         # 每次先展开广域再选大陆，避免沿用上次停留的东方或本土地图。
-        frame = self.frame()
+        # 时代指针先于右下广域按钮恢复；等待按钮就绪并复用同帧识别结果。
+        frame = self.wait("CatDiaryDomain")
         button = self.reco("CatDiaryDomain", frame)
         if not button:
             raise RuntimeError("未识别广域入口")
@@ -603,6 +751,10 @@ class CatDiaryRunner(Navigator):
                     pass
             if position is None:
                 excluded = [r.box for r in marker.filtered_results] if marker else []
+                quests = self.reco("CatDiaryQuestIcon", frame)
+                if quests:
+                    # 黄色任务菱形也符合金色范围，且会与角色环连成一块；先剔除任务图标。
+                    excluded.extend(r.box for r in quests.filtered_results)
                 screen_previous = tuple(a + b for a, b in zip(previous, offset)) if previous else None
                 position = player_ring(frame, screen_previous, excluded, 135 if movement in ("up", "down") else 65)
             if position is None:

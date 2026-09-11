@@ -208,6 +208,18 @@
         ],
         "threshold": 0.78
     },
+    "CatDiaryQuestIcon": {
+        "desc": "区域图中的黄色任务菱形；用于排除金色角色环定位中的任务图标干扰。",
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/QuestIcon.png",
+        "roi": [
+            165,
+            140,
+            955,
+            470
+        ],
+        "threshold": 0.85
+    },
     "CatDiaryPlayer": {
         "recognition": "TemplateMatch",
         "template": [
@@ -354,6 +366,43 @@
             "(?!)"
         ]
     },
+    "CatDiaryXenoDoor": {
+        "desc": "仅在异元晶控制所已确认的出口坐标附近点击门或扶梯入口。",
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/XenoDoor.png",
+        "roi": [
+            100,
+            130,
+            1000,
+            440
+        ],
+        "threshold": 0.85
+    },
+    "CatDiaryNazrikEastPassage": {
+        "desc": "纳兹里克东侧无小地图连接路的绿色灯具，仅在确认东侧传送落点后的有界步行中使用。",
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/NazrikEastPassage.png",
+        "roi": [
+            0,
+            120,
+            1280,
+            420
+        ],
+        "threshold": 0.75
+    },
+    "CatDiarySnakeIsland": {
+        "desc": "蛇骨岛弹出地图内固定的蛇首伊格玛文字，确认进入独立地图后才选择村落。",
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/SnakeIsland.png",
+        "roi": [
+            610,
+            125,
+            155,
+            70
+        ],
+        "threshold": 0.98,
+        "method": 10001
+    },
     "CatDiarySubmenu": {
         "recognition": "TemplateMatch",
         "template": "CatDiary/Submenu.png",
@@ -492,7 +541,7 @@
             44,
             35
         ],
-        "threshold": 0.86,
+        "threshold": 0.95,
         "method": 10001
     },
     "CatDiaryRemaining": {

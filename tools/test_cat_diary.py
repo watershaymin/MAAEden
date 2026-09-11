@@ -11,7 +11,7 @@ from unittest.mock import Mock, patch
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "agent"))
-from cat_diary import CatDiary, CatDiaryRunner, DiaryState, RoadMap, count_stamps, load_catalog, match_clue, remaining_seconds, verify_change
+from cat_diary import CatDiary, CatDiaryRunner, DiaryState, RoadMap, count_stamps, load_catalog, match_clue, remaining_seconds, verify_change, world_pan_points
 
 
 class CatDiaryTests(unittest.TestCase):
@@ -20,6 +20,108 @@ class CatDiaryTests(unittest.TestCase):
 
     def runner(self):
         return CatDiaryRunner(self.context)
+
+    def test_world_pan_avoids_palace_and_ratol_buttons(self):
+        # 9 月 12 日古代初始画面：原起点落在宫殿和拉托尔按钮内，十次拖动均未移动。
+        labels = [[225, 418, 171, 23], [749, 282, 115, 23]]
+        for pan, button in [((420, 430, 1100, 430), (177, 403, 305, 49)),
+                            ((900, 270, 900, 600), (669, 269, 276, 48))]:
+            begin, end = world_pan_points(pan, labels)
+            bx, by, bw, bh = button
+            self.assertFalse(bx <= begin[0] <= bx + bw and by <= begin[1] <= by + bh)
+            self.assertEqual([end[i] - begin[i] for i in range(2)],
+                             [pan[i + 2] - pan[i] for i in range(2)])
+            self.assertTrue(80 <= end[0] <= 1100 and 240 <= end[1] <= 600)
+
+    def test_world_pan_stops_when_labels_cover_all_starts(self):
+        with self.assertRaisesRegex(RuntimeError, "拖动起点"):
+            world_pan_points((420, 430, 1100, 430), [[0, 0, 1280, 720]])
+
+    def test_xeno_crossing_checks_both_doors_and_upper_landing(self):
+        runner = self.runner()
+        road = SimpleNamespace(step=Mock(return_value=("right", 600)))
+        runner.locate = Mock(side_effect=[
+            ("异元晶控制所入口", (535, 412), [], road),
+            ("异元晶控制所入口", (740, 309), [], road),
+            ("异元晶控制所研究中心", (564, 462), [], road),
+            ("异元晶控制所研究中心", (760, 258), [], road),
+            ("异元晶控制所研究中心", (498, 462), [], road),
+        ])
+        runner.wait = Mock(return_value=object())
+        runner.reco = Mock(return_value=object())
+        runner.click = Mock()
+        runner.world = Mock()
+        runner.action = Mock()
+        runner.wait_xeno_transition = Mock()
+        runner.walk_xeno_research(next(e for e in runner.catalog if e["id"] == "cat_42"))
+        self.assertEqual(runner.click.call_count, 2)
+        self.assertEqual(runner.action.call_count, 2)
+        self.assertEqual(runner.locate.call_args_list[2].args[0]["road_map"], "异元晶控制所研究中心下层")
+
+    def test_xeno_crossing_rejects_wrong_start_and_stop(self):
+        for stopping, name, position in [(False, "异元晶控制所研究中心", (535, 412)),
+                                         (False, "异元晶控制所入口", (740, 309)),
+                                         (True, "异元晶控制所入口", (535, 412))]:
+            with self.subTest(stopping=stopping, name=name, position=position):
+                runner = self.runner()
+                self.context.tasker.stopping = stopping
+                runner.locate = Mock(return_value=(name, position, [], None))
+                runner.action = Mock()
+                runner.click = Mock()
+                with self.assertRaises(RuntimeError):
+                    runner.walk_xeno_research({})
+                runner.action.assert_not_called()
+                runner.click.assert_not_called()
+
+    def test_xeno_same_title_does_not_prove_floor_transition(self):
+        runner = self.runner()
+        road = SimpleNamespace(step=Mock(return_value=("right", 600)))
+        runner.locate = Mock(side_effect=[
+            ("异元晶控制所入口", (535, 412), [], road),
+            ("异元晶控制所入口", (740, 309), [], road),
+            ("异元晶控制所研究中心", (564, 462), [], road),
+            ("异元晶控制所研究中心", (760, 258), [], road),
+            ("异元晶控制所研究中心", (760, 258), [], road),
+        ])
+        runner.wait = Mock(return_value=object())
+        runner.reco = Mock(return_value=object())
+        runner.click = Mock()
+        runner.world = Mock()
+        runner.action = Mock()
+        runner.wait_xeno_transition = Mock()
+        with self.assertRaisesRegex(RuntimeError, "未确认进入研究中心深处"):
+            runner.walk_xeno_research({})
+
+    def test_xeno_crossing_stops_after_three_stalled_moves(self):
+        runner = self.runner()
+        runner.locate = Mock(return_value=("异元晶控制所入口", (535, 412), [],
+                                          SimpleNamespace(step=Mock(return_value=("right", 600)))))
+        runner.action = Mock()
+        runner.click = Mock()
+        with self.assertRaisesRegex(RuntimeError, "连续三步"):
+            runner.walk_xeno_research({})
+        self.assertEqual(runner.action.call_count, 3)
+        runner.click.assert_not_called()
+
+    def test_xeno_transition_waits_until_old_world_disappears(self):
+        runner = self.runner()
+        runner.frame = Mock(return_value=object())
+        runner.reco = Mock(side_effect=[object(), object(), None])
+        runner.world = Mock()
+        with patch("cat_diary.time.sleep"):
+            runner.wait_xeno_transition()
+        self.assertEqual(runner.reco.call_count, 3)
+        runner.world.assert_called_once()
+
+    def test_xeno_transition_times_out_without_opening_another_map(self):
+        runner = self.runner()
+        runner.frame = Mock(return_value=object())
+        runner.reco = Mock(return_value=object())
+        runner.world = Mock()
+        with patch("cat_diary.time.monotonic", side_effect=[0, 0, 11]), patch("cat_diary.time.sleep"):
+            with self.assertRaisesRegex(RuntimeError, "未开始切换"):
+                runner.wait_xeno_transition()
+        runner.world.assert_not_called()
 
     def test_catalog_and_three_supplied_clues(self):
         catalog = load_catalog()
@@ -217,6 +319,88 @@ class CatDiaryTests(unittest.TestCase):
                     self.assertEqual(era_clicks[0].args[1]["CatDiarySelectEra"]["target"],
                                      [447 if region == "冥峡界" else 203, 115])
 
+    def test_island_entry_requires_panel_and_keeps_final_destination_exact(self):
+        for panel_visible, destination_visible in ((True, True), (False, True), (True, False)):
+            with self.subTest(panel=panel_visible, destination=destination_visible):
+                runner = self.runner()
+                entry = next(e for e in runner.catalog if e["id"] == "cat_27")
+                outer = SimpleNamespace(best_result=SimpleNamespace(text="蛇骨岛"))
+                inner = SimpleNamespace(best_result=SimpleNamespace(text="魔兽村落 柯尼姆"))
+                yes = object()
+                runner.world = Mock()
+                runner.frame = Mock()
+                runner.wait = Mock()
+                runner.action = Mock()
+                runner.select_region = Mock()
+                runner.click = Mock()
+                runner.wait_confirm = Mock(return_value=yes)
+
+                def recognize(node, frame, override=None):
+                    if node == "CatDiaryDestination":
+                        pattern = override[node]["expected"][0]
+                        return (outer if "蛇" in pattern else inner if destination_visible else None)
+                    if node == "CatDiarySnakeIsland":
+                        return panel_visible
+                    return node in ("CatDiaryEraSelected", "CatDiaryWorldMap")
+
+                runner.reco = Mock(side_effect=recognize)
+                if panel_visible and destination_visible:
+                    runner.teleport(entry)
+                    self.assertEqual([c.args[0] for c in runner.click.call_args_list], [outer, inner, yes])
+                    target, pattern, names = runner.wait_confirm.call_args.args
+                    self.assertEqual(target, "魔兽村落 柯尼姆")
+                    self.assertEqual(names, ["魔兽村落 柯尼姆"])
+                    self.assertNotIn("蛇", pattern)
+                else:
+                    with patch("cat_diary.time.monotonic", side_effect=range(100)), patch("cat_diary.time.sleep"):
+                        with self.assertRaises(RuntimeError):
+                            runner.teleport(entry)
+                    runner.wait_confirm.assert_not_called()
+                    runner.click.assert_called_once_with(outer)
+
+    def test_island_label_waits_for_opening_animation(self):
+        runner = self.runner()
+        entry = next(e for e in runner.catalog if e["id"] == "cat_27")
+        runner.frame = Mock(side_effect=["opening", "panel", "ready"])
+        label = object()
+        runner.reco = Mock(side_effect=lambda node, frame, *args:
+                           (frame != "opening" if node == "CatDiarySnakeIsland" else
+                            label if frame == "ready" else None))
+        with patch("cat_diary.time.sleep"):
+            self.assertIs(runner.wait_world_destination(entry, "^魔兽村落柯尼姆$"), label)
+        self.assertEqual(runner.frame.call_count, 3)
+
+    def test_island_name_cannot_confirm_village_teleport(self):
+        runner = self.runner()
+        runner.frame = Mock()
+        runner.text = Mock(return_value="即将移动到蛇骨岛。")
+        runner.reco = Mock(return_value=True)
+        with patch("cat_diary.time.monotonic", side_effect=[0, 0, 11]):
+            with self.assertRaisesRegex(RuntimeError, "确认文字不符"):
+                runner.wait_confirm("魔兽村落 柯尼姆", "^魔兽村落柯尼姆$", ["魔兽村落 柯尼姆"])
+
+    def test_konium_quest_diamond_is_not_the_player_ring(self):
+        runner = self.runner()
+        fixture = Path(__file__).parent / "fixtures/cat_diary_konium.npz"
+        with np.load(fixture) as sample:
+            frame = np.zeros((720, 1280, 3), dtype=np.uint8)
+            x, y = sample["origin"]
+            h, w = sample["patch"].shape[:2]
+            frame[y:y + h, x:x + w] = sample["patch"]
+            quests = SimpleNamespace(filtered_results=[SimpleNamespace(box=b.tolist()) for b in sample["quests"]])
+            markers = SimpleNamespace(filtered_results=[SimpleNamespace(box=b.tolist()) for b in sample["markers"]])
+        runner.world = Mock(return_value=frame)
+        runner.frame = Mock(return_value=frame)
+        runner.action = Mock()
+        runner.text = Mock(return_value="魔兽村落柯尼姆")
+        runner.reco = Mock(side_effect=lambda node, *args: {
+            "NavigationLocalMap": True, "CatDiaryQuestIcon": quests, "CatDiaryMarker": markers,
+        }.get(node))
+        entry = next(e for e in runner.catalog if e["id"] == "cat_27")
+        _, position, _, _ = runner.locate(entry)
+        self.assertLess(abs(position[0] - 601), 8)
+        self.assertLess(abs(position[1] - 360), 8)
+
     def test_underworld_region_must_be_recognized_before_selection(self):
         for found in (True, False):
             with self.subTest(found=found):
@@ -233,6 +417,48 @@ class CatDiaryTests(unittest.TestCase):
                     with self.assertRaisesRegex(RuntimeError, "未识别冥峡界入口"):
                         runner.select_region("冥峡界")
                     runner.click.assert_called_once_with(button)
+
+    def test_frozen_east_crossing_requires_destination_map(self):
+        runner = self.runner()
+        runner.locate = Mock(return_value=("影之镇纳兹里克", (943, 284), [], None))
+        runner.crossing_map_name = Mock(side_effect=["影之镇纳兹里克", None, "冻时领域"])
+        runner.world = Mock()
+        runner.reco = Mock(return_value=True)
+        runner.action = Mock()
+        runner.walk_nazrik_east({})
+        self.assertEqual(runner.action.call_count, 2)
+        runner.reco.assert_called_once_with("CatDiaryNazrikEastPassage", runner.world.return_value)
+
+    def test_frozen_east_crossing_rejects_wrong_start_unknown_gap_and_wrong_map(self):
+        for position, name in (((700, 284), None), ((943, 284), None), ((943, 284), "冻时领域西侧")):
+            with self.subTest(position=position, name=name):
+                runner = self.runner()
+                runner.locate = Mock(return_value=("影之镇纳兹里克", position, [], None))
+                runner.crossing_map_name = Mock(return_value=name)
+                runner.world = Mock()
+                runner.reco = Mock(return_value=False)
+                runner.action = Mock()
+                with self.assertRaises(RuntimeError):
+                    runner.walk_nazrik_east({})
+                runner.action.assert_not_called()
+
+    def test_frozen_east_crossing_is_bounded_and_stoppable(self):
+        runner = self.runner()
+        runner.locate = Mock(return_value=("影之镇纳兹里克", (943, 284), [], None))
+        runner.crossing_map_name = Mock(return_value="影之镇纳兹里克")
+        runner.action = Mock()
+        with self.assertRaisesRegex(RuntimeError, "18 步"):
+            runner.walk_nazrik_east({})
+        self.assertEqual(runner.action.call_count, 18)
+        self.context.tasker.stopping = True
+        runner.action.reset_mock()
+        with self.assertRaisesRegex(RuntimeError, "用户停止"):
+            runner.walk_nazrik_east({})
+        runner.action.assert_not_called()
+
+    def test_baruoki_road_remains_connected_under_player_and_shop_icons(self):
+        road = RoadMap.from_segments(self.runner().maps["巴尔沃基"])
+        self.assertEqual(road.step((619.5, 338.5), (545, 334.5))[0], "left")
 
     def test_elzion_gama_route_and_separate_upper_streets(self):
         road = RoadMap.from_segments(self.runner().maps["埃尔吉昂伽玛区"])

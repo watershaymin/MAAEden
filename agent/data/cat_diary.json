@@ -361,12 +361,14 @@
             "era": "现代",
             "region": "本土大陆",
             "location": "魔兽村柯尼姆",
-            "teleport": "魔兽村柯尼姆",
+            "teleport": "柯尼姆",
+            "world_entry": "蛇骨岛",
+            "world_panel": "CatDiarySnakeIsland",
             "clues": [
                 "看来是被抓去玩鬼抓人跑到都没力气了"
             ],
             "world_names": [
-                "魔兽村柯尼姆"
+                "魔兽村落 柯尼姆"
             ]
         },
         {
@@ -568,12 +570,14 @@
             "era": "未来",
             "region": "本土大陆",
             "location": "异次元控制所",
-            "teleport": "异次元控制所",
+            "teleport": "异元晶控制所",
+            "approach": "xeno_research",
+            "road_map": "异元晶控制所研究中心上层",
             "clues": [
                 "人类都在这个比都市还要更高"
             ],
             "world_names": [
-                "异次元控制所"
+                "异元晶控制所"
             ]
         },
         {
@@ -616,6 +620,7 @@
             "region": "本土大陆",
             "location": "冻时领域-东",
             "teleport": "冻时领域",
+            "approach": "nazrik_east",
             "clues": [
                 "那些飘落的亮晶晶的东西",
                 "晶晶的东西是雪吗"
