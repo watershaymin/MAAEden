@@ -295,6 +295,10 @@
             "region": "本土大陆",
             "location": "米格兰斯城2F",
             "teleport": "米格兰斯城",
+            "approach": "miglance_second_floor",
+            "map_names": [
+                "米格兰斯城2楼"
+            ],
             "clues": [
                 "富丽堂皇的王城竟然变成这副模样"
             ],
@@ -869,13 +873,13 @@
             "id": "cat_63",
             "era": "现代",
             "region": "东方",
-            "location": "贽殿之乡",
-            "teleport": "贽殿之乡",
+            "location": "斑鸠之乡",
+            "teleport": "斑鸠之乡",
             "clues": [
                 "这个村子里面有好多好吃的食物"
             ],
             "world_names": [
-                "贽殿之乡"
+                "斑鸠之乡"
             ]
         },
         {

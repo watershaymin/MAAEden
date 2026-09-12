@@ -480,6 +480,10 @@ class CatDiaryRunner(Navigator):
         raise RuntimeError("日记奖励动画或关闭状态超时")
 
     def teleport(self, entry):
+        if entry.get("approach") == "miglance_second_floor":
+            self.teleport({key: value for key, value in entry.items() if key != "approach"})
+            self.climb_miglance_castle(entry)
+            return
         if entry.get("approach") == "xeno_research":
             self.teleport({key: value for key, value in entry.items() if key != "approach"})
             self.walk_xeno_research(entry)
@@ -497,10 +501,14 @@ class CatDiaryRunner(Navigator):
         era = entry["era"]
         # 冥峡界属于“???”时代下的广域分区。
         era_x = {"古代": 82, "现代": 203, "未来": 325, "冥峡界": 447}[era]
+        # 地图标题和广域按钮可能先于时代指针出现。先确认任一时代指针可见，
+        # 才判断是否需要切换；否则点击当前时代可能穿透到背后的地点按钮。
+        era_frame = self.wait("CatDiaryEraPointerReady")
         selected_roi = {"CatDiaryEraSelected": {"roi": [era_x - 22, 40, 44, 35]}}
-        for _ in range(3):
+        for attempt in range(3):
             # 当前时代图标有透明区域，重复点击可能穿过图标选中后方的城镇标签。
-            if self.reco("CatDiaryEraSelected", self.frame(), selected_roi):
+            frame = era_frame if attempt == 0 else self.wait("CatDiaryEraPointerReady")
+            if self.reco("CatDiaryEraSelected", frame, selected_roi):
                 break
             self.action("CatDiarySelectEra", {"CatDiarySelectEra": {"target": [era_x, 115]}})
             selected_until = min(self.deadline, time.monotonic() + 3)
@@ -650,21 +658,34 @@ class CatDiaryRunner(Navigator):
             frame = self.wait("CatDiaryXenoDoor")
             door = self.reco("CatDiaryXenoDoor", frame)
             self.click(door)
-            self.wait_xeno_transition()
+            self.wait_area_transition()
         # 两层同名，必须核验扶梯后的独立落点；旧层出口不能视为跨层完成。
         name, position, _, _ = self.locate(entry)
         if name != "异元晶控制所研究中心" or math.dist(position, (498, 462)) > 20:
             raise RuntimeError(f"未确认进入研究中心深处：{name} {position}")
         LOG.warning("CatDiary 已确认进入异元晶控制所研究中心深处")
 
-    def wait_xeno_transition(self):
+    def climb_miglance_castle(self, entry):
+        first_floor = dict(entry, map_names=["米格兰斯城1楼"])
+        name, position, _, _ = self.locate(first_floor)
+        if name != "米格兰斯城1楼" or math.dist(position, (640, 410)) > 20:
+            raise RuntimeError(f"米格兰斯城楼梯起点不符：{name} {position}")
+        frame = self.wait("CatDiaryMiglanceStairs")
+        self.click(self.reco("CatDiaryMiglanceStairs", frame))
+        self.wait_area_transition()
+        name, position, _, _ = self.locate(entry)
+        if name != "米格兰斯城2楼" or math.dist(position, (640, 410)) > 20:
+            raise RuntimeError(f"未确认到达米格兰斯城2楼：{name} {position}")
+        LOG.warning("CatDiary 已从米格兰斯城1楼进入2楼")
+
+    def wait_area_transition(self):
         until = min(self.deadline, time.monotonic() + 10)
         while time.monotonic() < until:
             if not self.reco("StartUpWorldReady", self.frame()):
                 self.world()
                 return
             time.sleep(0.1)
-        raise RuntimeError("控制所出口点击后未开始切换场景")
+        raise RuntimeError("区域出口点击后未开始切换场景")
 
     def select_region(self, region):
         # 每次先展开广域再选大陆，避免沿用上次停留的东方或本土地图。

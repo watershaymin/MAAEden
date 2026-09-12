@@ -366,6 +366,18 @@
             "(?!)"
         ]
     },
+    "CatDiaryMiglanceStairs": {
+        "desc": "仅在米格兰斯城1楼已确认的传送落点附近点击正前方上楼图标。",
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/MiglanceStairs.png",
+        "roi": [
+            550,
+            100,
+            180,
+            150
+        ],
+        "threshold": 0.9
+    },
     "CatDiaryXenoDoor": {
         "desc": "仅在异元晶控制所已确认的出口坐标附近点击门或扶梯入口。",
         "recognition": "TemplateMatch",
@@ -530,7 +542,21 @@
         ],
         "expected": [
             "^是否确定[?？]?$"
-        ]
+        ],
+        "color_filter": "CatDiaryWhiteText"
+    },
+    "CatDiaryEraPointerReady": {
+        "desc": "等待任一时代的白色指针出现；避免世界地图展开动画中误点当前时代。",
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/EraPointer.png",
+        "roi": [
+            45,
+            40,
+            575,
+            35
+        ],
+        "threshold": 0.95,
+        "method": 10001
     },
     "CatDiaryEraSelected": {
         "recognition": "TemplateMatch",

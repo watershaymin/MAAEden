@@ -37,6 +37,83 @@ class CatDiaryTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "拖动起点"):
             world_pan_points((420, 430, 1100, 430), [[0, 0, 1280, 720]])
 
+    def test_castle_stairs_require_correct_floor_and_landing(self):
+        runner = self.runner()
+        entry = next(e for e in runner.catalog if e["id"] == "cat_22")
+        runner.locate = Mock(side_effect=[("米格兰斯城1楼", (640, 410), [], None),
+                                         ("米格兰斯城2楼", (640, 410), [], None)])
+        runner.wait = Mock(return_value=object())
+        runner.reco = Mock(return_value=object())
+        runner.click = Mock()
+        runner.wait_area_transition = Mock()
+        runner.climb_miglance_castle(entry)
+        runner.click.assert_called_once()
+        runner.wait_area_transition.assert_called_once()
+        self.assertEqual(runner.locate.call_args_list[0].args[0]["map_names"], ["米格兰斯城1楼"])
+        self.assertEqual(runner.locate.call_args_list[1].args[0]["map_names"], ["米格兰斯城2楼"])
+
+    def test_castle_second_floor_routes_around_central_stairs_icon(self):
+        runner = self.runner()
+        road = RoadMap.from_segments(runner.maps["米格兰斯城2楼"])
+        self.assertEqual(road.step((638, 409), (794, 310))[0], "right")
+        self.assertEqual(road.step((690, 409), (794, 310))[0], "up")
+        self.assertEqual(road.step((692, 311), (794, 310))[0], "right")
+
+    def test_era_choice_uses_ready_pointer_frame_without_reclicking_current_era(self):
+        runner = self.runner()
+        ready_frame = object()
+        runner.world = Mock()
+        runner.action = Mock()
+        runner.frame = Mock(side_effect=AssertionError("不能用尚未就绪的帧判断时代"))
+        runner.wait = Mock(side_effect=lambda node: ready_frame if node == "CatDiaryEraPointerReady" else object())
+        def reco(node, frame, override=None):
+            self.assertEqual(node, "CatDiaryEraSelected")
+            self.assertIs(frame, ready_frame)
+            return object()
+        runner.reco = reco
+        runner.select_region = Mock(side_effect=RuntimeError("开始选择大陆"))
+        with self.assertRaisesRegex(RuntimeError, "开始选择大陆"):
+            runner.teleport(next(e for e in runner.catalog if e["id"] == "cat_19"))
+        self.assertEqual([call.args[0] for call in runner.action.call_args_list], ["NavigationOpenWorldMap"])
+
+    def test_missing_era_pointer_stops_before_any_era_click(self):
+        runner = self.runner()
+        runner.world = Mock()
+        runner.action = Mock()
+        runner.reco = Mock()
+        def wait(node):
+            if node == "CatDiaryEraPointerReady":
+                raise RuntimeError("时代指针未就绪")
+            return object()
+        runner.wait = wait
+        with self.assertRaisesRegex(RuntimeError, "时代指针未就绪"):
+            runner.teleport(next(e for e in runner.catalog if e["id"] == "cat_19"))
+        runner.reco.assert_not_called()
+        self.assertEqual([call.args[0] for call in runner.action.call_args_list], ["NavigationOpenWorldMap"])
+
+    def test_castle_stairs_reject_wrong_start_before_click(self):
+        for name, point in [("米格兰斯城2楼", (640, 410)), ("米格兰斯城1楼", (590, 310))]:
+            with self.subTest(name=name, point=point):
+                runner = self.runner()
+                runner.locate = Mock(return_value=(name, point, [], None))
+                runner.click = Mock()
+                with self.assertRaisesRegex(RuntimeError, "楼梯起点不符"):
+                    runner.climb_miglance_castle({})
+                runner.click.assert_not_called()
+
+    def test_castle_stairs_do_not_accept_unchanged_floor_or_wrong_landing(self):
+        for name, point in [("米格兰斯城1楼", (640, 410)), ("米格兰斯城2楼", (800, 310))]:
+            with self.subTest(name=name, point=point):
+                runner = self.runner()
+                runner.locate = Mock(side_effect=[("米格兰斯城1楼", (640, 410), [], None),
+                                                 (name, point, [], None)])
+                runner.wait = Mock(return_value=object())
+                runner.reco = Mock(return_value=object())
+                runner.click = Mock()
+                runner.wait_area_transition = Mock()
+                with self.assertRaisesRegex(RuntimeError, "未确认到达"):
+                    runner.climb_miglance_castle({})
+
     def test_xeno_crossing_checks_both_doors_and_upper_landing(self):
         runner = self.runner()
         road = SimpleNamespace(step=Mock(return_value=("right", 600)))
@@ -52,7 +129,7 @@ class CatDiaryTests(unittest.TestCase):
         runner.click = Mock()
         runner.world = Mock()
         runner.action = Mock()
-        runner.wait_xeno_transition = Mock()
+        runner.wait_area_transition = Mock()
         runner.walk_xeno_research(next(e for e in runner.catalog if e["id"] == "cat_42"))
         self.assertEqual(runner.click.call_count, 2)
         self.assertEqual(runner.action.call_count, 2)
@@ -88,7 +165,7 @@ class CatDiaryTests(unittest.TestCase):
         runner.click = Mock()
         runner.world = Mock()
         runner.action = Mock()
-        runner.wait_xeno_transition = Mock()
+        runner.wait_area_transition = Mock()
         with self.assertRaisesRegex(RuntimeError, "未确认进入研究中心深处"):
             runner.walk_xeno_research({})
 
@@ -109,7 +186,7 @@ class CatDiaryTests(unittest.TestCase):
         runner.reco = Mock(side_effect=[object(), object(), None])
         runner.world = Mock()
         with patch("cat_diary.time.sleep"):
-            runner.wait_xeno_transition()
+            runner.wait_area_transition()
         self.assertEqual(runner.reco.call_count, 3)
         runner.world.assert_called_once()
 
@@ -120,7 +197,7 @@ class CatDiaryTests(unittest.TestCase):
         runner.world = Mock()
         with patch("cat_diary.time.monotonic", side_effect=[0, 0, 11]), patch("cat_diary.time.sleep"):
             with self.assertRaisesRegex(RuntimeError, "未开始切换"):
-                runner.wait_xeno_transition()
+                runner.wait_area_transition()
         runner.world.assert_not_called()
 
     def test_catalog_and_three_supplied_clues(self):
@@ -137,6 +214,12 @@ class CatDiaryTests(unittest.TestCase):
             for clue in entry["clues"]:
                 with self.subTest(id=entry["id"], clue=clue):
                     self.assertEqual(match_clue(clue, catalog)["location"], entry["location"])
+
+    def test_september_13_ikaruga_food_clue_uses_verified_name(self):
+        entry = match_clue("这个村子里面有好多好吃的食物……！看来这里的作物经常丰收呢喵！", load_catalog())
+        self.assertEqual(entry["id"], "cat_63")
+        self.assertEqual(entry["location"], "斑鸠之乡")
+        self.assertEqual(entry["world_names"], ["斑鸠之乡"])
 
     def test_unknown_and_ambiguous_clues_are_not_teleports(self):
         catalog = load_catalog()
