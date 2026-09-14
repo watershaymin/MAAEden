@@ -33,6 +33,110 @@ class CatDiaryTests(unittest.TestCase):
                              [pan[i + 2] - pan[i] for i in range(2)])
             self.assertTrue(80 <= end[0] <= 1100 and 240 <= end[1] <= 600)
 
+    def hot_spring_runner(self, frames):
+        runner = self.runner()
+        runner.world = Mock(side_effect=frames)
+        nodes = ['CatDiaryHotSpringEntrance', 'CatDiaryHotSpringTree', 'CatDiaryHotSpringBath']
+        runner.reco = Mock(side_effect=lambda node, frame: (
+            SimpleNamespace(best_result=SimpleNamespace(box=[frame[1], 90, 100, 100]))
+            if frame is not None and nodes[frame[0]] == node else None))
+        runner.action = Mock()
+        runner.interact = Mock(return_value=False)
+        return runner
+
+    def test_hot_spring_direct_teleport_and_guarded_chase(self):
+        runner = self.hot_spring_runner([(0, 868), (1, 147), (1, 486), (1, 860), (2, 147)])
+        entry = next(e for e in runner.catalog if e['id'] == 'cat_62')
+        self.assertEqual(entry['teleport'], '温泉')
+        self.assertEqual(entry['world_names'], ['温泉'])
+        runner.interact.side_effect = [False] * 4 + [True]
+        runner.chase(entry)
+        self.assertEqual(runner.action.call_count, 4)
+
+    def test_hot_spring_unknown_scene_stops_before_moving(self):
+        runner = self.hot_spring_runner([None])
+        with self.assertRaisesRegex(RuntimeError, '场景标志不符'):
+            runner.chase_hot_spring()
+        runner.action.assert_not_called()
+        runner.interact.assert_not_called()
+
+    def test_hot_spring_stall_and_backtracking_stop(self):
+        for frames, reason, steps in [([(1, 147)] * 4, '连续三步', 3),
+                                      ([(1, 147), (0, 868)], '顺序异常', 1)]:
+            with self.subTest(reason=reason):
+                runner = self.hot_spring_runner(frames)
+                with self.assertRaisesRegex(RuntimeError, reason):
+                    runner.chase_hot_spring()
+                self.assertEqual(runner.action.call_count, steps)
+
+    def test_hot_spring_steps_are_bounded(self):
+        runner = self.hot_spring_runner([(1, 100 + 20*i) for i in range(9)])
+        with self.assertRaisesRegex(RuntimeError, '超过 8 步'):
+            runner.chase_hot_spring()
+        self.assertEqual(runner.action.call_count, 8)
+
+    def test_hot_spring_user_stop_prevents_movement(self):
+        runner = self.hot_spring_runner([(0, 868)])
+        runner.context.tasker.stopping = True
+        with self.assertRaises(RuntimeError):
+            runner.chase_hot_spring()
+        runner.action.assert_not_called()
+
+    def kunlun_runner(self, locations):
+        runner = self.runner()
+        runner.locate = Mock(side_effect=locations)
+        runner.action = Mock()
+        runner.wait = Mock(return_value=object())
+        runner.reco = Mock(return_value=object())
+        runner.click = Mock()
+        runner.wait_area_transition = Mock()
+        return runner
+
+    def test_kunlun_slide_checks_exit_and_landing(self):
+        runner = self.kunlun_runner([('妖魔殿', (653,394), [], None),
+                                    ('妖魔殿', (678,394), [], None),
+                                    ('妖魔殿', (704,394), [], None),
+                                    ('昆仑山脉', (598,598), [], None)])
+        runner.slide_to_kunlun({}, {})
+        self.assertEqual(runner.action.call_count, 2)
+        runner.click.assert_called_once()
+        runner.wait_area_transition.assert_called_once()
+
+    def test_kunlun_slide_rejects_wrong_start_or_route(self):
+        for name, position in [('妖魔殿', (704,394)), ('其他地图', (653,394)), ('妖魔殿', (653,410))]:
+            with self.subTest(name=name, position=position):
+                runner = self.kunlun_runner([(name,position,[],None)])
+                with self.assertRaises(RuntimeError):
+                    runner.slide_to_kunlun({}, {})
+                runner.action.assert_not_called()
+                runner.click.assert_not_called()
+
+    def test_kunlun_slide_stops_when_stalled(self):
+        runner = self.kunlun_runner([('妖魔殿',(653,394),[],None)] * 4)
+        with self.assertRaisesRegex(RuntimeError, '连续三步'):
+            runner.slide_to_kunlun({}, {})
+        self.assertEqual(runner.action.call_count, 3)
+        runner.click.assert_not_called()
+
+    def test_kunlun_slide_requires_destination_and_correct_landing(self):
+        for name, position in [('妖魔殿',(704,394)), ('昆仑山脉',(600,326))]:
+            with self.subTest(name=name, position=position):
+                runner = self.kunlun_runner([('妖魔殿',(653,394),[],None),
+                                            ('妖魔殿',(704,394),[],None),(name,position,[],None)])
+                with self.assertRaisesRegex(RuntimeError, '未确认冰坡到达'):
+                    runner.slide_to_kunlun({}, {})
+
+    def test_kunlun_small_quest_icon_is_excluded_from_player_ring(self):
+        from cat_diary import player_ring
+        samples = np.load(Path(__file__).parent / 'fixtures/cat_diary_kunlun.npz')
+        frame = np.zeros((720,1280,3), dtype=np.uint8)
+        frame[582:610,584:642] = samples['player']
+        frame[442:478,522:556] = samples['quest']
+        self.assertIsNone(player_ring(frame))
+        position = player_ring(frame, excluded=[[525,444,27,32]])
+        self.assertIsNotNone(position)
+        self.assertLess(np.linalg.norm(np.array(position) - [613,598]), 3)
+
     def test_world_pan_stops_when_labels_cover_all_starts(self):
         with self.assertRaisesRegex(RuntimeError, "拖动起点"):
             world_pan_points((420, 430, 1100, 430), [[0, 0, 1280, 720]])
@@ -58,6 +162,15 @@ class CatDiaryTests(unittest.TestCase):
         self.assertEqual(road.step((638, 409), (794, 310))[0], "right")
         self.assertEqual(road.step((690, 409), (794, 310))[0], "up")
         self.assertEqual(road.step((692, 311), (794, 310))[0], "right")
+
+    def test_isiya_uses_visible_junction_instead_of_background_roads(self):
+        runner = self.runner()
+        road = RoadMap.from_segments(runner.maps['空中城郭伊斯亚'])
+        # 实机误识别曾在 x=718、694、655、634 向下撞墙；真实连接路在 x=589。
+        for x in [748, 718, 694, 655, 634]:
+            self.assertEqual(road.step((x, 281), (490, 361))[0], 'left')
+        self.assertEqual(road.step((594, 281), (490, 361))[0], 'down')
+        self.assertEqual(road.step((589, 360), (490, 361))[0], 'left')
 
     def test_era_choice_uses_ready_pointer_frame_without_reclicking_current_era(self):
         runner = self.runner()
@@ -440,6 +553,27 @@ class CatDiaryTests(unittest.TestCase):
                             runner.teleport(entry)
                     runner.wait_confirm.assert_not_called()
                     runner.click.assert_called_once_with(outer)
+
+    def test_empty_world_map_requires_ready_controls_and_bounded_scan(self):
+        for domain, era in [(True, True), (False, True), (True, False)]:
+            with self.subTest(domain=domain, era=era):
+                runner = self.runner()
+                runner.world = Mock()
+                runner.wait = Mock(return_value='era-ready')
+                runner.frame = Mock(return_value='empty-sea')
+                runner.select_region = Mock()
+                runner.action = Mock()
+                runner.click = Mock()
+                runner.reco = Mock(side_effect=lambda node, frame, *args: (
+                    (frame == 'era-ready' or era) if node == 'CatDiaryEraSelected' else
+                    domain if node == 'CatDiaryDomain' else node == 'CatDiaryWorldMap'))
+                entry = next(e for e in runner.catalog if e['id'] == 'cat_71')
+                reason = '未找到已解锁' if domain and era else '控件未就绪'
+                with self.assertRaisesRegex(RuntimeError, reason):
+                    runner.teleport(entry)
+                pans = [c for c in runner.action.call_args_list if c.args[0] == 'CatDiaryPan']
+                self.assertEqual(len(pans), 34 if domain and era else 0)
+                runner.click.assert_not_called()
 
     def test_island_label_waits_for_opening_animation(self):
         runner = self.runner()

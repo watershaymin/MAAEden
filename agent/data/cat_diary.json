@@ -859,15 +859,15 @@
             "era": "现代",
             "region": "东方",
             "location": "温泉",
-            "teleport": "伊刹那",
+            "teleport": "温泉",
             "clues": [
                 "舒服舒服",
                 "这个水温刚刚好"
             ],
             "world_names": [
-                "伊刹那",
                 "温泉"
-            ]
+            ],
+            "chase_mode": "hot_spring"
         },
         {
             "id": "cat_63",
@@ -919,6 +919,10 @@
                 "一片雪景"
             ],
             "world_names": [
+                "昆仑山脉"
+            ],
+            "approach": "kunlun_slide",
+            "map_names": [
                 "昆仑山脉"
             ]
         },

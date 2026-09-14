@@ -480,6 +480,11 @@ class CatDiaryRunner(Navigator):
         raise RuntimeError("日记奖励动画或关闭状态超时")
 
     def teleport(self, entry):
+        if entry.get("approach") == "kunlun_slide":
+            source = next(e for e in self.catalog if e["id"] == "cat_67")
+            self.teleport(source)
+            self.slide_to_kunlun(source, entry)
+            return
         if entry.get("approach") == "miglance_second_floor":
             self.teleport({key: value for key, value in entry.items() if key != "approach"})
             self.climb_miglance_castle(entry)
@@ -557,9 +562,12 @@ class CatDiaryRunner(Navigator):
                 break
             labels = self.reco("CatDiaryDestination", frame,
                                {"CatDiaryDestination": {"expected": [".+"]}})
-            if not labels:
-                raise RuntimeError("世界地图标签不可读，无法选择拖动起点")
-            begin, end = world_pan_points(pans[attempt], [r.box for r in labels.all_results])
+            # 未来东方地图边缘可只有海域、没有地点文字。完整地图控件同帧就绪时
+            # 继续原有有限扫描；弹窗遮罩或时代过渡期间仍不能盲拖。
+            if not labels and not (self.reco("CatDiaryDomain", frame)
+                                   and self.reco("CatDiaryEraSelected", frame, selected_roi)):
+                raise RuntimeError("世界地图标签不可读且控件未就绪，无法选择拖动起点")
+            begin, end = world_pan_points(pans[attempt], [r.box for r in labels.all_results] if labels else [])
             self.action("CatDiaryPan", {"CatDiaryPan": {"begin": begin, "end": end}})
         raise RuntimeError(f"世界地图未找到已解锁的传送点：{target}（{era}/{entry['region']}）")
 
@@ -619,6 +627,37 @@ class CatDiaryRunner(Navigator):
                 "begin": [200, 450], "end": [380, 450], "duration": 600, "post_delay": 200,
             }})
         raise RuntimeError("纳兹里克东侧路线超过 18 步，未确认进入冻时领域")
+
+    def slide_to_kunlun(self, source, entry):
+        previous = None
+        stalled = 0
+        for step in range(7):
+            self.check()
+            name, position, _, _ = self.locate(source, previous, "right" if previous else None)
+            if name != "妖魔殿" or (previous is None and math.dist(position, (653, 394)) > 20):
+                raise RuntimeError(f"妖魔殿冰坡起点不符：{name} {position}")
+            if abs(position[1] - 394) > 12 or not 630 <= position[0] <= 720:
+                raise RuntimeError(f"妖魔殿冰坡路线偏离：{position}")
+            if position[0] >= 695:
+                break
+            if previous is not None:
+                stalled = stalled + 1 if position[0] - previous[0] < 3 else 0
+                if stalled >= 3:
+                    raise RuntimeError("妖魔殿冰坡连续三步没有预期位移")
+            if step == 6:
+                raise RuntimeError("妖魔殿冰坡超过 6 步未到出口")
+            LOG.warning("CatDiary 妖魔殿冰坡 第%s步：%s，right 600ms", step + 1, position)
+            self.action("CatDiarySwipe", {"CatDiarySwipe": {
+                "begin": [200, 450], "end": [380, 450], "duration": 600, "post_delay": 200,
+            }})
+            previous = position
+        frame = self.wait("CatDiaryKunlunSlide")
+        self.click(self.reco("CatDiaryKunlunSlide", frame))
+        self.wait_area_transition()
+        name, position, _, _ = self.locate(entry)
+        if name != "昆仑山脉" or math.dist(position, (598, 598)) > 20:
+            raise RuntimeError(f"未确认冰坡到达昆仑山脉：{name} {position}")
+        LOG.warning("CatDiary 已从妖魔殿冰坡进入昆仑山脉")
 
     def walk_xeno_research(self, entry):
         stages = [
@@ -838,7 +877,41 @@ class CatDiaryRunner(Navigator):
             time.sleep(0.1)
         raise RuntimeError("猫交互后未进入日记，不能确认成功")
 
+    def chase_hot_spring(self):
+        # 温泉没有区域图；只沿实机确认的入口、池边树木、浴场招牌向左寻找。
+        nodes = ["CatDiaryHotSpringEntrance", "CatDiaryHotSpringTree", "CatDiaryHotSpringBath"]
+        previous = None
+        stalled = 0
+        for step in range(9):
+            self.check()
+            frame = self.world()
+            landmarks = [(index, self.reco(node, frame)) for index, node in enumerate(nodes)]
+            landmarks = [(index, match) for index, match in landmarks if match]
+            if not landmarks:
+                raise RuntimeError("温泉场景标志不符，停止无小地图寻猫")
+            stage, match = landmarks[-1]
+            x = match.best_result.box[0]
+            if previous is not None:
+                if stage < previous[0]:
+                    raise RuntimeError("温泉场景顺序异常")
+                stalled = stalled + 1 if stage == previous[0] and x - previous[1] < 3 else 0
+                if stalled >= 3:
+                    raise RuntimeError("温泉连续三步没有预期场景位移")
+            if self.interact():
+                return
+            if step == 8:
+                break
+            LOG.warning("CatDiary 温泉无小地图追踪 第%s步：%s，left 600ms", step + 1, nodes[stage])
+            self.action("CatDiarySwipe", {"CatDiarySwipe": {
+                "begin": [600, 450], "end": [420, 450], "duration": 600,
+            }})
+            previous = (stage, x)
+        raise RuntimeError("温泉超过 8 步仍未找到猫")
+
     def chase(self, entry):
+        if entry.get("chase_mode") == "hot_spring":
+            self.chase_hot_spring()
+            return
         previous = None
         last_step = None
         last_road = None

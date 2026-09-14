@@ -154,7 +154,8 @@
         "recognition": "TemplateMatch",
         "template": [
             "CatDiary/Marker.png",
-            "CatDiary/MarkerNazrik.png"
+            "CatDiary/MarkerNazrik.png",
+            "CatDiary/MarkerKunlun.png"
         ],
         "roi": [
             165,
@@ -211,7 +212,10 @@
     "CatDiaryQuestIcon": {
         "desc": "区域图中的黄色任务菱形；用于排除金色角色环定位中的任务图标干扰。",
         "recognition": "TemplateMatch",
-        "template": "CatDiary/QuestIcon.png",
+        "template": [
+            "CatDiary/QuestIcon.png",
+            "CatDiary/QuestIconKunlun.png"
+        ],
         "roi": [
             165,
             140,
@@ -607,5 +611,53 @@
             255,
             255
         ]
+    },
+    "CatDiaryHotSpringEntrance": {
+        "desc": "温泉无小地图场景标志；仅用于已确认传送后的向左寻猫。",
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/HotSpringEntrance.png",
+        "roi": [
+            0,
+            0,
+            1280,
+            360
+        ],
+        "threshold": 0.9
+    },
+    "CatDiaryHotSpringTree": {
+        "desc": "温泉无小地图场景标志；仅用于已确认传送后的向左寻猫。",
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/HotSpringTree.png",
+        "roi": [
+            0,
+            0,
+            1280,
+            360
+        ],
+        "threshold": 0.9
+    },
+    "CatDiaryHotSpringBath": {
+        "desc": "温泉无小地图场景标志；仅用于已确认传送后的向左寻猫。",
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/HotSpringBath.png",
+        "roi": [
+            0,
+            0,
+            1280,
+            360
+        ],
+        "threshold": 0.9
+    },
+    "CatDiaryKunlunSlide": {
+        "desc": "妖魔殿右侧冰坡交互按钮；先核验区域图出口坐标。",
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/KunlunSlide.png",
+        "roi": [
+            800,
+            260,
+            160,
+            150
+        ],
+        "threshold": 0.9
     }
 }
