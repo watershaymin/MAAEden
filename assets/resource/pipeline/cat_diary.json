@@ -519,7 +519,10 @@
             },
             {
                 "recognition": "TemplateMatch",
-                "template": "CatDiary/DialogueBorder.png",
+                "template": [
+                    "CatDiary/DialogueBorder.png",
+                    "CatDiary/DialogueBorderBeach.png"
+                ],
                 "roi": [
                     0,
                     515,
