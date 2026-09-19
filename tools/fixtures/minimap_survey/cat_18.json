@@ -1,0 +1,70 @@
+{
+  "entry_id": "cat_18",
+  "map_name": "月影森林入口",
+  "teleport_override": {
+    "teleport": "月影森林",
+    "world_names": [
+      "月影森林"
+    ]
+  },
+  "waypoints": [
+    [
+      590,
+      369
+    ]
+  ],
+  "segments": [
+    [
+      743,
+      369,
+      832,
+      369
+    ],
+    [
+      743,
+      273,
+      743,
+      369
+    ],
+    [
+      657,
+      273,
+      743,
+      273
+    ],
+    [
+      686,
+      273,
+      686,
+      369
+    ],
+    [
+      469,
+      369,
+      686,
+      369
+    ],
+    [
+      469,
+      369,
+      469,
+      448
+    ],
+    [
+      548,
+      369,
+      548,
+      448
+    ],
+    [
+      444,
+      448,
+      579,
+      448
+    ]
+  ],
+  "target_description": "中央横路，左侧向下路口右侧",
+  "source_capture": "cat_18/capture/map.png",
+  "case_id": "cat_18",
+  "evidence_root": "debug/minimap/survey"
+}

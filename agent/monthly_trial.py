@@ -138,7 +138,7 @@ class MonthlyNavigator(Navigator):
     def click_match(self, node, result):
         self.check()
         box = result.box
-        detail = self.context.run_action(node, box=(box.x, box.y, box.w, box.h))
+        detail = self.context.run_action(node, box=(round(box.x+box.w/2), round(box.y+box.h/2), 1, 1))
         if not detail or not detail.success:
             raise RuntimeError(f"点击识别结果失败：{node}")
 
@@ -154,12 +154,14 @@ class MonthlyNavigator(Navigator):
             frame = self.frame()
             # 结算和战斗优先，防止透过遮罩把背景识别为世界。
             if self.reco("MonthlyRewards", frame):
+                self.navigation_epoch += 1
                 if rewards >= 12:
                     raise RuntimeError("单场结算超过 12 次操作")
                 self.counter.observe("rewards")
                 self.action("MonthlyRewards")
                 rewards += 1
             elif self.reco("MonthlyAttack", frame):
+                self.navigation_epoch += 1
                 if attacks >= 30:
                     raise RuntimeError("单场战斗超过 30 次攻击")
                 self.counter.observe("battle")
@@ -174,6 +176,13 @@ class MonthlyNavigator(Navigator):
         raise RuntimeError("180 秒内未恢复主界面；保留未知画面")
 
     def position(self, expected_map=None):
+        return super().position(expected_map)
+
+    def navigation_interrupted(self, frame):
+        return bool(self.reco('MonthlyAttack', frame) or self.reco('MonthlyRewards', frame))
+
+    def position_legacy(self, expected_map=None):
+        """旧截图诊断入口；正式试炼巡路使用共享小地图会话。"""
         # 放大的地图也不暂停明雷；读取标题和标记期间仍可能进入战斗。
         for _ in range(5):
             self.world()
@@ -226,6 +235,7 @@ class MonthlyNavigator(Navigator):
             if route_step(position, target, tolerance) is not None:
                 raise RuntimeError(f"路点 {target} 超过 20 步")
             LOG.warning("MonthlyStarTrial 路点 %s / %s", map_name, position)
+        position = self.audit_navigation(points[-1][0], max(8, points[-1][1]))
         return position
 
     def move(self, direction, duration, expected_map, previous):
@@ -238,10 +248,12 @@ class MonthlyNavigator(Navigator):
             "begin": [200, 450], "end": [200 + dx * 180, 450 + dy * 180], "duration": duration,
             "post_delay": settle,
         }})
+        self.navigation_movement = direction
         _, position = self.position(expected_map)
         distance = (position[0] - previous[0]) * dx + (position[1] - previous[1]) * dy
         if distance < max(3, min(6, duration * 0.01)):
-            if self.counter.wins > before and math.dist(position, previous) <= 5:
+            cross = (position[0]-previous[0]) * dy - (position[1]-previous[1]) * dx
+            if self.counter.wins > before and distance >= -3 and abs(cross) <= 5:
                 LOG.warning("MonthlyStarTrial 移动被战斗打断，在同一路点继续")
                 return position
             raise RuntimeError(f"未确认 {direction} 位移：{previous} -> {position}")
@@ -333,6 +345,7 @@ class MonthlyNavigator(Navigator):
         self.world()
 
     def teleport(self):
+        self.reset_navigation()
         for _ in range(6):
             frame = self.frame()
             if self.reco("MonthlyWorldMap", frame):
@@ -370,6 +383,7 @@ class MonthlyNavigator(Navigator):
         self.teleport()
         frame = self.wait("MonthlyTowerPortal")
         self.click_match("MonthlyTowerPortal", self.reco("MonthlyTowerPortal", frame))
+        self.reset_navigation()
         self.wait("MonthlyFloorArrived", seconds=20)
         self.world()
         _, position = self.position("第1层")
@@ -382,6 +396,7 @@ class MonthlyNavigator(Navigator):
             door = self.reco("MonthlyNestDoor", frame)
             if door:
                 self.click_match("MonthlyNestDoor", door)
+                self.reset_navigation()
                 self.wait("MonthlyNestArrived", seconds=20)
                 self.world()
                 _, position = self.position("魔物巢穴")

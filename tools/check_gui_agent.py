@@ -36,7 +36,7 @@ def check(package):
             assert client.connected and client.alive, 'Agent 连接状态异常'
             actions = client.custom_action_list
             recognitions = client.custom_recognition_list
-            assert {'NavigationMove', 'NavigationBaruokiRoute', 'DungeonSkip',
+            assert {'NavigationMove', 'NavigationBaruokiRoute', 'NavigationMiniMapRoute', 'DungeonSkip',
                     'DungeonDismissDetail', 'MenasTrial', 'MenasAppraisal', 'MonthlyStarTrial', 'MonthlyTrialDungeons', 'CatDiary'} <= set(actions), actions
             assert 'DungeonMenuReady' in recognitions, recognitions
             print(f'Agent 握手及注册通过：{actions}, {recognitions}', flush=True)

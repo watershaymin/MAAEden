@@ -1,0 +1,15 @@
+{
+  "entry_id": "cat_12",
+  "catalog_location": "星之塔",
+  "map_name": "星之塔1楼",
+  "waypoints": [
+    [
+      720,
+      263
+    ]
+  ],
+  "target_description": "最上方横路中央",
+  "source_capture": "cat_12/capture/map.png",
+  "case_id": "cat_12",
+  "evidence_root": "debug/minimap/survey"
+}

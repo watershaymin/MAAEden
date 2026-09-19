@@ -1,0 +1,16 @@
+{
+  "entry_id": "cat_23",
+  "catalog_location": "魔兽城王座",
+  "map_name": "魔兽城入口",
+  "waypoints": [
+    [
+      630,
+      263
+    ]
+  ],
+  "target_description": "上层横路中央，楼梯左侧",
+  "source_capture": "cat_23/capture3/map.png",
+  "access_note": "传送落在无小地图的城门外。向上接近门后点击门图标进入；复现导航请在魔兽城入口使用 run，不直接 --teleport。",
+  "case_id": "cat_23",
+  "evidence_root": "debug/minimap/survey"
+}

@@ -1,4 +1,26 @@
 {
+    "NavigationMiniMapRoute": {
+        "desc": "小地图闭环导航调试入口。显式传入地图全名和已确认的路点；开始及终点展开整图核验。日常巡路已共用该定位方式。",
+        "action": "Custom",
+        "custom_action": "NavigationMiniMapRoute",
+        "custom_action_param": {},
+        "next": [
+            "NavigationMiniMapComplete"
+        ]
+    },
+    "NavigationMiniMapComplete": {
+        "recognition": "And",
+        "all_of": [
+            "StartUpWorldReady"
+        ]
+    },
+    "NavigationMapInteraction": {
+        "desc": "实机采集的圆形感叹号；只在地图身份、起点和已验证连接的 ROI 同时满足时点击。",
+        "recognition": "TemplateMatch",
+        "template": "Navigation/Interact.png",
+        "roi": [0,100,1280,480],
+        "threshold": 0.9
+    },
     "NavigationMove": {
         "action": "Custom",
         "custom_action": "NavigationMove",
@@ -90,13 +112,14 @@
         "roi": [
             0,
             40,
-            650,
+            780,
             60
         ],
         "method": 10001,
         "threshold": 0.85
     },
     "NavigationMapName": {
+        "desc": "保留标题抗锯齿笔画，避免白色二值化割裂沼字或制造额外字符。",
         "recognition": "OCR",
         "roi": [
             15,

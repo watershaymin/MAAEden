@@ -1,0 +1,16 @@
+{
+  "entry_id": "cat_50",
+  "catalog_location": "龙神池",
+  "map_name": "龙神池",
+  "waypoints": [
+    [
+      710,
+      232
+    ]
+  ],
+  "target_description": "最上方支路横台",
+  "source_capture": "cat_50/capture/map.png",
+  "case_id": "cat_50",
+  "evidence_root": "debug/minimap/survey",
+  "road_model": "automatic_with_confirmed_icon_corners"
+}

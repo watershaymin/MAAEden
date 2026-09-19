@@ -1,0 +1,2654 @@
+{
+  "date": "2026-09-19",
+  "selection": "既有源码、开发文档和 debug 素材中未找到区域内实机导航记录；不等于证明账号从未进入。",
+  "maps_tested": 15,
+  "maps_passed": 7,
+  "success_steps": 91,
+  "success_map_opens": 16,
+  "records": [
+    {
+      "case": {
+        "entry_id": "cat_18",
+        "map_name": "月影森林入口",
+        "teleport_override": {
+          "teleport": "月影森林",
+          "world_names": [
+            "月影森林"
+          ]
+        },
+        "waypoints": [
+          [
+            590,
+            369
+          ]
+        ],
+        "segments": [
+          [
+            743,
+            369,
+            832,
+            369
+          ],
+          [
+            743,
+            273,
+            743,
+            369
+          ],
+          [
+            657,
+            273,
+            743,
+            273
+          ],
+          [
+            686,
+            273,
+            686,
+            369
+          ],
+          [
+            469,
+            369,
+            686,
+            369
+          ],
+          [
+            469,
+            369,
+            469,
+            448
+          ],
+          [
+            548,
+            369,
+            548,
+            448
+          ],
+          [
+            444,
+            448,
+            579,
+            448
+          ]
+        ],
+        "target_description": "中央横路，左侧向下路口右侧",
+        "source_capture": "cat_18/capture/map.png",
+        "case_id": "cat_18",
+        "evidence_root": "debug/minimap/survey"
+      },
+      "final": {
+        "entry_id": "cat_18",
+        "map_name": "月影森林入口",
+        "teleport_override": {
+          "teleport": "月影森林",
+          "world_names": [
+            "月影森林"
+          ]
+        },
+        "waypoints": [
+          [
+            590,
+            369
+          ]
+        ],
+        "segments": [
+          [
+            743,
+            369,
+            832,
+            369
+          ],
+          [
+            743,
+            273,
+            743,
+            369
+          ],
+          [
+            657,
+            273,
+            743,
+            273
+          ],
+          [
+            686,
+            273,
+            686,
+            369
+          ],
+          [
+            469,
+            369,
+            686,
+            369
+          ],
+          [
+            469,
+            369,
+            469,
+            448
+          ],
+          [
+            548,
+            369,
+            548,
+            448
+          ],
+          [
+            444,
+            448,
+            579,
+            448
+          ]
+        ],
+        "target_description": "中央横路，左侧向下路口右侧",
+        "source_capture": "cat_18/capture/map.png",
+        "phase": "run",
+        "status": "passed",
+        "steps": 13,
+        "map_opens": 2,
+        "mini_updates": 13,
+        "recalibrations": 0,
+        "audit_error": 0.5605035518656476,
+        "final_position": [
+          591.5570818070818,
+          367.3572484109867
+        ],
+        "target_error": 2.2634346770231213,
+        "elapsed_seconds": 38.12,
+        "evidence": "debug/minimap/survey/cat_18/run1/result.json",
+        "parameter_valid": true
+      },
+      "attempts": [
+        {
+          "entry_id": "cat_18",
+          "map_name": "月影森林入口",
+          "teleport_override": {
+            "teleport": "月影森林",
+            "world_names": [
+              "月影森林"
+            ]
+          },
+          "waypoints": [
+            [
+              590,
+              369
+            ]
+          ],
+          "segments": [
+            [
+              743,
+              369,
+              832,
+              369
+            ],
+            [
+              743,
+              273,
+              743,
+              369
+            ],
+            [
+              657,
+              273,
+              743,
+              273
+            ],
+            [
+              686,
+              273,
+              686,
+              369
+            ],
+            [
+              469,
+              369,
+              686,
+              369
+            ],
+            [
+              469,
+              369,
+              469,
+              448
+            ],
+            [
+              548,
+              369,
+              548,
+              448
+            ],
+            [
+              444,
+              448,
+              579,
+              448
+            ]
+          ],
+          "target_description": "中央横路，左侧向下路口右侧",
+          "source_capture": "cat_18/capture/map.png",
+          "phase": "run",
+          "status": "passed",
+          "steps": 13,
+          "map_opens": 2,
+          "mini_updates": 13,
+          "recalibrations": 0,
+          "audit_error": 0.5605035518656476,
+          "final_position": [
+            591.5570818070818,
+            367.3572484109867
+          ],
+          "target_error": 2.2634346770231213,
+          "elapsed_seconds": 38.12,
+          "evidence": "debug/minimap/survey/cat_18/run1/result.json",
+          "parameter_valid": true
+        }
+      ]
+    },
+    {
+      "case": {
+        "entry_id": "cat_06",
+        "map_name": "水之都阿克托尔",
+        "waypoints": [
+          [
+            590,
+            570
+          ]
+        ],
+        "target_description": "最下方横路，酒馆南侧",
+        "source_capture": "cat_06/capture/map.png",
+        "segments": [
+          [
+            255,
+            400,
+            847,
+            400
+          ],
+          [
+            458,
+            314,
+            977,
+            314
+          ],
+          [
+            458,
+            314,
+            458,
+            400
+          ],
+          [
+            612,
+            314,
+            612,
+            400
+          ],
+          [
+            847,
+            314,
+            847,
+            400
+          ],
+          [
+            563,
+            400,
+            563,
+            486
+          ],
+          [
+            490,
+            486,
+            665,
+            486
+          ],
+          [
+            510,
+            486,
+            510,
+            570
+          ],
+          [
+            510,
+            570,
+            704,
+            570
+          ],
+          [
+            665,
+            400,
+            665,
+            570
+          ],
+          [
+            742,
+            400,
+            742,
+            486
+          ],
+          [
+            742,
+            486,
+            846,
+            486
+          ]
+        ],
+        "case_id": "cat_06",
+        "evidence_root": "debug/minimap/survey"
+      },
+      "final": {
+        "entry_id": "cat_06",
+        "map_name": "水之都阿克托尔",
+        "waypoints": [
+          [
+            590,
+            570
+          ]
+        ],
+        "target_description": "最下方横路，酒馆南侧",
+        "source_capture": "cat_06/capture/map.png",
+        "segments": [
+          [
+            255,
+            400,
+            847,
+            400
+          ],
+          [
+            458,
+            314,
+            977,
+            314
+          ],
+          [
+            458,
+            314,
+            458,
+            400
+          ],
+          [
+            612,
+            314,
+            612,
+            400
+          ],
+          [
+            847,
+            314,
+            847,
+            400
+          ],
+          [
+            563,
+            400,
+            563,
+            486
+          ],
+          [
+            490,
+            486,
+            665,
+            486
+          ],
+          [
+            510,
+            486,
+            510,
+            570
+          ],
+          [
+            510,
+            570,
+            704,
+            570
+          ],
+          [
+            665,
+            400,
+            665,
+            570
+          ],
+          [
+            742,
+            400,
+            742,
+            486
+          ],
+          [
+            742,
+            486,
+            846,
+            486
+          ]
+        ],
+        "phase": "run",
+        "status": "passed",
+        "environment": {
+          "maafw": "5.12.3",
+          "opencv": "5.0.0",
+          "device": "127.0.0.1:16384",
+          "scaled_resolution": [
+            1280,
+            720
+          ],
+          "navigation_sha256": "3be022718b809fc5d84fc9ad8c4ec8e3b933285b435b469630276ef7e5da02f9"
+        },
+        "steps": 11,
+        "map_opens": 2,
+        "mini_updates": 11,
+        "recalibrations": 0,
+        "audit_error": 1.3545561056413473,
+        "final_position": [
+          586.2945402298851,
+          570.1120689655172
+        ],
+        "target_error": 3.7071541053713903,
+        "last_position": [
+          586.1598018022553,
+          570.3035152605055
+        ],
+        "last_map_position": [
+          586.2945402298851,
+          570.1120689655172
+        ],
+        "elapsed_seconds": 78.86,
+        "evidence": "debug/minimap/survey/cat_06/run3/result.json",
+        "parameter_valid": true
+      },
+      "attempts": [
+        {
+          "entry_id": "cat_06",
+          "map_name": "水之都阿克托尔",
+          "waypoints": [
+            [
+              590,
+              570
+            ]
+          ],
+          "target_description": "最下方横路，酒馆南侧",
+          "source_capture": "cat_06/capture/map.png",
+          "phase": "run",
+          "status": "failed",
+          "error": "猫图例与角色之间没有连续的可确认道路",
+          "elapsed_seconds": 4.12,
+          "evidence": "debug/minimap/survey/cat_06/run1/result.json",
+          "parameter_valid": true
+        },
+        {
+          "entry_id": "cat_06",
+          "map_name": "水之都阿克托尔",
+          "waypoints": [
+            [
+              590,
+              570
+            ]
+          ],
+          "target_description": "最下方横路，酒馆南侧",
+          "source_capture": "cat_06/capture/map.png",
+          "segments": [
+            [
+              255,
+              400,
+              847,
+              400
+            ],
+            [
+              458,
+              314,
+              977,
+              314
+            ],
+            [
+              458,
+              314,
+              458,
+              400
+            ],
+            [
+              612,
+              314,
+              612,
+              400
+            ],
+            [
+              847,
+              314,
+              847,
+              400
+            ],
+            [
+              563,
+              400,
+              563,
+              486
+            ],
+            [
+              490,
+              486,
+              665,
+              486
+            ],
+            [
+              510,
+              486,
+              510,
+              570
+            ],
+            [
+              510,
+              570,
+              704,
+              570
+            ],
+            [
+              665,
+              400,
+              665,
+              570
+            ],
+            [
+              742,
+              400,
+              742,
+              486
+            ],
+            [
+              742,
+              486,
+              846,
+              486
+            ]
+          ],
+          "phase": "run",
+          "status": "failed",
+          "error": "小地图定位候选 0：没有可确认的呼吸环",
+          "elapsed_seconds": 26.94,
+          "evidence": "debug/minimap/survey/cat_06/run2/result.json",
+          "parameter_valid": true
+        },
+        {
+          "entry_id": "cat_06",
+          "map_name": "水之都阿克托尔",
+          "waypoints": [
+            [
+              590,
+              570
+            ]
+          ],
+          "target_description": "最下方横路，酒馆南侧",
+          "source_capture": "cat_06/capture/map.png",
+          "segments": [
+            [
+              255,
+              400,
+              847,
+              400
+            ],
+            [
+              458,
+              314,
+              977,
+              314
+            ],
+            [
+              458,
+              314,
+              458,
+              400
+            ],
+            [
+              612,
+              314,
+              612,
+              400
+            ],
+            [
+              847,
+              314,
+              847,
+              400
+            ],
+            [
+              563,
+              400,
+              563,
+              486
+            ],
+            [
+              490,
+              486,
+              665,
+              486
+            ],
+            [
+              510,
+              486,
+              510,
+              570
+            ],
+            [
+              510,
+              570,
+              704,
+              570
+            ],
+            [
+              665,
+              400,
+              665,
+              570
+            ],
+            [
+              742,
+              400,
+              742,
+              486
+            ],
+            [
+              742,
+              486,
+              846,
+              486
+            ]
+          ],
+          "phase": "run",
+          "status": "passed",
+          "environment": {
+            "maafw": "5.12.3",
+            "opencv": "5.0.0",
+            "device": "127.0.0.1:16384",
+            "scaled_resolution": [
+              1280,
+              720
+            ],
+            "navigation_sha256": "3be022718b809fc5d84fc9ad8c4ec8e3b933285b435b469630276ef7e5da02f9"
+          },
+          "steps": 11,
+          "map_opens": 2,
+          "mini_updates": 11,
+          "recalibrations": 0,
+          "audit_error": 1.3545561056413473,
+          "final_position": [
+            586.2945402298851,
+            570.1120689655172
+          ],
+          "target_error": 3.7071541053713903,
+          "last_position": [
+            586.1598018022553,
+            570.3035152605055
+          ],
+          "last_map_position": [
+            586.2945402298851,
+            570.1120689655172
+          ],
+          "elapsed_seconds": 78.86,
+          "evidence": "debug/minimap/survey/cat_06/run3/result.json",
+          "parameter_valid": true
+        }
+      ]
+    },
+    {
+      "case": {
+        "entry_id": "cat_04",
+        "catalog_location": "纳达拉火山",
+        "map_name": "纳达拉火山",
+        "waypoints": [
+          [
+            580,
+            274
+          ]
+        ],
+        "target_description": "上方横路，出口右侧",
+        "source_capture": "cat_04/capture/map.png",
+        "case_id": "cat_04",
+        "evidence_root": "debug/minimap/survey"
+      },
+      "final": {
+        "entry_id": "cat_04",
+        "catalog_location": "纳达拉火山",
+        "map_name": "纳达拉火山",
+        "waypoints": [
+          [
+            580,
+            274
+          ]
+        ],
+        "target_description": "上方横路，出口右侧",
+        "source_capture": "cat_04/capture/map.png",
+        "phase": "run",
+        "status": "failed",
+        "environment": {
+          "maafw": "5.12.3",
+          "opencv": "5.0.0",
+          "device": "127.0.0.1:16384",
+          "scaled_resolution": [
+            1280,
+            720
+          ],
+          "navigation_sha256": "3be022718b809fc5d84fc9ad8c4ec8e3b933285b435b469630276ef7e5da02f9"
+        },
+        "error": "小地图定位候选 0：小地图匹配不足：4",
+        "steps": 0,
+        "map_opens": 1,
+        "mini_updates": 0,
+        "recalibrations": 0,
+        "last_position": null,
+        "last_map_position": [
+          809.5222443559096,
+          444.0
+        ],
+        "audit_error": null,
+        "elapsed_seconds": 39.8,
+        "evidence": "debug/minimap/survey/cat_04/run2/result.json",
+        "parameter_valid": true
+      },
+      "attempts": [
+        {
+          "entry_id": "cat_04",
+          "catalog_location": "纳达拉火山",
+          "map_name": "纳达拉火山",
+          "waypoints": [
+            580,
+            274
+          ],
+          "target_description": "上方横路，出口右侧",
+          "source_capture": "cat_04/capture/map.png",
+          "phase": "run",
+          "status": "failed",
+          "error": "小地图定位候选 0：小地图匹配不足：6",
+          "elapsed_seconds": 4.25,
+          "evidence": "debug/minimap/survey/cat_04/run1/result.json",
+          "parameter_valid": false
+        },
+        {
+          "entry_id": "cat_04",
+          "catalog_location": "纳达拉火山",
+          "map_name": "纳达拉火山",
+          "waypoints": [
+            [
+              580,
+              274
+            ]
+          ],
+          "target_description": "上方横路，出口右侧",
+          "source_capture": "cat_04/capture/map.png",
+          "phase": "run",
+          "status": "failed",
+          "environment": {
+            "maafw": "5.12.3",
+            "opencv": "5.0.0",
+            "device": "127.0.0.1:16384",
+            "scaled_resolution": [
+              1280,
+              720
+            ],
+            "navigation_sha256": "3be022718b809fc5d84fc9ad8c4ec8e3b933285b435b469630276ef7e5da02f9"
+          },
+          "error": "小地图定位候选 0：小地图匹配不足：4",
+          "steps": 0,
+          "map_opens": 1,
+          "mini_updates": 0,
+          "recalibrations": 0,
+          "last_position": null,
+          "last_map_position": [
+            809.5222443559096,
+            444.0
+          ],
+          "audit_error": null,
+          "elapsed_seconds": 39.8,
+          "evidence": "debug/minimap/survey/cat_04/run2/result.json",
+          "parameter_valid": true
+        }
+      ]
+    },
+    {
+      "case": {
+        "entry_id": "cat_08",
+        "catalog_location": "酸性沼泽",
+        "map_name": "酸性沼泽",
+        "waypoints": [
+          [
+            570,
+            274
+          ]
+        ],
+        "target_description": "上方横路中央",
+        "source_capture": "cat_08/capture/map.png",
+        "case_id": "cat_08",
+        "evidence_root": "debug/minimap/survey"
+      },
+      "final": {
+        "entry_id": "cat_08",
+        "catalog_location": "酸性沼泽",
+        "map_name": "酸性沼泽",
+        "waypoints": [
+          [
+            570,
+            274
+          ]
+        ],
+        "target_description": "上方横路中央",
+        "source_capture": "cat_08/capture/map.png",
+        "phase": "run",
+        "status": "failed",
+        "error": "地图不符：预期 酸性沼泽，实际 酸性洛泽；保留现场",
+        "steps": 0,
+        "map_opens": 1,
+        "mini_updates": 0,
+        "recalibrations": 0,
+        "last_position": null,
+        "last_map_position": null,
+        "audit_error": null,
+        "elapsed_seconds": 2.55,
+        "evidence": "debug/minimap/survey/cat_08/run1/result.json",
+        "parameter_valid": true
+      },
+      "attempts": [
+        {
+          "entry_id": "cat_08",
+          "catalog_location": "酸性沼泽",
+          "map_name": "酸性沼泽",
+          "waypoints": [
+            [
+              570,
+              274
+            ]
+          ],
+          "target_description": "上方横路中央",
+          "source_capture": "cat_08/capture/map.png",
+          "phase": "run",
+          "status": "failed",
+          "error": "地图不符：预期 酸性沼泽，实际 酸性洛泽；保留现场",
+          "steps": 0,
+          "map_opens": 1,
+          "mini_updates": 0,
+          "recalibrations": 0,
+          "last_position": null,
+          "last_map_position": null,
+          "audit_error": null,
+          "elapsed_seconds": 2.55,
+          "evidence": "debug/minimap/survey/cat_08/run1/result.json",
+          "parameter_valid": true
+        }
+      ]
+    },
+    {
+      "case": {
+        "entry_id": "cat_10",
+        "catalog_location": "时之塔7F",
+        "map_name": "时之塔1楼",
+        "waypoints": [
+          [
+            610,
+            263
+          ]
+        ],
+        "target_description": "上层横路，楼梯与叹号之间",
+        "source_capture": "cat_10/capture/map.png",
+        "case_id": "cat_10",
+        "evidence_root": "debug/minimap/survey"
+      },
+      "final": {
+        "entry_id": "cat_10",
+        "catalog_location": "时之塔7F",
+        "map_name": "时之塔1楼",
+        "waypoints": [
+          [
+            610,
+            263
+          ]
+        ],
+        "target_description": "上层横路，楼梯与叹号之间",
+        "source_capture": "cat_10/capture/map.png",
+        "phase": "run",
+        "status": "failed",
+        "error": "小地图定位候选 0：小地图几何约束不符：inliers=5/10 scale=1.000 angle=0.28",
+        "steps": 0,
+        "map_opens": 1,
+        "mini_updates": 0,
+        "recalibrations": 0,
+        "last_position": null,
+        "last_map_position": [
+          650.2835800686045,
+          456.8945630359423
+        ],
+        "audit_error": null,
+        "elapsed_seconds": 4.39,
+        "evidence": "debug/minimap/survey/cat_10/run1/result.json",
+        "parameter_valid": true
+      },
+      "attempts": [
+        {
+          "entry_id": "cat_10",
+          "catalog_location": "时之塔7F",
+          "map_name": "时之塔1楼",
+          "waypoints": [
+            [
+              610,
+              263
+            ]
+          ],
+          "target_description": "上层横路，楼梯与叹号之间",
+          "source_capture": "cat_10/capture/map.png",
+          "phase": "run",
+          "status": "failed",
+          "error": "小地图定位候选 0：小地图几何约束不符：inliers=5/10 scale=1.000 angle=0.28",
+          "steps": 0,
+          "map_opens": 1,
+          "mini_updates": 0,
+          "recalibrations": 0,
+          "last_position": null,
+          "last_map_position": [
+            650.2835800686045,
+            456.8945630359423
+          ],
+          "audit_error": null,
+          "elapsed_seconds": 4.39,
+          "evidence": "debug/minimap/survey/cat_10/run1/result.json",
+          "parameter_valid": true
+        }
+      ]
+    },
+    {
+      "case": {
+        "entry_id": "cat_12",
+        "catalog_location": "星之塔",
+        "map_name": "星之塔1楼",
+        "waypoints": [
+          [
+            720,
+            263
+          ]
+        ],
+        "target_description": "最上方横路中央",
+        "source_capture": "cat_12/capture/map.png",
+        "case_id": "cat_12",
+        "evidence_root": "debug/minimap/survey"
+      },
+      "final": {
+        "entry_id": "cat_12",
+        "catalog_location": "星之塔",
+        "map_name": "星之塔1楼",
+        "waypoints": [
+          [
+            720,
+            263
+          ]
+        ],
+        "target_description": "最上方横路中央",
+        "source_capture": "cat_12/capture/map.png",
+        "phase": "run",
+        "status": "passed",
+        "environment": {
+          "maafw": "5.12.3",
+          "opencv": "5.0.0",
+          "device": "127.0.0.1:16384",
+          "scaled_resolution": [
+            1280,
+            720
+          ],
+          "navigation_sha256": "3be022718b809fc5d84fc9ad8c4ec8e3b933285b435b469630276ef7e5da02f9"
+        },
+        "steps": 13,
+        "map_opens": 2,
+        "mini_updates": 13,
+        "recalibrations": 0,
+        "audit_error": 1.0170733715759093,
+        "final_position": [
+          722.317840050297,
+          262.25611787810584
+        ],
+        "target_error": 2.434284927865825,
+        "last_position": [
+          721.2424833305993,
+          261.88617817935517
+        ],
+        "last_map_position": [
+          722.317840050297,
+          262.25611787810584
+        ],
+        "elapsed_seconds": 45.75,
+        "evidence": "debug/minimap/survey/cat_12/run2/result.json",
+        "parameter_valid": true
+      },
+      "attempts": [
+        {
+          "entry_id": "cat_12",
+          "catalog_location": "星之塔",
+          "map_name": "星之塔1楼",
+          "waypoints": [
+            [
+              720,
+              263
+            ]
+          ],
+          "target_description": "最上方横路中央",
+          "source_capture": "cat_12/capture/map.png",
+          "phase": "run",
+          "status": "failed",
+          "error": "整图与小地图初始位置不一致",
+          "steps": 0,
+          "map_opens": 1,
+          "mini_updates": 0,
+          "recalibrations": 0,
+          "last_position": null,
+          "last_map_position": [
+            687.7069711897298,
+            456.6718301127944
+          ],
+          "audit_error": null,
+          "elapsed_seconds": 4.2,
+          "evidence": "debug/minimap/survey/cat_12/run1/result.json",
+          "parameter_valid": true
+        },
+        {
+          "entry_id": "cat_12",
+          "catalog_location": "星之塔",
+          "map_name": "星之塔1楼",
+          "waypoints": [
+            [
+              720,
+              263
+            ]
+          ],
+          "target_description": "最上方横路中央",
+          "source_capture": "cat_12/capture/map.png",
+          "phase": "run",
+          "status": "passed",
+          "environment": {
+            "maafw": "5.12.3",
+            "opencv": "5.0.0",
+            "device": "127.0.0.1:16384",
+            "scaled_resolution": [
+              1280,
+              720
+            ],
+            "navigation_sha256": "3be022718b809fc5d84fc9ad8c4ec8e3b933285b435b469630276ef7e5da02f9"
+          },
+          "steps": 13,
+          "map_opens": 2,
+          "mini_updates": 13,
+          "recalibrations": 0,
+          "audit_error": 1.0170733715759093,
+          "final_position": [
+            722.317840050297,
+            262.25611787810584
+          ],
+          "target_error": 2.434284927865825,
+          "last_position": [
+            721.2424833305993,
+            261.88617817935517
+          ],
+          "last_map_position": [
+            722.317840050297,
+            262.25611787810584
+          ],
+          "elapsed_seconds": 45.75,
+          "evidence": "debug/minimap/survey/cat_12/run2/result.json",
+          "parameter_valid": true
+        }
+      ]
+    },
+    {
+      "case": {
+        "entry_id": "cat_23",
+        "catalog_location": "魔兽城王座",
+        "map_name": "魔兽城入口",
+        "waypoints": [
+          [
+            630,
+            263
+          ]
+        ],
+        "target_description": "上层横路中央，楼梯左侧",
+        "source_capture": "cat_23/capture3/map.png",
+        "access_note": "传送落在无小地图的城门外。向上接近门后点击门图标进入；复现导航请在魔兽城入口使用 run，不直接 --teleport。",
+        "case_id": "cat_23",
+        "evidence_root": "debug/minimap/survey"
+      },
+      "final": {
+        "entry_id": "cat_23",
+        "catalog_location": "魔兽城王座",
+        "map_name": "魔兽城入口",
+        "waypoints": [
+          [
+            630,
+            263
+          ]
+        ],
+        "target_description": "上层横路中央，楼梯左侧",
+        "source_capture": "cat_23/capture3/map.png",
+        "phase": "run",
+        "status": "passed",
+        "steps": 17,
+        "map_opens": 3,
+        "mini_updates": 16,
+        "recalibrations": 1,
+        "audit_error": 0.979407789373468,
+        "final_position": [
+          628.2555294322535,
+          263.6386639676113
+        ],
+        "target_error": 1.8577053655676208,
+        "last_position": [
+          627.7281037380881,
+          263.14434296672255
+        ],
+        "last_map_position": [
+          628.2555294322535,
+          263.6386639676113
+        ],
+        "elapsed_seconds": 51.42,
+        "evidence": "debug/minimap/survey/cat_23/run1/result.json",
+        "parameter_valid": true
+      },
+      "attempts": [
+        {
+          "entry_id": "cat_23",
+          "catalog_location": "魔兽城王座",
+          "map_name": "魔兽城入口",
+          "waypoints": [
+            [
+              630,
+              263
+            ]
+          ],
+          "target_description": "上层横路中央，楼梯左侧",
+          "source_capture": "cat_23/capture3/map.png",
+          "phase": "run",
+          "status": "passed",
+          "steps": 17,
+          "map_opens": 3,
+          "mini_updates": 16,
+          "recalibrations": 1,
+          "audit_error": 0.979407789373468,
+          "final_position": [
+            628.2555294322535,
+            263.6386639676113
+          ],
+          "target_error": 1.8577053655676208,
+          "last_position": [
+            627.7281037380881,
+            263.14434296672255
+          ],
+          "last_map_position": [
+            628.2555294322535,
+            263.6386639676113
+          ],
+          "elapsed_seconds": 51.42,
+          "evidence": "debug/minimap/survey/cat_23/run1/result.json",
+          "parameter_valid": true
+        }
+      ]
+    },
+    {
+      "case": {
+        "entry_id": "cat_38",
+        "catalog_location": "工业都市废墟（连接通道）",
+        "map_name": "工业都市废墟区域A",
+        "waypoints": [
+          [
+            550,
+            360
+          ]
+        ],
+        "target_description": "中层横路，连接路左侧",
+        "source_capture": "cat_38/capture/map.png",
+        "case_id": "cat_38",
+        "evidence_root": "debug/minimap/survey"
+      },
+      "final": {
+        "entry_id": "cat_38",
+        "catalog_location": "工业都市废墟（连接通道）",
+        "map_name": "工业都市废墟区域A",
+        "waypoints": [
+          [
+            550,
+            360
+          ]
+        ],
+        "target_description": "中层横路，连接路左侧",
+        "source_capture": "cat_38/capture/map.png",
+        "phase": "run",
+        "status": "failed",
+        "error": "小地图定位候选 0：小地图几何约束不符：inliers=7/9 scale=0.995 angle=1.51",
+        "steps": 0,
+        "map_opens": 1,
+        "mini_updates": 0,
+        "recalibrations": 0,
+        "last_position": null,
+        "last_map_position": [
+          867.6731781791502,
+          439.85130398459916
+        ],
+        "audit_error": null,
+        "elapsed_seconds": 4.22,
+        "evidence": "debug/minimap/survey/cat_38/run1/result.json",
+        "parameter_valid": true
+      },
+      "attempts": [
+        {
+          "entry_id": "cat_38",
+          "catalog_location": "工业都市废墟（连接通道）",
+          "map_name": "工业都市废墟区域A",
+          "waypoints": [
+            [
+              550,
+              360
+            ]
+          ],
+          "target_description": "中层横路，连接路左侧",
+          "source_capture": "cat_38/capture/map.png",
+          "phase": "run",
+          "status": "failed",
+          "error": "小地图定位候选 0：小地图几何约束不符：inliers=7/9 scale=0.995 angle=1.51",
+          "steps": 0,
+          "map_opens": 1,
+          "mini_updates": 0,
+          "recalibrations": 0,
+          "last_position": null,
+          "last_map_position": [
+            867.6731781791502,
+            439.85130398459916
+          ],
+          "audit_error": null,
+          "elapsed_seconds": 4.22,
+          "evidence": "debug/minimap/survey/cat_38/run1/result.json",
+          "parameter_valid": true
+        }
+      ]
+    },
+    {
+      "case": {
+        "entry_id": "cat_40",
+        "catalog_location": "托托梦幻乐园（正门）",
+        "map_name": "托托的梦幻乐园惊悚区",
+        "waypoints": [
+          [
+            800,
+            440
+          ]
+        ],
+        "target_description": "下层横路右半段",
+        "source_capture": "cat_40/capture/map.png",
+        "case_id": "cat_40",
+        "evidence_root": "debug/minimap/survey"
+      },
+      "final": {
+        "entry_id": "cat_40",
+        "catalog_location": "托托梦幻乐园（正门）",
+        "map_name": "托托的梦幻乐园惊悚区",
+        "waypoints": [
+          [
+            800,
+            440
+          ]
+        ],
+        "target_description": "下层横路右半段",
+        "source_capture": "cat_40/capture/map.png",
+        "phase": "run",
+        "status": "passed",
+        "steps": 14,
+        "map_opens": 2,
+        "mini_updates": 14,
+        "recalibrations": 0,
+        "audit_error": 0.44063352237556896,
+        "final_position": [
+          796.1725652376515,
+          439.6988593857015
+        ],
+        "target_error": 3.8392632795386437,
+        "last_position": [
+          794.732741482984,
+          439.0252408646828
+        ],
+        "last_map_position": [
+          796.1725652376515,
+          439.6988593857015
+        ],
+        "elapsed_seconds": 40.98,
+        "evidence": "debug/minimap/survey/cat_40/run1/result.json",
+        "parameter_valid": true
+      },
+      "attempts": [
+        {
+          "entry_id": "cat_40",
+          "catalog_location": "托托梦幻乐园（正门）",
+          "map_name": "托托的梦幻乐园惊悚区",
+          "waypoints": [
+            [
+              800,
+              440
+            ]
+          ],
+          "target_description": "下层横路右半段",
+          "source_capture": "cat_40/capture/map.png",
+          "phase": "run",
+          "status": "passed",
+          "steps": 14,
+          "map_opens": 2,
+          "mini_updates": 14,
+          "recalibrations": 0,
+          "audit_error": 0.44063352237556896,
+          "final_position": [
+            796.1725652376515,
+            439.6988593857015
+          ],
+          "target_error": 3.8392632795386437,
+          "last_position": [
+            794.732741482984,
+            439.0252408646828
+          ],
+          "last_map_position": [
+            796.1725652376515,
+            439.6988593857015
+          ],
+          "elapsed_seconds": 40.98,
+          "evidence": "debug/minimap/survey/cat_40/run1/result.json",
+          "parameter_valid": true
+        }
+      ]
+    },
+    {
+      "case": {
+        "entry_id": "cat_38",
+        "case_id": "kms",
+        "teleport_override": {
+          "teleport": "旧KMS总部",
+          "world_names": [
+            "旧KMS总部"
+          ]
+        },
+        "map_name": "旧KMS总部副入口",
+        "waypoints": [
+          [
+            620,
+            263
+          ]
+        ],
+        "target_description": "上层横路中央",
+        "source_capture": "kms/capture/map.png",
+        "segments": [
+          [
+            720,
+            456,
+            893,
+            456
+          ],
+          [
+            806,
+            360,
+            806,
+            456
+          ],
+          [
+            600,
+            360,
+            886,
+            360
+          ],
+          [
+            704,
+            263,
+            704,
+            360
+          ],
+          [
+            364,
+            263,
+            840,
+            263
+          ],
+          [
+            422,
+            263,
+            422,
+            360
+          ],
+          [
+            374,
+            360,
+            560,
+            360
+          ],
+          [
+            474,
+            360,
+            474,
+            456
+          ],
+          [
+            450,
+            456,
+            645,
+            456
+          ],
+          [
+            628,
+            360,
+            628,
+            456
+          ]
+        ],
+        "evidence_root": "debug/minimap/survey"
+      },
+      "final": {
+        "entry_id": "cat_38",
+        "case_id": "kms",
+        "teleport_override": {
+          "teleport": "旧KMS总部",
+          "world_names": [
+            "旧KMS总部"
+          ]
+        },
+        "map_name": "旧KMS总部副入口",
+        "waypoints": [
+          [
+            620,
+            263
+          ]
+        ],
+        "target_description": "上层横路中央",
+        "source_capture": "kms/capture/map.png",
+        "segments": [
+          [
+            720,
+            456,
+            893,
+            456
+          ],
+          [
+            806,
+            360,
+            806,
+            456
+          ],
+          [
+            600,
+            360,
+            886,
+            360
+          ],
+          [
+            704,
+            263,
+            704,
+            360
+          ],
+          [
+            364,
+            263,
+            840,
+            263
+          ],
+          [
+            422,
+            263,
+            422,
+            360
+          ],
+          [
+            374,
+            360,
+            560,
+            360
+          ],
+          [
+            474,
+            360,
+            474,
+            456
+          ],
+          [
+            450,
+            456,
+            645,
+            456
+          ],
+          [
+            628,
+            360,
+            628,
+            456
+          ]
+        ],
+        "phase": "run",
+        "status": "passed",
+        "environment": {
+          "maafw": "5.12.3",
+          "opencv": "5.0.0",
+          "device": "127.0.0.1:16384",
+          "scaled_resolution": [
+            1280,
+            720
+          ],
+          "navigation_sha256": "3be022718b809fc5d84fc9ad8c4ec8e3b933285b435b469630276ef7e5da02f9"
+        },
+        "steps": 12,
+        "map_opens": 3,
+        "mini_updates": 11,
+        "recalibrations": 1,
+        "audit_error": 1.816765474127211,
+        "final_position": [
+          626.2097596515823,
+          262.2745195195195
+        ],
+        "target_error": 6.251994630354215,
+        "last_position": [
+          624.5224479580643,
+          261.81096984360204
+        ],
+        "last_map_position": [
+          626.2097596515823,
+          262.2745195195195
+        ],
+        "elapsed_seconds": 47.02,
+        "evidence": "debug/minimap/survey/kms/run2/result.json",
+        "parameter_valid": true
+      },
+      "attempts": [
+        {
+          "entry_id": "cat_38",
+          "case_id": "kms",
+          "teleport_override": {
+            "teleport": "旧KMS总部",
+            "world_names": [
+              "旧KMS总部"
+            ]
+          },
+          "map_name": "旧KMS总部副入口",
+          "waypoints": [
+            [
+              620,
+              263
+            ]
+          ],
+          "target_description": "上层横路中央",
+          "source_capture": "kms/capture/map.png",
+          "segments": [
+            [
+              720,
+              456,
+              893,
+              456
+            ],
+            [
+              806,
+              360,
+              806,
+              456
+            ],
+            [
+              600,
+              360,
+              886,
+              360
+            ],
+            [
+              704,
+              263,
+              704,
+              360
+            ],
+            [
+              364,
+              263,
+              840,
+              263
+            ],
+            [
+              422,
+              263,
+              422,
+              360
+            ],
+            [
+              374,
+              360,
+              560,
+              360
+            ],
+            [
+              474,
+              360,
+              474,
+              456
+            ],
+            [
+              450,
+              456,
+              645,
+              456
+            ],
+            [
+              628,
+              360,
+              628,
+              456
+            ]
+          ],
+          "phase": "run",
+          "status": "failed",
+          "environment": {
+            "maafw": "5.12.3",
+            "opencv": "5.0.0",
+            "device": "127.0.0.1:16384",
+            "scaled_resolution": [
+              1280,
+              720
+            ],
+            "navigation_sha256": "0f51ffe843c615191c1ac588a9628010bc41214ca1646c4b8e726317726188dc"
+          },
+          "error": "地图不符：预期 旧KMS总部副入口，实际 旧KMS总部β副入口；保留现场",
+          "steps": 3,
+          "map_opens": 2,
+          "mini_updates": 2,
+          "recalibrations": 1,
+          "last_position": [
+            829.5522368742868,
+            455.3289422652746
+          ],
+          "last_map_position": [
+            880.1111473645647,
+            456.66959035017373
+          ],
+          "audit_error": null,
+          "elapsed_seconds": 12.8,
+          "evidence": "debug/minimap/survey/kms/run1/result.json",
+          "parameter_valid": true
+        },
+        {
+          "entry_id": "cat_38",
+          "case_id": "kms",
+          "teleport_override": {
+            "teleport": "旧KMS总部",
+            "world_names": [
+              "旧KMS总部"
+            ]
+          },
+          "map_name": "旧KMS总部副入口",
+          "waypoints": [
+            [
+              620,
+              263
+            ]
+          ],
+          "target_description": "上层横路中央",
+          "source_capture": "kms/capture/map.png",
+          "segments": [
+            [
+              720,
+              456,
+              893,
+              456
+            ],
+            [
+              806,
+              360,
+              806,
+              456
+            ],
+            [
+              600,
+              360,
+              886,
+              360
+            ],
+            [
+              704,
+              263,
+              704,
+              360
+            ],
+            [
+              364,
+              263,
+              840,
+              263
+            ],
+            [
+              422,
+              263,
+              422,
+              360
+            ],
+            [
+              374,
+              360,
+              560,
+              360
+            ],
+            [
+              474,
+              360,
+              474,
+              456
+            ],
+            [
+              450,
+              456,
+              645,
+              456
+            ],
+            [
+              628,
+              360,
+              628,
+              456
+            ]
+          ],
+          "phase": "run",
+          "status": "passed",
+          "environment": {
+            "maafw": "5.12.3",
+            "opencv": "5.0.0",
+            "device": "127.0.0.1:16384",
+            "scaled_resolution": [
+              1280,
+              720
+            ],
+            "navigation_sha256": "3be022718b809fc5d84fc9ad8c4ec8e3b933285b435b469630276ef7e5da02f9"
+          },
+          "steps": 12,
+          "map_opens": 3,
+          "mini_updates": 11,
+          "recalibrations": 1,
+          "audit_error": 1.816765474127211,
+          "final_position": [
+            626.2097596515823,
+            262.2745195195195
+          ],
+          "target_error": 6.251994630354215,
+          "last_position": [
+            624.5224479580643,
+            261.81096984360204
+          ],
+          "last_map_position": [
+            626.2097596515823,
+            262.2745195195195
+          ],
+          "elapsed_seconds": 47.02,
+          "evidence": "debug/minimap/survey/kms/run2/result.json",
+          "parameter_valid": true
+        }
+      ]
+    },
+    {
+      "case": {
+        "entry_id": "cat_38",
+        "case_id": "fantasy",
+        "teleport_override": {
+          "teleport": "幻想遗址",
+          "world_names": [
+            "幻想遗址"
+          ]
+        },
+        "map_name": "艾尼亚德的秘密基地楼层B",
+        "waypoints": [
+          [
+            705,
+            390
+          ]
+        ],
+        "target_description": "已显示短走廊上端内侧",
+        "source_capture": "fantasy/capture/map.png",
+        "segments": [
+          [
+            705,
+            385,
+            705,
+            462
+          ],
+          [
+            705,
+            462,
+            734,
+            462
+          ]
+        ],
+        "evidence_root": "debug/minimap/survey"
+      },
+      "final": {
+        "entry_id": "cat_38",
+        "case_id": "fantasy",
+        "teleport_override": {
+          "teleport": "幻想遗址",
+          "world_names": [
+            "幻想遗址"
+          ]
+        },
+        "map_name": "艾尼亚德的秘密基地楼层B",
+        "waypoints": [
+          [
+            705,
+            390
+          ]
+        ],
+        "target_description": "已显示短走廊上端内侧",
+        "source_capture": "fantasy/capture/map.png",
+        "segments": [
+          [
+            705,
+            385,
+            705,
+            462
+          ],
+          [
+            705,
+            462,
+            734,
+            462
+          ]
+        ],
+        "phase": "run",
+        "status": "failed",
+        "environment": {
+          "maafw": "5.12.3",
+          "opencv": "5.0.0",
+          "device": "127.0.0.1:16384",
+          "scaled_resolution": [
+            1280,
+            720
+          ],
+          "navigation_sha256": "3be022718b809fc5d84fc9ad8c4ec8e3b933285b435b469630276ef7e5da02f9"
+        },
+        "error": "小地图定位候选 0：小地图匹配不足：0",
+        "steps": 0,
+        "map_opens": 1,
+        "mini_updates": 0,
+        "recalibrations": 0,
+        "last_position": null,
+        "last_map_position": [
+          732.2434640522875,
+          461.1240657698056
+        ],
+        "audit_error": null,
+        "elapsed_seconds": 3.84,
+        "evidence": "debug/minimap/survey/fantasy/run1/result.json",
+        "parameter_valid": true
+      },
+      "attempts": [
+        {
+          "entry_id": "cat_38",
+          "case_id": "fantasy",
+          "teleport_override": {
+            "teleport": "幻想遗址",
+            "world_names": [
+              "幻想遗址"
+            ]
+          },
+          "map_name": "艾尼亚德的秘密基地楼层B",
+          "waypoints": [
+            [
+              705,
+              390
+            ]
+          ],
+          "target_description": "已显示短走廊上端内侧",
+          "source_capture": "fantasy/capture/map.png",
+          "segments": [
+            [
+              705,
+              385,
+              705,
+              462
+            ],
+            [
+              705,
+              462,
+              734,
+              462
+            ]
+          ],
+          "phase": "run",
+          "status": "failed",
+          "environment": {
+            "maafw": "5.12.3",
+            "opencv": "5.0.0",
+            "device": "127.0.0.1:16384",
+            "scaled_resolution": [
+              1280,
+              720
+            ],
+            "navigation_sha256": "3be022718b809fc5d84fc9ad8c4ec8e3b933285b435b469630276ef7e5da02f9"
+          },
+          "error": "小地图定位候选 0：小地图匹配不足：0",
+          "steps": 0,
+          "map_opens": 1,
+          "mini_updates": 0,
+          "recalibrations": 0,
+          "last_position": null,
+          "last_map_position": [
+            732.2434640522875,
+            461.1240657698056
+          ],
+          "audit_error": null,
+          "elapsed_seconds": 3.84,
+          "evidence": "debug/minimap/survey/fantasy/run1/result.json",
+          "parameter_valid": true
+        }
+      ]
+    },
+    {
+      "case": {
+        "entry_id": "cat_38",
+        "case_id": "iskariot",
+        "teleport_override": {
+          "teleport": "伊丝卡莉欧忒",
+          "world_names": [
+            "伊丝卡莉欧忒"
+          ]
+        },
+        "map_name": "背叛之地伊丝卡莉欧忒",
+        "waypoints": [
+          [
+            640,
+            282
+          ]
+        ],
+        "target_description": "上方入口的平台；中间为断续台阶，未预设连通道路",
+        "source_capture": "iskariot/capture/map.png",
+        "evidence_root": "debug/minimap/survey"
+      },
+      "final": {
+        "entry_id": "cat_38",
+        "case_id": "iskariot",
+        "teleport_override": {
+          "teleport": "伊丝卡莉欧忒",
+          "world_names": [
+            "伊丝卡莉欧忒"
+          ]
+        },
+        "map_name": "背叛之地伊丝卡莉欧忒",
+        "waypoints": [
+          [
+            640,
+            282
+          ]
+        ],
+        "target_description": "上方入口的平台；中间为断续台阶，未预设连通道路",
+        "source_capture": "iskariot/capture/map.png",
+        "phase": "run",
+        "status": "failed",
+        "environment": {
+          "maafw": "5.12.3",
+          "opencv": "5.0.0",
+          "device": "127.0.0.1:16384",
+          "scaled_resolution": [
+            1280,
+            720
+          ],
+          "navigation_sha256": "3be022718b809fc5d84fc9ad8c4ec8e3b933285b435b469630276ef7e5da02f9"
+        },
+        "error": "小地图定位候选 0：小地图几何约束不符：inliers=6/19 scale=1.017 angle=0.58",
+        "steps": 0,
+        "map_opens": 1,
+        "mini_updates": 0,
+        "recalibrations": 0,
+        "last_position": null,
+        "last_map_position": [
+          641.5344712182061,
+          438.2258199464525
+        ],
+        "audit_error": null,
+        "elapsed_seconds": 4.33,
+        "evidence": "debug/minimap/survey/iskariot/run1/result.json",
+        "parameter_valid": true
+      },
+      "attempts": [
+        {
+          "entry_id": "cat_38",
+          "case_id": "iskariot",
+          "teleport_override": {
+            "teleport": "伊丝卡莉欧忒",
+            "world_names": [
+              "伊丝卡莉欧忒"
+            ]
+          },
+          "map_name": "背叛之地伊丝卡莉欧忒",
+          "waypoints": [
+            [
+              640,
+              282
+            ]
+          ],
+          "target_description": "上方入口的平台；中间为断续台阶，未预设连通道路",
+          "source_capture": "iskariot/capture/map.png",
+          "phase": "run",
+          "status": "failed",
+          "environment": {
+            "maafw": "5.12.3",
+            "opencv": "5.0.0",
+            "device": "127.0.0.1:16384",
+            "scaled_resolution": [
+              1280,
+              720
+            ],
+            "navigation_sha256": "3be022718b809fc5d84fc9ad8c4ec8e3b933285b435b469630276ef7e5da02f9"
+          },
+          "error": "小地图定位候选 0：小地图几何约束不符：inliers=6/19 scale=1.017 angle=0.58",
+          "steps": 0,
+          "map_opens": 1,
+          "mini_updates": 0,
+          "recalibrations": 0,
+          "last_position": null,
+          "last_map_position": [
+            641.5344712182061,
+            438.2258199464525
+          ],
+          "audit_error": null,
+          "elapsed_seconds": 4.33,
+          "evidence": "debug/minimap/survey/iskariot/run1/result.json",
+          "parameter_valid": true
+        }
+      ]
+    },
+    {
+      "case": {
+        "entry_id": "cat_48",
+        "catalog_location": "祭偶窟",
+        "map_name": "塔尔加纳山道",
+        "waypoints": [
+          [
+            450,
+            542
+          ]
+        ],
+        "target_description": "左下横路右半段",
+        "source_capture": "cat_48/capture2/map.png",
+        "access_note": "传送祭偶窟后点击房间下方出口进入山道；不计祭偶窟为导航样本",
+        "segments": [
+          [
+            230,
+            360,
+            620,
+            360
+          ],
+          [
+            390,
+            360,
+            390,
+            420
+          ],
+          [
+            342,
+            420,
+            450,
+            420
+          ],
+          [
+            435,
+            420,
+            435,
+            480
+          ],
+          [
+            324,
+            480,
+            443,
+            480
+          ],
+          [
+            380,
+            480,
+            380,
+            542
+          ],
+          [
+            210,
+            542,
+            480,
+            542
+          ]
+        ],
+        "case_id": "cat_48",
+        "evidence_root": "debug/minimap/survey"
+      },
+      "final": {
+        "entry_id": "cat_48",
+        "catalog_location": "祭偶窟",
+        "map_name": "塔尔加纳山道",
+        "waypoints": [
+          [
+            450,
+            542
+          ]
+        ],
+        "target_description": "左下横路右半段",
+        "source_capture": "cat_48/capture2/map.png",
+        "access_note": "传送祭偶窟后点击房间下方出口进入山道；不计祭偶窟为导航样本",
+        "segments": [
+          [
+            230,
+            360,
+            620,
+            360
+          ],
+          [
+            390,
+            360,
+            390,
+            420
+          ],
+          [
+            342,
+            420,
+            450,
+            420
+          ],
+          [
+            435,
+            420,
+            435,
+            480
+          ],
+          [
+            324,
+            480,
+            443,
+            480
+          ],
+          [
+            380,
+            480,
+            380,
+            542
+          ],
+          [
+            210,
+            542,
+            480,
+            542
+          ]
+        ],
+        "phase": "run",
+        "status": "failed",
+        "environment": {
+          "maafw": "5.12.3",
+          "opencv": "5.0.0",
+          "device": "127.0.0.1:16384",
+          "scaled_resolution": [
+            1280,
+            720
+          ],
+          "navigation_sha256": "3be022718b809fc5d84fc9ad8c4ec8e3b933285b435b469630276ef7e5da02f9"
+        },
+        "error": "小地图定位候选 0：小地图几何约束不符：inliers=5/15 scale=0.693 angle=178.55",
+        "steps": 0,
+        "map_opens": 1,
+        "mini_updates": 0,
+        "recalibrations": 0,
+        "last_position": null,
+        "last_map_position": [
+          235.56644144144144,
+          359.0
+        ],
+        "audit_error": null,
+        "elapsed_seconds": 4.03,
+        "evidence": "debug/minimap/survey/cat_48/run1/result.json",
+        "parameter_valid": true
+      },
+      "attempts": [
+        {
+          "entry_id": "cat_48",
+          "catalog_location": "祭偶窟",
+          "map_name": "塔尔加纳山道",
+          "waypoints": [
+            [
+              450,
+              542
+            ]
+          ],
+          "target_description": "左下横路右半段",
+          "source_capture": "cat_48/capture2/map.png",
+          "access_note": "传送祭偶窟后点击房间下方出口进入山道；不计祭偶窟为导航样本",
+          "segments": [
+            [
+              230,
+              360,
+              620,
+              360
+            ],
+            [
+              390,
+              360,
+              390,
+              420
+            ],
+            [
+              342,
+              420,
+              450,
+              420
+            ],
+            [
+              435,
+              420,
+              435,
+              480
+            ],
+            [
+              324,
+              480,
+              443,
+              480
+            ],
+            [
+              380,
+              480,
+              380,
+              542
+            ],
+            [
+              210,
+              542,
+              480,
+              542
+            ]
+          ],
+          "phase": "run",
+          "status": "failed",
+          "environment": {
+            "maafw": "5.12.3",
+            "opencv": "5.0.0",
+            "device": "127.0.0.1:16384",
+            "scaled_resolution": [
+              1280,
+              720
+            ],
+            "navigation_sha256": "3be022718b809fc5d84fc9ad8c4ec8e3b933285b435b469630276ef7e5da02f9"
+          },
+          "error": "小地图定位候选 0：小地图几何约束不符：inliers=5/15 scale=0.693 angle=178.55",
+          "steps": 0,
+          "map_opens": 1,
+          "mini_updates": 0,
+          "recalibrations": 0,
+          "last_position": null,
+          "last_map_position": [
+            235.56644144144144,
+            359.0
+          ],
+          "audit_error": null,
+          "elapsed_seconds": 4.03,
+          "evidence": "debug/minimap/survey/cat_48/run1/result.json",
+          "parameter_valid": true
+        }
+      ]
+    },
+    {
+      "case": {
+        "entry_id": "cat_50",
+        "catalog_location": "龙神池",
+        "map_name": "龙神池",
+        "waypoints": [
+          [
+            710,
+            232
+          ]
+        ],
+        "target_description": "最上方支路横台",
+        "source_capture": "cat_50/capture/map.png",
+        "segments": [
+          [
+            690,
+            402,
+            893,
+            402
+          ],
+          [
+            806,
+            318,
+            806,
+            402
+          ],
+          [
+            488,
+            318,
+            843,
+            318
+          ],
+          [
+            678,
+            232,
+            678,
+            318
+          ],
+          [
+            642,
+            232,
+            748,
+            232
+          ],
+          [
+            525,
+            318,
+            525,
+            402
+          ],
+          [
+            408,
+            402,
+            548,
+            402
+          ],
+          [
+            474,
+            402,
+            474,
+            489
+          ],
+          [
+            388,
+            489,
+            474,
+            489
+          ]
+        ],
+        "case_id": "cat_50",
+        "evidence_root": "debug/minimap/survey"
+      },
+      "final": {
+        "entry_id": "cat_50",
+        "catalog_location": "龙神池",
+        "map_name": "龙神池",
+        "waypoints": [
+          [
+            710,
+            232
+          ]
+        ],
+        "target_description": "最上方支路横台",
+        "source_capture": "cat_50/capture/map.png",
+        "segments": [
+          [
+            690,
+            402,
+            893,
+            402
+          ],
+          [
+            806,
+            318,
+            806,
+            402
+          ],
+          [
+            488,
+            318,
+            843,
+            318
+          ],
+          [
+            678,
+            232,
+            678,
+            318
+          ],
+          [
+            642,
+            232,
+            748,
+            232
+          ],
+          [
+            525,
+            318,
+            525,
+            402
+          ],
+          [
+            408,
+            402,
+            548,
+            402
+          ],
+          [
+            474,
+            402,
+            474,
+            489
+          ],
+          [
+            388,
+            489,
+            474,
+            489
+          ]
+        ],
+        "phase": "run",
+        "status": "failed",
+        "environment": {
+          "maafw": "5.12.3",
+          "opencv": "5.0.0",
+          "device": "127.0.0.1:16384",
+          "scaled_resolution": [
+            1280,
+            720
+          ],
+          "navigation_sha256": "3be022718b809fc5d84fc9ad8c4ec8e3b933285b435b469630276ef7e5da02f9"
+        },
+        "error": "小地图定位候选 0：小地图几何约束不符：inliers=5/15 scale=0.498 angle=0.01",
+        "steps": 0,
+        "map_opens": 1,
+        "mini_updates": 0,
+        "recalibrations": 0,
+        "last_position": null,
+        "last_map_position": [
+          884.0471190230478,
+          401.40625397651684
+        ],
+        "audit_error": null,
+        "elapsed_seconds": 3.89,
+        "evidence": "debug/minimap/survey/cat_50/run1/result.json",
+        "parameter_valid": true
+      },
+      "attempts": [
+        {
+          "entry_id": "cat_50",
+          "catalog_location": "龙神池",
+          "map_name": "龙神池",
+          "waypoints": [
+            [
+              710,
+              232
+            ]
+          ],
+          "target_description": "最上方支路横台",
+          "source_capture": "cat_50/capture/map.png",
+          "segments": [
+            [
+              690,
+              402,
+              893,
+              402
+            ],
+            [
+              806,
+              318,
+              806,
+              402
+            ],
+            [
+              488,
+              318,
+              843,
+              318
+            ],
+            [
+              678,
+              232,
+              678,
+              318
+            ],
+            [
+              642,
+              232,
+              748,
+              232
+            ],
+            [
+              525,
+              318,
+              525,
+              402
+            ],
+            [
+              408,
+              402,
+              548,
+              402
+            ],
+            [
+              474,
+              402,
+              474,
+              489
+            ],
+            [
+              388,
+              489,
+              474,
+              489
+            ]
+          ],
+          "phase": "run",
+          "status": "failed",
+          "environment": {
+            "maafw": "5.12.3",
+            "opencv": "5.0.0",
+            "device": "127.0.0.1:16384",
+            "scaled_resolution": [
+              1280,
+              720
+            ],
+            "navigation_sha256": "3be022718b809fc5d84fc9ad8c4ec8e3b933285b435b469630276ef7e5da02f9"
+          },
+          "error": "小地图定位候选 0：小地图几何约束不符：inliers=5/15 scale=0.498 angle=0.01",
+          "steps": 0,
+          "map_opens": 1,
+          "mini_updates": 0,
+          "recalibrations": 0,
+          "last_position": null,
+          "last_map_position": [
+            884.0471190230478,
+            401.40625397651684
+          ],
+          "audit_error": null,
+          "elapsed_seconds": 3.89,
+          "evidence": "debug/minimap/survey/cat_50/run1/result.json",
+          "parameter_valid": true
+        }
+      ]
+    },
+    {
+      "case": {
+        "entry_id": "cat_01",
+        "catalog_location": "火之村拉托尔",
+        "map_name": "火之村拉托尔",
+        "waypoints": [
+          [
+            580,
+            232
+          ]
+        ],
+        "target_description": "最上方横路，猫图例左侧",
+        "source_capture": "cat_01/capture/map.png",
+        "case_id": "cat_01",
+        "evidence_root": "debug/minimap/survey"
+      },
+      "final": {
+        "entry_id": "cat_01",
+        "catalog_location": "火之村拉托尔",
+        "map_name": "火之村拉托尔",
+        "waypoints": [
+          [
+            580,
+            232
+          ]
+        ],
+        "target_description": "最上方横路，猫图例左侧",
+        "source_capture": "cat_01/capture/map.png",
+        "phase": "run",
+        "status": "passed",
+        "environment": {
+          "maafw": "5.12.3",
+          "opencv": "5.0.0",
+          "device": "127.0.0.1:16384",
+          "scaled_resolution": [
+            1280,
+            720
+          ],
+          "navigation_sha256": "3be022718b809fc5d84fc9ad8c4ec8e3b933285b435b469630276ef7e5da02f9"
+        },
+        "steps": 11,
+        "map_opens": 2,
+        "mini_updates": 11,
+        "recalibrations": 0,
+        "audit_error": 0.5215439604484179,
+        "final_position": [
+          578.8660445701455,
+          230.88605454679114
+        ],
+        "target_error": 1.589568932013072,
+        "last_position": [
+          578.0602911819026,
+          230.34228290002514
+        ],
+        "last_map_position": [
+          578.8660445701455,
+          230.88605454679114
+        ],
+        "elapsed_seconds": 32.81,
+        "evidence": "debug/minimap/survey/cat_01/run1/result.json",
+        "parameter_valid": true
+      },
+      "attempts": [
+        {
+          "entry_id": "cat_01",
+          "catalog_location": "火之村拉托尔",
+          "map_name": "火之村拉托尔",
+          "waypoints": [
+            [
+              580,
+              232
+            ]
+          ],
+          "target_description": "最上方横路，猫图例左侧",
+          "source_capture": "cat_01/capture/map.png",
+          "phase": "run",
+          "status": "passed",
+          "environment": {
+            "maafw": "5.12.3",
+            "opencv": "5.0.0",
+            "device": "127.0.0.1:16384",
+            "scaled_resolution": [
+              1280,
+              720
+            ],
+            "navigation_sha256": "3be022718b809fc5d84fc9ad8c4ec8e3b933285b435b469630276ef7e5da02f9"
+          },
+          "steps": 11,
+          "map_opens": 2,
+          "mini_updates": 11,
+          "recalibrations": 0,
+          "audit_error": 0.5215439604484179,
+          "final_position": [
+            578.8660445701455,
+            230.88605454679114
+          ],
+          "target_error": 1.589568932013072,
+          "last_position": [
+            578.0602911819026,
+            230.34228290002514
+          ],
+          "last_map_position": [
+            578.8660445701455,
+            230.88605454679114
+          ],
+          "elapsed_seconds": 32.81,
+          "evidence": "debug/minimap/survey/cat_01/run1/result.json",
+          "parameter_valid": true
+        }
+      ]
+    }
+  ]
+}

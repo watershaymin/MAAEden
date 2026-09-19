@@ -13,6 +13,7 @@ from maa.toolkit import Toolkit
 
 
 TASKS = {
+    "NavigationMiniMapRoute": ("NavigationMiniMapComplete", 330, "minimap-run", "小地图路线完成，已通过终点整图复核。"),
     "MenasAppraisal": ("MenasAppraisalComplete", 780, "menas-appraisal-run", "谜晶鉴定筛选完成，停留鉴定道具页；详细结果见 debug/menas-appraisal。"),
     "CatDiary": ("CatDiaryComplete", 2760, "cat-diary-run", "本轮猫咪日记已全部完成，停留日记页。"),
     "MonthlyTrialDungeons": ("MonthlyTrialDungeonsComplete", 1860, "monthly-trial-dungeons-run", "本期可跳过的副本任务已处理，停留试炼页；略过原因见日志。"),
@@ -57,6 +58,9 @@ def main() -> int:
     parser.add_argument("--address", required=True, help="例如 127.0.0.1:16384")
     parser.add_argument("--task", choices=list(TASKS), default="StartUp")
     parser.add_argument("--direction", choices=["left", "right", "up", "down"], default="left")
+    parser.add_argument("--map-name", help="小地图导航的区域图全名")
+    parser.add_argument("--waypoints", help='小地图导航的整图路点 JSON，例如 [[600,339],[600,254]]')
+    parser.add_argument("--max-steps", type=int, default=60, help="小地图导航移动步数上限")
     parser.add_argument("--dungeon", help="兼容旧单副本模式，默认蛇肝达玛克非常困难")
     parser.add_argument("--count", type=int, help="梅纳斯默认 0（全部入场券）；副本旧单副本模式默认 1")
     parser.add_argument("--red-dungeon", help="红票副本 ID，默认 snake_damak_vh")
@@ -72,6 +76,17 @@ def main() -> int:
     parser.add_argument("--appraisal-config", type=Path, help="谜晶鉴定规则 JSON，字段与 Custom 参数一致")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
+    minimap_params = None
+    if args.task == "NavigationMiniMapRoute":
+        import json
+        sys.path.insert(0, str(root / "agent"))
+        from minimap_navigation import parse_route
+        try:
+            minimap_params = {"map_name": args.map_name, "waypoints": json.loads(args.waypoints or 'null'),
+                              "max_steps": args.max_steps}
+            parse_route(minimap_params)
+        except ValueError as exc:
+            parser.error(str(exc))
     skip_params = None
     if args.task == "DungeonSkip":
         import json
@@ -110,7 +125,7 @@ def main() -> int:
     capture = MaaAdbScreencapMethodEnum.Encode
     input_method = MaaAdbInputMethodEnum.AdbShell
     config = {}
-    if args.task in ("CatDiary", "MenasAppraisal"):
+    if args.task in ("CatDiary", "MenasAppraisal", "NavigationMiniMapRoute"):
         # 移动目标和逐把鉴定需要及时截图。只复用明确匹配用户所选地址的模拟器配置。
         devices = [device for device in Toolkit.find_adb_devices() if device.address == args.address
                    and device.adb_path.resolve() == args.adb_path.resolve()]
@@ -191,6 +206,8 @@ def main() -> int:
         return 1
 
     override = {}
+    if minimap_params is not None:
+        override = {"NavigationMiniMapRoute": {"custom_action_param": minimap_params}}
     if args.task == "MenasAppraisal":
         override = {"MenasAppraisal": {"custom_action_param": appraisal_params}}
     if args.task == "MenasTrial":

@@ -385,7 +385,10 @@
     "CatDiaryXenoDoor": {
         "desc": "仅在异元晶控制所已确认的出口坐标附近点击门或扶梯入口。",
         "recognition": "TemplateMatch",
-        "template": "CatDiary/XenoDoor.png",
+        "template": [
+            "CatDiary/XenoDoor.png",
+            "CatDiary/XenoDoorGold.png"
+        ],
         "roi": [
             100,
             130,

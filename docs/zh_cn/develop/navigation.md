@@ -1,5 +1,8 @@
 # 基础移动与传送
 
+基础移动、巴尔沃基巡路、猫咪日记及星天试炼现已默认使用小地图多帧定位与低频整图校准。
+`NavigationMiniMapRoute` 可额外传入已确认路点；实现和限制见 [小地图定位与移动](minimap-navigation.md)。
+
 当前提供三个独立入口，识别与点击定义在 `assets/resource/pipeline/navigation.json`，
 位置校验和路点推进在 `agent/navigation.py`。
 这三个辅助任务已从默认客户端任务列表隐藏，Pipeline 与下述命令行调试入口保留。
@@ -22,8 +25,8 @@
 已配置 Agent 启动与动作注册。发布布局中 `interface.json` 和 `agent/` 同级，
 `child_exec: python` 要求客户端能找到装有上述依赖的 Python。
 仓库开发布局的 `assets/interface.json` 与 `agent/` 不同级，直接开发建议使用下述命令行入口。
-本机 AgentClient 的独立进程通信初始化遇到 ZeroMQ `Bad file descriptor`，IPC/TCP 均未通过，
-因此目前实机验证使用同进程注册；不宣称通用 GUI 客户端已验证成功。
+早期 AgentClient 曾遇到 ZeroMQ 初始化问题；当前本地运行包的独立 Agent 握手及实际巡路已通过，
+详见 [默认导航接入报告](minimap-integration.md)。其他通用 GUI 客户端未统一验证。
 
 ```powershell
 # 用实际 Python、ADB 路径和端口替换示例。
@@ -40,9 +43,8 @@ python -X utf8 tools/test_navigation.py
 
 右上小地图会跟随视野平移，不能直接用其屏幕坐标作世界坐标。
 点击小地图可展开固定布局的区域地图，同时在左上显示地图名。
-每一步均打开区域地图识别角色标记，关闭地图后再滑动，随后重新定位。
-角色标记存在缩放动画，因此收集了多种尺寸；等待可识别帧的上限为 4 秒，
-同一位置的多尺寸命中会归为一个标记，不同位置出现候选时停止。小幅中心抖动不算行走成功。
+首次展开区域地图建模，之后主要从小地图的呼吸环和静态道路判断位置；证据不足、定期核对地图名
+或抵达终点时再展开整图。位置不依赖固定大小的角色模板，小幅中心抖动不算行走成功。
 
 上下移动可能直接沿连接道路切换至另一条横向道路，不按固定速度推算纵向位置。
 转弯前路点采用 2px 对齐容差，最终到达采用 5px 容差，避免在终点因标记动画反复微调。
@@ -89,7 +91,7 @@ python -X utf8 tools/test_navigation.py
 - 实际截图回放：区域地图多种标记尺寸、世界地图与确认框互斥、缺少目的地文本的合成弹窗拒绝；停止期间不会继续滑动或发送关闭地图点击。
 - Pipeline/Interface Schema、maa-tools 检查。
 
-普通野外战斗和结算、跨地图出口、其他地图/分辨率、通用 GUI 客户端尚未实机验证。
-战斗识别沿用已验证试炼素材，普通战斗 UI 若不同，需要补充样本。
+以上是早期验证范围；2026-09-19 的默认小地图接入、遇敌恢复、跨层与运行包验证见
+[默认导航接入报告](minimap-integration.md)。其他分辨率、未知区域及通用 GUI 客户端仍需单独验证。
 
 流程字段已核对本地 Schema 与 [MaaFramework Pipeline 协议](https://maafw.com/docs/3.1-PipelineProtocol/)。

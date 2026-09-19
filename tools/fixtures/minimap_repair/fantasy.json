@@ -1,0 +1,26 @@
+{
+  "entry_id": "cat_38",
+  "case_id": "fantasy",
+  "teleport_override": {
+    "teleport": "幻想遗址",
+    "world_names": [
+      "幻想遗址"
+    ]
+  },
+  "map_name": "艾尼亚德的秘密基地楼层B",
+  "waypoints": [
+    [
+      705,
+      358
+    ]
+  ],
+  "target_description": "实走揭示连接路自动换道；改为上端可停留平台，原目标 (705,390) 不可停留",
+  "source_capture": "fantasy/capture/map.png",
+  "evidence_root": "debug/minimap/survey",
+  "road_model": "automatic_with_confirmed_icon_corners",
+  "original_target": [
+    705,
+    390
+  ],
+  "target_evidence": "debug/minimap/repair/fantasy/run3/frame-10.png"
+}

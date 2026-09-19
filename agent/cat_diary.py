@@ -323,6 +323,7 @@ class CatDiaryRunner(Navigator):
         self.horizontal_slopes = map_data.get("horizontal_slopes", {})
         self.map_anchors = map_data.get("anchors", {})
         self.round_deadline = None
+        self.tracking_cat = False
 
     def check(self):
         if self.context.tasker.stopping:
@@ -381,10 +382,12 @@ class CatDiaryRunner(Navigator):
                 self.action("CatDiaryDialogue")
                 dialogues += 1
             elif self.reco("NavigationRewards", frame):
+                self.navigation_epoch += 1
                 self.action("NavigationRewards")
             else:
                 battle = self.reco("NavigationBattle", frame)
                 if battle:
+                    self.navigation_epoch += 1
                     if attacks >= 30:
                         raise RuntimeError("寻猫途中战斗超过 30 轮")
                     self.click(battle)
@@ -480,6 +483,8 @@ class CatDiaryRunner(Navigator):
         raise RuntimeError("日记奖励动画或关闭状态超时")
 
     def teleport(self, entry):
+        self.reset_navigation()
+        self.tracking_cat = False
         if entry.get("approach") == "kunlun_slide":
             source = next(e for e in self.catalog if e["id"] == "cat_67")
             self.teleport(source)
@@ -587,6 +592,15 @@ class CatDiaryRunner(Navigator):
     def crossing_map_name(self):
         """跨图连接路可能没有小地图；已有地图但标题读不到时不能继续移动。"""
         self.world()
+        if self.navigation_session is not None:
+            from minimap_navigation import LocalizationLost, NavigationInterrupted
+            try:
+                self.navigation_session.observe_only(self.navigation_movement)
+                self.navigation_movement = None
+                return self.navigation_session.map_name
+            except (LocalizationLost, NavigationInterrupted):
+                self.reset_navigation()
+                self.world()
         self.action("NavigationToggleLocalMap")
         until = min(self.deadline, time.monotonic() + 2)
         visible = False
@@ -626,6 +640,7 @@ class CatDiaryRunner(Navigator):
             self.action("CatDiarySwipe", {"CatDiarySwipe": {
                 "begin": [200, 450], "end": [380, 450], "duration": 600, "post_delay": 200,
             }})
+            self.navigation_movement = 'right'
         raise RuntimeError("纳兹里克东侧路线超过 18 步，未确认进入冻时领域")
 
     def slide_to_kunlun(self, source, entry):
@@ -673,7 +688,8 @@ class CatDiaryRunner(Navigator):
                 name, position, _, road = self.locate(stage, previous, movement)
                 if name != title or (previous is None and math.dist(position, start) > 20):
                     raise RuntimeError(f"异元晶控制所跨层起点不符：{name} {position}")
-                if math.dist(position, target) <= 10:
+                near_exit = math.dist(position, target) <= 10
+                if near_exit and self.reco('CatDiaryXenoDoor', self.world()):
                     break
                 if previous is not None:
                     dx, dy = DIRECTIONS[movement]
@@ -683,7 +699,12 @@ class CatDiaryRunner(Navigator):
                         raise RuntimeError("异元晶控制所跨层连续三步没有预期位移")
                 next_step = road.step(position, target)
                 if next_step is None:
-                    raise RuntimeError("异元晶控制所尚未到达出口位置")
+                    # 地图到达容差比场景门按钮的出现范围宽。只在已验证的
+                    # 同一横路末端朝出口微调，不能因几像素误差再触发上下换道。
+                    if near_exit and abs(position[1]-target[1]) <= 8 and abs(position[0]-target[0]) > 2:
+                        next_step = ('right' if target[0] > position[0] else 'left', 150)
+                    else:
+                        raise RuntimeError("异元晶控制所尚未确认出口按钮")
                 movement, duration = next_step
                 dx, dy = DIRECTIONS[movement]
                 LOG.warning("CatDiary 跨层 %s 第%s步：%s，%s %sms", road_key, step + 1, position, movement, duration)
@@ -718,6 +739,7 @@ class CatDiaryRunner(Navigator):
         LOG.warning("CatDiary 已从米格兰斯城1楼进入2楼")
 
     def wait_area_transition(self):
+        self.reset_navigation()
         until = min(self.deadline, time.monotonic() + 10)
         while time.monotonic() < until:
             if not self.reco("StartUpWorldReady", self.frame()):
@@ -769,6 +791,21 @@ class CatDiaryRunner(Navigator):
         raise RuntimeError(f"传送确认文字不符：{target}")
 
     def locate(self, expected, previous=None, movement=None):
+        from minimap_navigation import NavigationInterrupted
+        aliases = expected.get('map_names', [expected['teleport'], expected['location']])
+        for _ in range(5):
+            session = self.localize(tuple(aliases), expected.get('road_map'), movement,
+                                    exact='map_names' in expected)
+            try:
+                targets = session.cat_targets() if self.tracking_cat else []
+                return session.map_name, session.position, targets, session.road
+            except NavigationInterrupted:
+                self.reset_navigation()
+                self.world()
+        raise RuntimeError('羽毛目标采集连续被战斗打断 5 次')
+
+    def locate_legacy(self, expected, previous=None, movement=None):
+        """旧截图诊断入口；正式寻猫和跨层巡路统一走 locate 的导航会话。"""
         base = self.world()
         self.action("NavigationToggleLocalMap")
         until = min(self.deadline, time.monotonic() + 8)
@@ -909,6 +946,7 @@ class CatDiaryRunner(Navigator):
         raise RuntimeError("温泉超过 8 步仍未找到猫")
 
     def chase(self, entry):
+        self.tracking_cat = True
         if entry.get("chase_mode") == "hot_spring":
             self.chase_hot_spring()
             return

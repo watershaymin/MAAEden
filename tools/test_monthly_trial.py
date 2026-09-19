@@ -170,6 +170,11 @@ class MonthlyTrialTests(unittest.TestCase):
 
         nav.position.side_effect = lambda _: battle_interrupted()
         self.assertEqual(nav.move("right", 600, "魔物巢穴", (670, 402)), (670, 402))
+        def partial_battle(_):
+            nav.counter.wins += 1
+            return '魔物巢穴', (675.3, 402)
+        nav.position.side_effect = partial_battle
+        self.assertEqual(nav.move('right', 600, '魔物巢穴', (670, 402)), (675.3, 402))
         nav.position.side_effect = None
         nav.position.return_value = ("魔物巢穴", (660, 402))
         with self.assertRaises(RuntimeError):
@@ -186,7 +191,7 @@ class MonthlyTrialTests(unittest.TestCase):
         nav.reco = lambda node, frame, override=None: (marker if node == "MonthlyPlayer" else True) if node in frame else None
         nav.rows = Mock(return_value=[row("魔物巢穴")])
         with patch("monthly_trial.time.sleep"), patch("monthly_trial.nest_player_position", return_value=None):
-            self.assertEqual(nav.position("魔物巢穴"), ("魔物巢穴", (710, 402)))
+            self.assertEqual(nav.position_legacy("魔物巢穴"), ("魔物巢穴", (710, 402)))
         self.assertEqual(nav.action.call_count, 3)  # 打开、战斗后重新打开、成功后关闭。
         self.assertEqual(nav.action.call_args.args, ("MonthlyCloseLocalMap",))
         self.assertEqual(nav.world.call_count, 4)
@@ -195,8 +200,10 @@ class MonthlyTrialTests(unittest.TestCase):
         nav = MonthlyNavigator(SimpleNamespace(tasker=SimpleNamespace(stopping=False)))
         nav.position = Mock(return_value=("第1层", (653, 530)))
         nav.move = Mock(return_value=(653, 445))
+        nav.audit_navigation = Mock(return_value=(653, 445))
         self.assertEqual(nav.route([((653, 445), 5)], "第1层"), (653, 445))
         nav.move.assert_called_once_with("up", 600, "第1层", (653, 530))
+        nav.audit_navigation.assert_called_once_with((653, 445), 8)
 
 
 if __name__ == "__main__":

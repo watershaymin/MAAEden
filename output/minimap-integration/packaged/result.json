@@ -1,0 +1,14 @@
+[
+  {
+    "entry": "NavigationBaruokiRoute",
+    "success": true,
+    "framework": "v5.12.3",
+    "device": "127.0.0.1:16384"
+  },
+  {
+    "entry": "CatDiary",
+    "success": true,
+    "framework": "v5.12.3",
+    "device": "127.0.0.1:16384"
+  }
+]

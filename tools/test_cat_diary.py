@@ -263,6 +263,26 @@ class CatDiaryTests(unittest.TestCase):
                 runner.action.assert_not_called()
                 runner.click.assert_not_called()
 
+    def test_xeno_near_exit_requires_button_and_only_micro_adjusts_same_road(self):
+        runner = self.runner()
+        road = SimpleNamespace(step=lambda p, t: None if abs(p[0]-t[0]) <= 10 else ('right', 600))
+        runner.locate = Mock(side_effect=[
+            ('异元晶控制所入口', (535, 412), [], road),
+            ('异元晶控制所入口', (734, 309), [], road),
+            ('异元晶控制所入口', (741, 309), [], road),
+            ('异元晶控制所研究中心', (564, 462), [], road),
+            ('异元晶控制所研究中心', (760, 258), [], road),
+            ('异元晶控制所研究中心', (498, 462), [], road),
+        ])
+        runner.world = Mock(side_effect=['outside', 'inside', 'inside'])
+        runner.reco = Mock(side_effect=lambda node, frame: None if frame == 'outside' else object())
+        runner.wait = Mock(return_value='door')
+        runner.action, runner.click, runner.wait_area_transition = Mock(), Mock(), Mock()
+        runner.walk_xeno_research({})
+        self.assertEqual(runner.click.call_count, 2)
+        actions = runner.action.call_args_list
+        self.assertEqual([c.args[1]['CatDiarySwipe']['duration'] for c in actions], [600, 150, 600])
+
     def test_xeno_same_title_does_not_prove_floor_transition(self):
         runner = self.runner()
         road = SimpleNamespace(step=Mock(return_value=("right", 600)))
@@ -614,7 +634,7 @@ class CatDiaryTests(unittest.TestCase):
             "NavigationLocalMap": True, "CatDiaryQuestIcon": quests, "CatDiaryMarker": markers,
         }.get(node))
         entry = next(e for e in runner.catalog if e["id"] == "cat_27")
-        _, position, _, _ = runner.locate(entry)
+        _, position, _, _ = runner.locate_legacy(entry)
         self.assertLess(abs(position[0] - 601), 8)
         self.assertLess(abs(position[1] - 360), 8)
 
@@ -721,7 +741,7 @@ class CatDiaryTests(unittest.TestCase):
             return None
 
         runner.reco = Mock(side_effect=recognize)
-        _, position, targets, road = runner.locate(entry, (895, 288), "left")
+        _, position, targets, road = runner.locate_legacy(entry, (895, 288), "left")
         self.assertEqual(position, (875, 296))
         self.assertEqual(targets, [(731, 289.5)])
         self.assertEqual(road.step(position, targets[0])[0], "left")
@@ -878,7 +898,7 @@ class CatDiaryTests(unittest.TestCase):
 
         runner.reco = Mock(side_effect=recognize)
         with patch("cat_diary.time.sleep"):
-            _, position, _, _ = runner.locate(entry)
+            _, position, _, _ = runner.locate_legacy(entry)
         self.assertEqual(position, (683, 361))
         self.assertEqual(runner.frame.call_count, 2)
 

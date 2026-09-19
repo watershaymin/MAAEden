@@ -1,0 +1,20 @@
+{
+  "entry_id": "cat_38",
+  "case_id": "iskariot",
+  "teleport_override": {
+    "teleport": "伊丝卡莉欧忒",
+    "world_names": [
+      "伊丝卡莉欧忒"
+    ]
+  },
+  "map_name": "背叛之地伊丝卡莉欧忒",
+  "waypoints": [
+    [
+      640,
+      282
+    ]
+  ],
+  "target_description": "上方入口的平台；中间为断续台阶，未预设连通道路",
+  "source_capture": "iskariot/capture/map.png",
+  "evidence_root": "debug/minimap/survey"
+}

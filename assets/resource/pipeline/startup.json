@@ -68,7 +68,10 @@
             },
             {
                 "recognition": "TemplateMatch",
-                "template": "Startup/WorldMap.png",
+                "template": [
+                    "Startup/WorldMap.png",
+                    "Startup/WorldMapBright.png"
+                ],
                 "roi": [
                     235,
                     630,
@@ -76,7 +79,7 @@
                     73
                 ],
                 "method": 10001,
-                "threshold": 0.9
+                "threshold": [0.9, 0.97]
             }
         ]
     }

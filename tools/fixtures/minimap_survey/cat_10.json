@@ -1,0 +1,15 @@
+{
+  "entry_id": "cat_10",
+  "catalog_location": "时之塔7F",
+  "map_name": "时之塔1楼",
+  "waypoints": [
+    [
+      610,
+      263
+    ]
+  ],
+  "target_description": "上层横路，楼梯与叹号之间",
+  "source_capture": "cat_10/capture/map.png",
+  "case_id": "cat_10",
+  "evidence_root": "debug/minimap/survey"
+}

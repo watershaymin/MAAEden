@@ -1,0 +1,15 @@
+{
+  "entry_id": "cat_04",
+  "catalog_location": "纳达拉火山",
+  "map_name": "纳达拉火山",
+  "waypoints": [
+    [
+      580,
+      274
+    ]
+  ],
+  "target_description": "上方横路，出口右侧",
+  "source_capture": "cat_04/capture/map.png",
+  "case_id": "cat_04",
+  "evidence_root": "debug/minimap/survey"
+}

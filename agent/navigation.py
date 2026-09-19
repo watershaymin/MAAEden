@@ -4,6 +4,7 @@ import json
 import logging
 import math
 import time
+from pathlib import Path
 
 from maa.custom_action import CustomAction
 
@@ -54,6 +55,66 @@ class Navigator:
     def __init__(self, context):
         self.context = context
         self.deadline = time.monotonic() + 180
+        self.navigation_session = None
+        self.navigation_key = None
+        self.navigation_movement = None
+        self.navigation_epoch = 0
+        map_data = json.loads((Path(__file__).parent / 'data/cat_diary_maps.json').read_text(encoding='utf-8'))
+        self.maps = map_data['maps']
+        self.horizontal_slopes = map_data.get('horizontal_slopes', {})
+        self.map_anchors = map_data.get('anchors', {})
+
+    def reset_navigation(self):
+        """传送、换层或无小地图过渡后，不沿用旧机位和同名地图模型。"""
+        self.navigation_session = None
+        self.navigation_key = None
+        self.navigation_movement = None
+
+    def text(self, node, frame, roi=None, single_line=False):
+        result = self.reco(node, frame, {node: {'roi': roi}} if roi else None)
+        rows = [r for r in result.all_results if r.score >= .8] if result else []
+        if single_line and rows:
+            height = max(r.box[3] for r in rows)
+            rows = [r for r in rows if r.box[3] >= height * .5]
+        order = (lambda r: r.box[0]) if single_line else (lambda r: (r.box[1], r.box[0]))
+        return ''.join(r.text for r in sorted(rows, key=order))
+
+    def navigation_interrupted(self, frame):
+        return bool(self.reco('NavigationBattle', frame) or self.reco('NavigationRewards', frame))
+
+    def localize(self, aliases=(), road_key=None, movement=None, exact=False, audit=False):
+        from minimap_navigation import MiniMapNavigator, NavigationInterrupted
+        key = (tuple(aliases), road_key, exact)
+        for _ in range(5):
+            self.check()
+            if self.navigation_session is None or self.navigation_key != key:
+                self.navigation_session = MiniMapNavigator(self, aliases[0] if aliases else None,
+                                                          aliases=aliases, road_key=road_key,
+                                                          exact=exact, allow_full_map=True)
+                self.navigation_key = key
+            session = self.navigation_session
+            try:
+                if session.atlas is None or audit:
+                    session.calibrate(audit=audit)
+                else:
+                    session.locate(movement)
+                return session
+            except NavigationInterrupted:
+                # 使用原任务的恢复逻辑，尤其保留月度试炼的结算计数。
+                # 普通遇战不会换图；已完成的静态模型仍可重新配准，丢弃本次
+                # 采集即可。首次建模被打断才重建会话，避免驻怪点反复长留。
+                if session.atlas is None:
+                    self.reset_navigation()
+                self.world()
+        raise RuntimeError('定位连续被战斗打断 5 次，保留现场')
+
+    def audit_navigation(self, target, tolerance):
+        if self.navigation_session is None:
+            raise RuntimeError('尚未建立导航会话，不能确认到达')
+        session = self.localize(*self.navigation_key[:2], exact=self.navigation_key[2], audit=True)
+        if math.dist(session.last_map_position, target) > tolerance:
+            raise RuntimeError(f'终点整图复核未到达：{session.last_map_position} / {target}')
+        return session.position
 
     def check(self):
         if self.context.tasker.stopping:
@@ -96,43 +157,34 @@ class Navigator:
             if self.reco("StartUpWorldReady", frame):
                 return frame
             if self.reco("NavigationBattle", frame):
+                self.navigation_epoch += 1
                 if attacks >= 30:
                     raise RuntimeError("战斗攻击超过 30 次")
                 self.action("NavigationBattle")
                 attacks += 1
             elif self.reco("NavigationRewards", frame):
+                self.navigation_epoch += 1
                 self.action("NavigationRewards")
             time.sleep(0.15)
         raise RuntimeError("未恢复可操作主界面")
 
     def position(self, expected_map=None):
-        self.world()
-        self.action("NavigationToggleLocalMap")
-        frame = self.wait("NavigationLocalMap")
-        try:
-            # 标记有明灭动画，标题出现不等于标记已可见；限定时间等到可识别帧。
-            frame = self.wait("NavigationPlayer", seconds=4)
-            name = self.reco("NavigationMapName", frame)
-            marker = self.reco("NavigationPlayer", frame)
-            if not name or not marker:
-                raise RuntimeError("无法唯一确认地图名称或角色标记")
-            map_name = name.best_result.text.replace(" ", "")
-            if expected_map and expected_map not in map_name:
-                raise RuntimeError(f"地图不符：预期 {expected_map}，实际 {map_name}")
-            return map_name, marker_position(marker)
-        finally:
-            # 用户停止时不继续发送操作；否则恢复主界面。
-            if not self.context.tasker.stopping:
-                self.action("NavigationToggleLocalMap")
-                self.wait("StartUpWorldReady")
+        aliases = (expected_map,) if expected_map else ()
+        # 初次无指定名称的单步移动，在读到全名后复用同一会话。
+        if self.navigation_session and expected_map == self.navigation_session.map_name:
+            aliases = self.navigation_key[0]
+        movement, self.navigation_movement = self.navigation_movement, None
+        session = self.localize(aliases, movement=movement)
+        return session.map_name, session.position
 
     def move(self, direction, duration, expected_map, previous):
         self.world()
         dx, dy = DIRECTIONS[direction]
         self.action("NavigationSwipe", {"NavigationSwipe": {
-            "begin": [640, 450], "end": [640 + dx * 180, 450 + dy * 180],
-            "duration": duration,
+            "begin": [200, 450], "end": [200 + dx * 180, 450 + dy * 180],
+            "duration": duration, "post_delay": 1500 if dy else 200,
         }})
+        self.navigation_movement = direction
         name, position = self.position(expected_map)
         delta = (position[0] - previous[0], position[1] - previous[1])
         LOG.warning("Navigation %s %sms: %s -> %s (%s)", direction, duration, previous, position, name)
@@ -150,6 +202,7 @@ class NavigationMove(CustomAction):
             nav = Navigator(context)
             name, position = nav.position()
             nav.move(direction, duration, name, position)
+            nav.audit_navigation(nav.navigation_session.position, 8)
             return True
         except (ValueError, TypeError, KeyError, RuntimeError) as exc:
             LOG.error("NavigationMove 失败：%s", exc)
@@ -176,6 +229,7 @@ class NavigationBaruokiRoute(CustomAction):
                     position = nav.move(*step, "巴尔沃基", position)
                 if route_step(position, target, tolerance) is not None:
                     raise RuntimeError(f"路点 {target} 超过 20 步")
+            nav.audit_navigation((600, 254), 8)
             return True
         except (ValueError, TypeError, KeyError, RuntimeError) as exc:
             LOG.error("NavigationBaruokiRoute 失败：%s", exc)
@@ -185,7 +239,22 @@ class NavigationBaruokiRoute(CustomAction):
             return False
 
 
+class NavigationMiniMapRoute(CustomAction):
+    def run(self, context, argv):
+        try:
+            from cat_diary import CatDiaryRunner
+            from minimap_navigation import MiniMapNavigator, parse_route
+            name, points, steps = parse_route(json.loads(argv.custom_action_param))
+            runner = CatDiaryRunner(context, max_minutes=5)
+            MiniMapNavigator(runner, name).follow(points, steps)
+            return True
+        except Exception:
+            LOG.exception("NavigationMiniMapRoute 失败，保留现场")
+            return False
+
+
 def register(resource):
     """命令行直接注册与 AgentServer 共用同一实现。"""
     return (resource.register_custom_action("NavigationMove", NavigationMove())
-            and resource.register_custom_action("NavigationBaruokiRoute", NavigationBaruokiRoute()))
+            and resource.register_custom_action("NavigationBaruokiRoute", NavigationBaruokiRoute())
+            and resource.register_custom_action("NavigationMiniMapRoute", NavigationMiniMapRoute()))

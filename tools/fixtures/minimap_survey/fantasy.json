@@ -1,0 +1,34 @@
+{
+  "entry_id": "cat_38",
+  "case_id": "fantasy",
+  "teleport_override": {
+    "teleport": "幻想遗址",
+    "world_names": [
+      "幻想遗址"
+    ]
+  },
+  "map_name": "艾尼亚德的秘密基地楼层B",
+  "waypoints": [
+    [
+      705,
+      390
+    ]
+  ],
+  "target_description": "已显示短走廊上端内侧",
+  "source_capture": "fantasy/capture/map.png",
+  "segments": [
+    [
+      705,
+      385,
+      705,
+      462
+    ],
+    [
+      705,
+      462,
+      734,
+      462
+    ]
+  ],
+  "evidence_root": "debug/minimap/survey"
+}

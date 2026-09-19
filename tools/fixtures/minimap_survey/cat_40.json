@@ -1,0 +1,15 @@
+{
+  "entry_id": "cat_40",
+  "catalog_location": "托托梦幻乐园（正门）",
+  "map_name": "托托的梦幻乐园惊悚区",
+  "waypoints": [
+    [
+      800,
+      440
+    ]
+  ],
+  "target_description": "下层横路右半段",
+  "source_capture": "cat_40/capture/map.png",
+  "case_id": "cat_40",
+  "evidence_root": "debug/minimap/survey"
+}

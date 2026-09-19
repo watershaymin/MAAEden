@@ -1,0 +1,15 @@
+{
+  "entry_id": "cat_38",
+  "catalog_location": "工业都市废墟（连接通道）",
+  "map_name": "工业都市废墟区域A",
+  "waypoints": [
+    [
+      550,
+      360
+    ]
+  ],
+  "target_description": "中层横路，连接路左侧",
+  "source_capture": "cat_38/capture/map.png",
+  "case_id": "cat_38",
+  "evidence_root": "debug/minimap/survey"
+}

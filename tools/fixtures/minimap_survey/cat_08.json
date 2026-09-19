@@ -1,0 +1,15 @@
+{
+  "entry_id": "cat_08",
+  "catalog_location": "酸性沼泽",
+  "map_name": "酸性沼泽",
+  "waypoints": [
+    [
+      570,
+      274
+    ]
+  ],
+  "target_description": "上方横路中央",
+  "source_capture": "cat_08/capture/map.png",
+  "case_id": "cat_08",
+  "evidence_root": "debug/minimap/survey"
+}

@@ -1,0 +1,15 @@
+{
+  "entry_id": "cat_01",
+  "catalog_location": "火之村拉托尔",
+  "map_name": "火之村拉托尔",
+  "waypoints": [
+    [
+      580,
+      232
+    ]
+  ],
+  "target_description": "最上方横路，猫图例左侧",
+  "source_capture": "cat_01/capture/map.png",
+  "case_id": "cat_01",
+  "evidence_root": "debug/minimap/survey"
+}

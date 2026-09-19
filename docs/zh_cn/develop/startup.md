@@ -69,3 +69,12 @@ python -X utf8 tools/run_startup.py --adb-path 'E:\Program Files\Netease\MuMu\nx
 尚未再次实机触发。账号失效、首次登录、更新下载、每日奖励弹窗、其他分辨率和客户端未验证。
 
 协议语义参考 [MaaFramework Pipeline 文档](https://maafw.com/docs/3.1-PipelineProtocol/)。
+
+### 2026-09-19 明亮场景主界面识别
+
+帕西法尔宫殿一楼的明亮地面改变半透明地图按钮外观，旧 `WorldMap.png` 得分为 0.899，导致寻猫移动后等待主界面超时。
+为 `StartUpWorldReady` 补充 `WorldMapBright.png`，裁剪自实机 `[250,653,56,39]`，采用更严格的 0.97 阈值；旧模板仍为 0.9，菜单与地图双重识别不变。
+原生框架回放确认宫殿落点和明亮区域可识别，区域地图、世界地图、猫咪日记、普通对话与合成半亮度主界面均不命中。
+合成 75% 亮度样本仍命中旧模板（0.951），属于原有识别边界，不能据此宣称任意遮罩均可排除。
+本轮只扩展 `StartUpWorldReady`，其他任务独立定义的主界面节点未同步扩展，也未验证它们从宫殿明亮区域启动。
+运行包实测修复后重新传送宫殿一楼并完成寻猫；75 项猫咪日记测试、8 项导航回归、Schema 与 maa-tools 校验通过。
