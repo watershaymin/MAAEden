@@ -47,15 +47,20 @@ try {
     Invoke-Checked $Python @('-X','utf8',(Join-Path $PSScriptRoot 'configure.py'))
     Invoke-Checked $Python @('-m','pip','install','--upgrade','--target',(Join-Path $repoRoot 'deps/gui-python-packages'),'-r',(Join-Path $PSScriptRoot 'gui-requirements.txt'))
     $agentPatch = Join-Path $PSScriptRoot 'patches/gui-agent-temp.patch'
+    $focusPatch = Join-Path $PSScriptRoot 'patches/gui-focus-abort.patch'
     Invoke-Checked git @('-C',$sourceRoot,'apply','--check',$agentPatch)
+    Invoke-Checked git @('-C',$sourceRoot,'apply','--check',$focusPatch)
     Invoke-Checked git @('-C',$sourceRoot,'apply',$agentPatch)
+    Invoke-Checked git @('-C',$sourceRoot,'apply',$focusPatch)
     try {
         Invoke-Checked dotnet @('publish',(Join-Path $sourceRoot 'MFAAvalonia.Desktop/MFAAvalonia.Desktop.csproj'),'-c','Release','-r','win-x64','--self-contained','true','-o',$publishRoot,"-p:ApplicationIcon=$applicationIcon",'-p:Version=2.16.1','-p:FileVersion=2.16.1.0','-p:AssemblyVersion=2.16.1.0','-p:InformationalVersion=2.16.1','--nologo')
     } finally {
+        Invoke-Checked git @('-C',$sourceRoot,'apply','--reverse',$focusPatch)
         Invoke-Checked git @('-C',$sourceRoot,'apply','--reverse',$agentPatch)
     }
     Invoke-Checked $Python @('-X','utf8',(Join-Path $PSScriptRoot 'package_gui.py'),'--output',$publishRoot)
     Invoke-Checked (Join-Path $publishRoot 'python/python.exe') @('-X','utf8',(Join-Path $PSScriptRoot 'check_gui_agent.py'),'--package',$publishRoot)
+    Invoke-Checked dotnet @('run','--project',(Join-Path $PSScriptRoot 'gui_focus_check/FocusCheck.csproj'),"-p:PackageDir=$publishRoot",'--',$publishRoot)
     if ($Run) { Start-Process -FilePath (Join-Path $publishRoot 'MFAAvalonia.exe') -WorkingDirectory $publishRoot }
 } finally {
     $env:HTTPS_PROXY = $oldHttpsProxy

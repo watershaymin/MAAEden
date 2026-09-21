@@ -79,7 +79,7 @@
             "name": "DungeonSkip",
             "label": "副本跳过",
             "entry": "DungeonSkip",
-            "description": "红票、绿票分别设置副本和跳过次数，每次运行先执行红票，再执行绿票；各默认 4 次，设为 0 则不执行该票种。有扫荡分支的副本会显示路线选项，各副本独立保存选择。红绿票每 6 小时各恢复 1 张，每天各 4 张；部分绿票副本每场消耗 2 张，次数按场数计算。自动前往次元夹缝蓝门，核对副本、难度和票耗。红票、绿票和猫掌券不足时可分别启用导证之力补充，默认不补充；未允许补充、额度不足或执行失败时停止整个任务。禁止使用克洛诺斯之石。",
+            "description": "红票、绿票分别设置副本和跳过次数，每次运行先执行红票，再执行绿票；各默认 4 次，设为 0 则不执行该票种。有扫荡分支的副本会显示路线选项，各副本独立保存选择。红绿票每 6 小时各恢复 1 张，每天各 4 张；部分绿票副本每场消耗 2 张，次数按场数计算。自动前往次元夹缝蓝门，核对副本、难度和票耗。可勾选“获得白票时自动刷幻璃境”：持有或掉落白票时先处理幻璃境，再继续剩余扫荡；默认关闭，获得白票后继续跳过。进入终境即停止并提示“你撞大运了”，交给玩家处理。红票、绿票和猫掌券不足时可分别启用导证之力补充，默认不补充；未允许补充、额度不足或执行失败时停止整个任务。禁止使用克洛诺斯之石。",
             "option": [
                 "DungeonRedTarget",
                 "DungeonRedCount",
@@ -87,7 +87,8 @@
                 "DungeonGreenTarget",
                 "DungeonGreenCount",
                 "DungeonRefillGreen",
-                "DungeonRefillCat"
+                "DungeonRefillCat",
+                "DungeonAutoPhantom"
             ]
         }
     ],
@@ -826,6 +827,36 @@
                         "DungeonSkipOption_DungeonRefillCat": {
                             "attach": {
                                 "refill_cat": true
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "DungeonAutoPhantom": {
+            "type": "select",
+            "label": "获得白票时自动刷幻璃境",
+            "description": "勾选后自动使用已有或新获得的白票，完成幻璃境后继续原副本的剩余跳过次数；最后一场掉票也会处理。进入终境会停止并提示“你撞大运了”。默认关闭，保留白票并继续跳过。",
+            "default_case": "No",
+            "cases": [
+                {
+                    "name": "No",
+                    "label": "保留白票，继续跳过",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonAutoPhantom": {
+                            "attach": {
+                                "auto_phantom": false
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Yes",
+                    "label": "自动刷幻璃境后继续跳过",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonAutoPhantom": {
+                            "attach": {
+                                "auto_phantom": true
                             }
                         }
                     }

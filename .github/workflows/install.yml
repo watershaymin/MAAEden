@@ -59,6 +59,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Python dependencies failed' }
           python tools/validate_schema.py --schema-dir deps/tools --resource-dirs assets/resource --exclude-dirs assets/resource/announcement --interface-files assets/interface.json
           if ($LASTEXITCODE -ne 0) { throw 'Schema check failed' }
+          python -X utf8 tools/configure.py
+          if ($LASTEXITCODE -ne 0) { throw 'OCR model configuration failed' }
           python -X utf8 -m unittest discover -s tools -p 'test_*.py'
           if ($LASTEXITCODE -ne 0) { throw 'Unit tests failed' }
 

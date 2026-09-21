@@ -44,15 +44,16 @@ def package(output):
     notices = output / 'licenses'
     notices.mkdir(exist_ok=True)
     shutil.copy2(ROOT / 'deps/MFAAvalonia/LICENSE', notices / 'MFAAvalonia-GPL-3.0.txt')
-    shutil.copy2(ROOT / 'tools/patches/gui-agent-temp.patch', notices / 'gui-agent-temp.patch')
+    for patch in ('gui-agent-temp.patch', 'gui-focus-abort.patch'):
+        shutil.copy2(ROOT / 'tools/patches' / patch, notices / patch)
     (notices / 'SOURCES.txt').write_text(
-        f'MFAAvalonia v2.16.1 + local Agent temp fix, GPL-3.0\nhttps://github.com/MaaXYZ/MFAAvalonia/tree/{GUI_COMMIT}\n'
-        'Local changes: gui-agent-temp.patch (apply with git apply before building)\n'
+        f'MFAAvalonia v2.16.1 + local Agent and focus fixes, GPL-3.0\nhttps://github.com/MaaXYZ/MFAAvalonia/tree/{GUI_COMMIT}\n'
+        'Local changes: gui-agent-temp.patch, gui-focus-abort.patch (apply with git apply before building)\n'
         'Python 3.12.10, PSF license: ../python/LICENSE.txt\n'
         'Python package licenses: ../python/Lib/site-packages/*dist-info/\n', encoding='utf-8')
     manifest = {'gui':'MFAAvalonia v2.16.1', 'gui_commit':GUI_COMMIT, 'framework':'5.12.3',
                 'python':'3.12.10', 'platform':'win-x64', 'self_contained_dotnet':True,
-                'gui_patches':['gui-agent-temp.patch'],
+                'gui_patches':['gui-agent-temp.patch', 'gui-focus-abort.patch'],
                 'project_version':interface['version'],
                 'project_commit':subprocess.check_output(['git','rev-parse','HEAD'], cwd=ROOT, text=True).strip()}
     (output / 'build-info.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')

@@ -1,6 +1,7 @@
 """通过 MaaFramework 在指定 ADB 设备上运行任务，默认启动并登录。"""
 
 import argparse
+import os
 import sys
 import time
 from pathlib import Path
@@ -49,10 +50,12 @@ def dungeon_params(args):
         if routes:
             params["routes"] = routes
     params.update(refill_red=args.refill_red, refill_green=args.refill_green, refill_cat=args.refill_cat)
+    params["auto_phantom"] = args.auto_phantom
     return params
 
 
 def main() -> int:
+    os.environ['MAAEDEN_CONSOLE_ALERT'] = '1'
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--adb-path", required=True, type=Path)
     parser.add_argument("--address", required=True, help="例如 127.0.0.1:16384")
@@ -73,6 +76,7 @@ def main() -> int:
     parser.add_argument("--refill-red", action="store_true", help="红票不足时使用星天之证的导证之力补充")
     parser.add_argument("--refill-green", action="store_true", help="绿票不足时使用星天之证的导证之力补充")
     parser.add_argument("--refill-cat", action="store_true", help="猫掌券不足时使用星天之证的导证之力补充")
+    parser.add_argument("--auto-phantom", action="store_true", help="副本跳过时自动使用白票刷幻璃境，结束后继续剩余场数")
     parser.add_argument("--appraisal-config", type=Path, help="谜晶鉴定规则 JSON，字段与 Custom 参数一致")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
@@ -190,7 +194,8 @@ def main() -> int:
             print("副本动作注册失败。", file=sys.stderr)
             return 1
         if args.task == "DungeonSkip":
-            time_limit = 60 + sum(600 + count * 90 for _, count in skip_plan)
+            per_run = 690 if skip_params["auto_phantom"] else 90
+            time_limit = 60 + sum(600 + count * per_run for _, count in skip_plan)
     if args.task.startswith("Navigation"):
         sys.path.insert(0, str(root / "agent"))
         from navigation import register

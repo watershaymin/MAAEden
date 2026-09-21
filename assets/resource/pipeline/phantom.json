@@ -1,0 +1,233 @@
+{
+    "PhantomRealm": {
+        "action": "Custom",
+        "custom_action": "PhantomRealm",
+        "next": [
+            "PhantomComplete"
+        ]
+    },
+    "PhantomComplete": {},
+    "PhantomCongratulations": {
+        "recognition": "OCR",
+        "roi": [
+            485,
+            340,
+            330,
+            80
+        ],
+        "expected": [
+            "获得迷宫内的奖励"
+        ],
+        "action": "Click",
+        "target": [
+            640,
+            580
+        ]
+    },
+    "PhantomWhiteAvailable": {
+        "recognition": "TemplateMatch",
+        "template": "Phantom/WhiteAvailable.png",
+        "roi": [
+            380,
+            60,
+            135,
+            140
+        ],
+        "method": 10001,
+        "threshold": 0.85
+    },
+    "PhantomWhiteWarning": {
+        "recognition": "OCR",
+        "roi": [
+            440,
+            475,
+            410,
+            60
+        ],
+        "expected": [
+            "未使用.*白色解锁卡"
+        ]
+    },
+    "PhantomTitle": {
+        "recognition": "OCR",
+        "roi": [
+            0,
+            0,
+            1280,
+            530
+        ],
+        "expected": [
+            "[壹贰貳叁參肆伍陆陸终終猫貓]之境",
+            "稻草人之境",
+            "此岸",
+            "地牢"
+        ]
+    },
+    "PhantomReadText": {
+        "recognition": "OCR",
+        "roi": [
+            0,
+            0,
+            1280,
+            720
+        ]
+    },
+    "PhantomEvent": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "Phantom/EventCore.png",
+            "Phantom/EventCore39.png",
+            "Phantom/EventCore43.png",
+            "Phantom/EventCore47.png",
+            "Phantom/EventCore51.png",
+            "Phantom/EventCore55.png",
+            "Phantom/EventCore59.png"
+        ],
+        "roi": [
+            0,
+            0,
+            1280,
+            550
+        ],
+        "threshold": 0.85,
+        "order_by": "Horizontal"
+    },
+    "PhantomChest": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "Phantom/Chest.png",
+            "Phantom/ChestFuture.png",
+            "Phantom/ChestLarge.png",
+            "Phantom/ChestBaruokiMiddle.png"
+        ],
+        "roi": [
+            0,
+            180,
+            1280,
+            350
+        ],
+        "threshold": 0.75,
+        "order_by": "Horizontal"
+    },
+    "PhantomSceneFirst": {
+        "recognition": "TemplateMatch",
+        "template": "Phantom/FirstRoom.png",
+        "threshold": 0.85
+    },
+    "PhantomCat": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "Phantom/CatSecond.png",
+            "Phantom/CatThird.png",
+            "Phantom/CatFourth.png"
+        ],
+        "roi": [
+            0,
+            250,
+            1280,
+            300
+        ],
+        "threshold": 0.75,
+        "order_by": "Horizontal"
+    },
+    "PhantomReward": {
+        "recognition": "OCR",
+        "roi": [
+            160,
+            20,
+            970,
+            125
+        ],
+        "expected": [
+            "获得[。.]?$"
+        ],
+        "action": "Click",
+        "target": [
+            640,
+            570
+        ],
+        "post_delay": 150
+    },
+    "PhantomStamp": {
+        "recognition": "OCR",
+        "roi": [
+            160,
+            20,
+            970,
+            130
+        ],
+        "expected": [
+            "猫咪按下肉球印",
+            "收集到的印章数"
+        ],
+        "action": "Click",
+        "target": [
+            640,
+            570
+        ],
+        "post_delay": 150
+    },
+    "PhantomWorld": {
+        "recognition": "TemplateMatch",
+        "template": "Phantom/RewardsButton.png",
+        "roi": [
+            135,
+            620,
+            110,
+            85
+        ],
+        "method": 10001,
+        "threshold": 0.9
+    },
+    "PhantomMove": {
+        "action": "Swipe",
+        "begin": [
+            640,
+            520
+        ],
+        "end": [
+            450,
+            520
+        ],
+        "duration": 400,
+        "post_delay": 200
+    },
+    "PhantomClick": {
+        "action": "Click",
+        "target": [
+            640,
+            600
+        ],
+        "post_delay": 100
+    },
+    "PhantomJackpot": {
+        "action": "DoNothing",
+        "focus": {
+            "aborted": true,
+            "Node.Action.Starting": {
+                "content": "你撞大运了",
+                "display": [
+                    "log",
+                    "dialog"
+                ]
+            }
+        }
+    },
+    "PhantomBlackCat": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "Phantom/BlackCat0.png",
+            "Phantom/BlackCat1.png",
+            "Phantom/BlackCat2.png",
+            "Phantom/BlackCat3.png",
+            "Phantom/BlackCat4.png"
+        ],
+        "roi": [
+            0,
+            200,
+            1280,
+            360
+        ],
+        "threshold": 0.75
+    }
+}

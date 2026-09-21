@@ -13,7 +13,7 @@ from maa.toolkit import Toolkit
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'agent'))
-from dungeons import parse_refill_policy, parse_skip_plan, read_interface_options
+from dungeons import parse_auto_phantom, parse_refill_policy, parse_skip_plan, read_interface_options
 
 
 class NoGameController(CustomController):
@@ -27,7 +27,7 @@ class CaptureOptions(CustomAction):
     def run(self, context, argv):
         try:
             params = read_interface_options(context, json.loads(argv.custom_action_param), self.catalog)
-            self.result = (parse_skip_plan(params, self.catalog), parse_refill_policy(params))
+            self.result = (parse_skip_plan(params, self.catalog), parse_refill_policy(params), parse_auto_phantom(params))
             return True
         except Exception as exc:
             self.error = exc
@@ -76,25 +76,43 @@ class NativeDungeonOptions(unittest.TestCase):
             expected.append((case['name'], route['name'], count))
             overrides.extend([case['pipeline_override'], route['pipeline_override'], self.count(name + 'Count', count)])
         overrides.extend(self.case('DungeonRefill' + ticket, index) for ticket, index in [('Red', 1), ('Green', 0), ('Cat', 1)])
-        plan, policy = self.run_options(overrides)
+        overrides.insert(0, self.case('DungeonAutoPhantom', 1))
+        plan, policy, auto_phantom = self.run_options(overrides)
         self.assertEqual([(t['id'], t['skip_route_id'], count) for t, count in plan], expected)
         self.assertEqual(policy, {'red': True, 'green': False, 'cat': True})
+        self.assertTrue(auto_phantom)
         # 后一任务没有选这些选项时，不得继承前一任务覆盖。
-        plan, policy = self.run_options([])
+        plan, policy, auto_phantom = self.run_options([])
         self.assertEqual([(t['id'], count) for t, count in plan], [('snake_damak_vh', 4), ('moon_forest_h', 4)])
         self.assertEqual(policy, {'red': False, 'green': False, 'cat': False})
+        self.assertFalse(auto_phantom)
+
+    def test_phantom_off_override_and_subsequent_reenable(self):
+        enabled = self.case('DungeonAutoPhantom', 1)
+        disabled = self.case('DungeonAutoPhantom', 0)
+        self.assertFalse(self.run_options([enabled, disabled])[2])
+        self.assertTrue(self.run_options([disabled, enabled])[2])
+
+    def test_phantom_only_available_as_an_opt_in_skip_option(self):
+        tasks = {task['name']: task for task in self.interface['task']}
+        self.assertNotIn('PhantomRealm', tasks)
+        self.assertIn('DungeonAutoPhantom', tasks['DungeonSkip']['option'])
+        option = self.interface['option']['DungeonAutoPhantom']
+        default = next(case for case in option['cases'] if case['name'] == option['default_case'])
+        self.assertFalse(self.run_options([default['pipeline_override']])[2])
 
     def test_legacy_target_count_and_route_still_make_one_group(self):
         case = next(c for c in self.interface['option']['DungeonTarget']['cases'] if c.get('option'))
         route = self.interface['option'][case['option'][0]]['cases'][-1]
-        plan, _ = self.run_options([case['pipeline_override'], route['pipeline_override'], self.count('DungeonCount', 2)])
+        plan, _, _ = self.run_options([case['pipeline_override'], route['pipeline_override'], self.count('DungeonCount', 2)])
         self.assertEqual([(t['id'], t['skip_route_id'], count) for t, count in plan], [(case['name'], route['name'], 2)])
 
     def test_cli_override_ignores_interface_settings(self):
-        plan, _ = self.run_options([self.count('DungeonRedCount', 9), {
+        plan, _, auto_phantom = self.run_options([self.count('DungeonRedCount', 9), self.case('DungeonAutoPhantom', 1), {
             'DungeonSkip': {'custom_action_param': {'red_count': 0, 'green_count': 1}},
         }])
         self.assertEqual([(t['id'], count) for t, count in plan], [('moon_forest_h', 1)])
+        self.assertFalse(auto_phantom)
 
 
 if __name__ == '__main__':

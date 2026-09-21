@@ -11,7 +11,15 @@ GUI 直接采用 MFAAvalonia，沿用其设备连接、任务队列、选项配�
 | 内嵌 Python | 3.12.10，Windows x64 |
 | .NET | 10，自包含发布 |
 
-GUI 源码取自 <https://github.com/MaaXYZ/MFAAvalonia>，构建时应用 `tools/patches/gui-agent-temp.patch`，完成或失败后撤回补丁，保持依赖目录干净。运行包 `licenses/` 附带该补丁，`build-info.json` 记录补丁名称。Python 依赖固定在 `tools/gui-requirements.txt`。嵌入式 Python 压缩包由打包脚本校验 SHA256。
+GUI 源码取自 <https://github.com/MaaXYZ/MFAAvalonia>，构建时应用 `tools/patches/gui-agent-temp.patch`
+和 `tools/patches/gui-focus-abort.patch`，完成或失败后撤回补丁，保持依赖目录干净。
+运行包 `licenses/` 附带补丁，`build-info.json` 记录补丁名称。Python 依赖固定在
+`tools/gui-requirements.txt`。嵌入式 Python 压缩包由打包脚本校验 SHA256。
+
+幻璃境终境使用 `focus.aborted` 取消客户端队列。仅调用原生 `post_stop` 在 Maa 5.12.3 中
+可能返回成功，不能保证客户端不执行下一项。焦点补丁接通取消回调，并跳过纯文本提示不需要的
+截图查询，避免在原生 Action 回调中重入截图锁。首次升级此功能需要完整重建 GUI。
+构建末尾的 `tools/gui_focus_check` 检查编译产物的焦点取消回调和重复任务中止；不连接游戏。
 
 ## 一键构建
 

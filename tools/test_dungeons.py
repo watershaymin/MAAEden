@@ -7,7 +7,8 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 sys.path.insert(0,str(Path(__file__).resolve().parents[1] / 'agent'))
 from dungeons import (DungeonNavigator, DungeonSkip, blank_map_point, parse_request, parse_refill_policy,
-                      parse_skip_plan, read_interface_options, verify_party, proof_refill_allowed, refill_ticket)
+                      parse_auto_phantom, parse_skip_plan, read_interface_options, verify_party,
+                      proof_refill_allowed, refill_ticket)
 
 
 OFFERS = {ticket: f'要使用1次导证之力，回复{label}吗？ 导证之力：剩余12次'
@@ -21,6 +22,14 @@ class FakeDungeon(DungeonNavigator):
 
     def choose(self, target):
         self.actions.append('choose')
+
+    def handle_white_ticket(self, pending=False):
+        if pending:
+            self.actions.append('phantom')
+        return pending
+
+    def reopen_menu(self):
+        self.actions.append('menu')
 
     def frame(self):
         return next(self.frames)
@@ -47,9 +56,85 @@ class FakeDungeon(DungeonNavigator):
 
 
 class DungeonCounting(unittest.TestCase):
+    def test_fading_refill_waits_and_rechecks_fresh_consumption_text(self):
+        nav = FakeDungeon(['fade', 'DungeonCongratulations', 'DungeonContinuePage'])
+        original_text = nav.text
+        nav.text = lambda frame: original_text(OFFERS['red'] if frame == 'fade' else frame)
+        nav.wait = Mock(return_value=OFFERS['red'])
+        self.assertEqual(nav.skip({'id': 'test'}, 1, {'red': True}), 1)
+        self.assertIn(('DungeonProofRefill', 5), [c.args for c in nav.wait.call_args_list])
+        self.assertEqual(nav.actions.count('refill:DungeonSkipActive:red'), 1)
+
+    def test_old_continue_page_during_refill_does_not_count(self):
+        nav = FakeDungeon(['DungeonContinuePage', OFFERS['red'],
+                           'DungeonContinuePage', 'DungeonCongratulations', 'DungeonContinuePage'])
+        self.assertEqual(nav.skip({'id': 'test'}, 1, {'red': True}), 1)
+        self.assertEqual(nav.actions.count('refill:DungeonSkipActive:red'), 1)
+        self.assertEqual(nav.actions.count('DungeonCongratulations'), 1)
+
+    def test_white_ticket_consumed_before_resuming_remaining_runs(self):
+        nav = FakeDungeon(['DungeonWhiteCardReward', 'DungeonContinuePage',
+                           'DungeonCongratulations', 'DungeonContinuePage'])
+        self.assertEqual(nav.skip({'id': 'test'}, 2, auto_phantom=True), 2)
+        self.assertEqual(nav.actions.count('phantom'), 1)
+        self.assertEqual(nav.actions.count('DungeonSkipActive'), 2)
+        self.assertNotIn('DungeonContinueSkip', nav.actions)
+
+    def test_disabled_phantom_keeps_sweeping_despite_reward_and_warning(self):
+        for options in ({}, {'auto_phantom': False}):
+            with self.subTest(options=options):
+                nav = FakeDungeon(['DungeonWhiteCardReward', 'DungeonContinuePage', 'transition',
+                                   'DungeonCongratulations', 'DungeonContinuePage'])
+                original_reco = nav.reco
+                nav.reco = lambda node, frame: (frame == 'DungeonContinuePage'
+                                                if node == 'PhantomWhiteWarning' else original_reco(node, frame))
+                nav.handle_white_ticket = Mock()
+                self.assertEqual(nav.skip({'id': 'test'}, 2, **options), 2)
+                nav.handle_white_ticket.assert_not_called()
+                self.assertEqual(nav.actions.count('DungeonWhiteCardReward'), 1)
+                self.assertEqual(nav.actions.count('DungeonContinueSkip'), 1)
+                self.assertEqual(nav.actions.count('DungeonSkipActive'), 1)
+                self.assertEqual(nav.actions.count('DungeonEndSkip'), 1)
+
+    def test_enabled_phantom_consumes_existing_white_before_first_skip(self):
+        nav = FakeDungeon(['DungeonCongratulations', 'DungeonContinuePage'])
+        nav.handle_white_ticket = Mock(side_effect=lambda: nav.actions.append('existing-phantom') or True)
+        self.assertEqual(nav.skip({'id': 'test'}, 1, auto_phantom=True), 1)
+        nav.handle_white_ticket.assert_called_once_with()
+        self.assertEqual(nav.actions[:4], ['existing-phantom', 'menu', 'choose', 'DungeonSkipActive'])
+
+    def test_warning_triggers_phantom_without_duplicate_reward(self):
+        nav = FakeDungeon(['DungeonCongratulations', 'DungeonContinuePage',
+                           'DungeonCongratulations', 'DungeonContinuePage'])
+        original_reco = nav.reco
+        nav.reco = lambda node, frame: (frame == 'DungeonContinuePage' and nav.last_completed == 1
+                                        if node == 'PhantomWhiteWarning' else original_reco(node, frame))
+        self.assertEqual(nav.skip({'id': 'test'}, 2, auto_phantom=True), 2)
+        self.assertEqual(nav.actions.count('phantom'), 1)
+        self.assertEqual(nav.actions.count('DungeonSkipActive'), 2)
+
+    def test_last_skip_white_is_consumed_only_when_enabled(self):
+        for enabled in (False, True):
+            with self.subTest(enabled=enabled):
+                nav = FakeDungeon(['DungeonWhiteCardReward', 'DungeonContinuePage'])
+                self.assertEqual(nav.skip({'id': 'test'}, 1, auto_phantom=enabled), 1)
+                self.assertEqual(nav.actions.count('phantom'), int(enabled))
+                self.assertEqual(nav.actions.count('DungeonSkipActive'), 1)
+                self.assertNotIn('DungeonContinueSkip', nav.actions)
+                self.assertEqual(nav.last_completed, 1)
+
+    def test_phantom_failure_does_not_resume_or_add_a_skip(self):
+        nav = FakeDungeon(['DungeonWhiteCardReward', 'DungeonContinuePage'])
+        nav.handle_white_ticket = Mock(side_effect=[False, RuntimeError('幻璃境停止')])
+        with self.assertRaisesRegex(RuntimeError, '幻璃境停止'):
+            nav.skip({'id': 'test'}, 2, auto_phantom=True)
+        self.assertEqual(nav.last_completed, 1)
+        self.assertEqual(nav.actions.count('DungeonSkipActive'), 1)
+        self.assertNotIn('DungeonContinueSkip', nav.actions)
+
     def test_region_selection_does_not_count_and_resets_after_settlement(self):
-        nav = FakeDungeon(['请选择区域。', 'DungeonContinuePage', 'transition',
-                           '请选择区域。', 'DungeonContinuePage'])
+        nav = FakeDungeon(['请选择区域。', 'DungeonCongratulations', 'DungeonContinuePage', 'transition',
+                           '请选择区域。', 'DungeonCongratulations', 'DungeonContinuePage'])
         self.assertEqual(nav.skip({'id': 'entna'}, 2), 2)
         self.assertEqual(nav.actions.count('select-region'), 2)
         self.assertEqual(nav.actions.count('DungeonContinueSkip'), 1)
@@ -61,14 +146,14 @@ class DungeonCounting(unittest.TestCase):
         self.assertEqual(nav.actions.count('select-region'), 1)
 
     def test_ends_at_requested_count(self):
-        nav = FakeDungeon(['DungeonContinuePage', 'DungeonCongratulations',
-                           'DungeonCongratulations', 'DungeonContinuePage'])
+        nav = FakeDungeon(['DungeonCongratulations', 'DungeonContinuePage', 'DungeonCongratulations',
+                           'DungeonCongratulations', 'DungeonCongratulations', 'DungeonContinuePage'])
         self.assertEqual(nav.skip({'id':'test'}, 2), 2)
         self.assertEqual(nav.actions.count('DungeonContinueSkip'), 1)
         self.assertEqual(nav.actions[-2:], ['DungeonEndSkip', 'StartUpWorldReady'])
 
     def test_does_not_submit_another_skip_after_single_run(self):
-        nav = FakeDungeon(['DungeonContinuePage'])
+        nav = FakeDungeon(['DungeonCongratulations', 'DungeonContinuePage'])
         self.assertEqual(nav.skip({'id':'test'}, 1), 1)
         self.assertNotIn('DungeonContinueSkip', nav.actions)
 
@@ -80,7 +165,7 @@ class DungeonCounting(unittest.TestCase):
 
     def test_reward_bonus_is_not_a_refill_dialog(self):
         nav = FakeDungeon(['受「星天引导之证」之力的影响 获得量增加中',
-                           'DungeonContinuePage'])
+                           'DungeonCongratulations', 'DungeonContinuePage'])
         self.assertEqual(nav.skip({'id':'test'}, 1), 1)
 
     def test_cat_voucher_refill_stops_without_spending(self):
@@ -90,13 +175,13 @@ class DungeonCounting(unittest.TestCase):
         self.assertEqual(nav.actions, ['choose', 'DungeonSkipActive'])
 
     def test_white_card_reward_does_not_add_a_run(self):
-        nav = FakeDungeon(['DungeonWhiteCardReward', 'DungeonContinuePage'])
+        nav = FakeDungeon(['DungeonWhiteCardReward', 'DungeonCongratulations', 'DungeonContinuePage'])
         self.assertEqual(nav.skip({'id':'test'}, 1), 1)
         self.assertEqual(nav.actions.count('DungeonWhiteCardReward'), 1)
 
     def test_refill_does_not_increment_completed_count(self):
-        nav = FakeDungeon(['DungeonContinuePage', OFFERS['red'],
-                           OFFERS['red'], 'DungeonCongratulations', 'DungeonContinuePage'])
+        nav = FakeDungeon(['DungeonCongratulations', 'DungeonContinuePage', OFFERS['red'],
+                           OFFERS['red'], 'DungeonCongratulations', 'DungeonCongratulations', 'DungeonContinuePage'])
         self.assertEqual(nav.skip({'id':'test'}, 2, {'red': True}), 2)
         self.assertEqual(nav.actions.count('refill:DungeonContinueSkip:red'), 1)
 
@@ -117,13 +202,13 @@ class DungeonCounting(unittest.TestCase):
     def test_each_ticket_can_be_enabled_independently(self):
         for ticket in OFFERS:
             with self.subTest(ticket=ticket):
-                nav = FakeDungeon([OFFERS[ticket], 'DungeonContinuePage'])
+                nav = FakeDungeon([OFFERS[ticket], 'DungeonCongratulations', 'DungeonContinuePage'])
                 self.assertEqual(nav.skip({'id':'test'}, 1, {ticket: True}), 1)
                 self.assertEqual(nav.actions.count('refill:DungeonSkipActive:' + ticket), 1)
 
     def test_key_then_cat_refill_in_same_run_and_reset_after_completion(self):
-        nav = FakeDungeon([OFFERS['green'], OFFERS['cat'], 'DungeonContinuePage',
-                           OFFERS['cat'], OFFERS['cat'], 'DungeonContinuePage'])
+        nav = FakeDungeon([OFFERS['green'], OFFERS['cat'], 'DungeonCongratulations', 'DungeonContinuePage',
+                           OFFERS['cat'], OFFERS['cat'], 'DungeonCongratulations', 'DungeonContinuePage'])
         self.assertEqual(nav.skip({'id':'test'}, 2, {'green': True, 'cat': True}), 2)
         self.assertIn('refill:DungeonSkipActive:cat', nav.actions)
         self.assertIn('refill:DungeonContinueSkip:cat', nav.actions)
@@ -138,6 +223,14 @@ class DungeonParameters(unittest.TestCase):
     def setUp(self):
         self.target = {'id':'snake','name':'蛇肝达玛克','difficulty':'非常困难','can_enter':True,'can_skip':True,'ticket':'red','ticket_cost':1}
         self.catalog={'dungeons':[self.target]}
+
+    def test_phantom_defaults_off_and_requires_boolean(self):
+        self.assertFalse(parse_auto_phantom({}))
+        self.assertFalse(parse_auto_phantom({'auto_phantom': False}))
+        self.assertTrue(parse_auto_phantom({'auto_phantom': True}))
+        for value in ('true', 'false', 0, 1, None, []):
+            with self.subTest(value=value), self.assertRaisesRegex(ValueError, '必须为布尔值'):
+                parse_auto_phantom({'auto_phantom': value})
 
     def test_region_selection_requires_configured_and_recognized_label(self):
         nav = DungeonNavigator(SimpleNamespace())
@@ -267,6 +360,70 @@ class DungeonParameters(unittest.TestCase):
             ('action', 'DungeonProofRefill'), ('action', 'DungeonProofReceived'),
             ('wait', 'DungeonSkipActive'), ('action', 'DungeonSkipActive')])
 
+    def test_detail_refill_receipt_does_not_submit_a_run(self):
+        nav = DungeonNavigator(SimpleNamespace())
+        nav.action = Mock()
+        nav.wait = Mock()
+        nav.frame = Mock(return_value='receipt')
+        nav.reco = Mock(return_value=True)
+        nav.refill(self.target, None, OFFERS['cat'], 'cat')
+        self.assertEqual([c.args[0] for c in nav.action.call_args_list],
+                         ['DungeonProofRefill', 'DungeonProofReceived'])
+        nav.wait.assert_not_called()
+
+    def test_pre_party_refill_requires_policy_and_matching_ticket(self):
+        for ticket, policy in [('red', {}), ('green', {'green': True})]:
+            nav = DungeonNavigator(SimpleNamespace())
+            nav.refill_policy = policy
+            nav.text = Mock(return_value=[SimpleNamespace(text=OFFERS[ticket])])
+            nav.refill = Mock()
+            with self.subTest(ticket=ticket), self.assertRaisesRegex(RuntimeError, '未允许补充该票种'):
+                nav.refill_before_party(self.target, 'frame')
+            nav.refill.assert_not_called()
+
+    def test_pre_party_refill_reselects_difficulty_without_starting_sweep(self):
+        nav = DungeonNavigator(SimpleNamespace())
+        nav.refill_policy = {'red': True}
+        nav.text = Mock(side_effect=lambda f: [SimpleNamespace(text=OFFERS['red'] if f == 'offer' else '详情页', box=[0, 0, 10, 10])])
+        nav.reco = Mock(return_value=True)
+        nav.refill = Mock()
+        nav.settle = Mock()
+        nav.frame = Mock(side_effect=['detail', 'party'])
+        nav.select_label = Mock()
+        nav.action = Mock()
+        self.assertEqual(nav.refill_before_party(self.target, 'offer'), 'party')
+        nav.refill.assert_called_once_with(self.target, None, OFFERS['red'], 'red')
+        nav.select_label.assert_called_once_with('非常困难', allow_pan=False)
+        nav.action.assert_not_called()
+
+    def test_empty_cat_requires_detail_and_zero_before_plus(self):
+        for zero, detail in [(False, True), (True, False)]:
+            nav = DungeonNavigator(SimpleNamespace())
+            nav.action = Mock()
+            nav.settle = Mock()
+            nav.frame = Mock(return_value='frame')
+            nav.reco = Mock(side_effect=lambda node, frame: {
+                'DungeonCatEmpty': zero, 'DungeonCloseDetail': detail}[node])
+            with self.subTest(zero=zero, detail=detail), self.assertRaisesRegex(RuntimeError, '零余额'):
+                nav.refill_empty_cat(self.target)
+            nav.action.assert_called_once_with('DungeonReturnParty')
+
+    def test_empty_cat_rechecks_destination_after_replenishment(self):
+        nav = DungeonNavigator(SimpleNamespace())
+        nav.action = Mock()
+        nav.settle = Mock()
+        nav.frame = Mock(return_value='frame')
+        nav.reco = Mock(return_value=True)
+        nav.wait = Mock(return_value='offer')
+        nav.text = Mock(return_value=[SimpleNamespace(text=OFFERS['cat'])])
+        nav.refill = Mock()
+        nav.select_label = Mock()
+        nav.party_matches = Mock(return_value=False)
+        with self.assertRaisesRegex(RuntimeError, '目标队伍页'):
+            nav.refill_empty_cat(self.target)
+        nav.refill.assert_called_once_with(self.target, None, OFFERS['cat'], 'cat')
+        self.assertNotIn('DungeonSkipActive', [c.args[0] for c in nav.action.call_args_list])
+
     def test_dismiss_avoids_a_dungeon_under_the_old_fixed_click(self):
         rows = [SimpleNamespace(box=[236, 410, 100, 24])]
         self.assertNotEqual(blank_map_point(rows), (350, 400))
@@ -376,8 +533,8 @@ class DungeonPlan(unittest.TestCase):
             events.append(name)
             return SimpleNamespace(status=SimpleNamespace(succeeded=True),
                                    nodes=[SimpleNamespace(name='DungeonMenuReady')])
-        def skip(target, count, policy):
-            events.append((target['ticket'], count, policy))
+        def skip(target, count, policy, *, auto_phantom):
+            events.append((target['ticket'], count, policy, auto_phantom))
             return count
         context = SimpleNamespace(run_task=Mock(side_effect=entrance))
         params = {'red_count': 3, 'green_count': 2, 'refill_red': True}
@@ -389,8 +546,16 @@ class DungeonPlan(unittest.TestCase):
             self.assertTrue(action.run(context, argv))
             self.assertTrue(action.run(context, argv))
         policy = {'red': True, 'green': False, 'cat': False}
-        self.assertEqual(events, ['DungeonEntrance', ('red', 3, policy),
-                                  'DungeonEntrance', ('green', 2, policy)] * 2)
+        self.assertEqual(events, ['DungeonEntrance', ('red', 3, policy, False),
+                                  'DungeonEntrance', ('green', 2, policy, False)] * 2)
+
+    def test_invalid_phantom_option_is_rejected_before_navigation(self):
+        context = SimpleNamespace(run_task=Mock())
+        with patch('dungeons.DungeonNavigator') as ctor:
+            argv = SimpleNamespace(custom_action_param='{"auto_phantom":"false"}')
+            self.assertFalse(DungeonSkip().run(context, argv))
+            ctor.assert_not_called()
+            context.run_task.assert_not_called()
 
     def test_invalid_second_group_is_rejected_before_any_navigation(self):
         context = SimpleNamespace(run_task=Mock())
@@ -421,8 +586,12 @@ class DungeonPlan(unittest.TestCase):
     def test_cli_preserves_legacy_and_supports_split_plan(self):
         from run_startup import dungeon_params
         args = SimpleNamespace(dungeon=None, count=None, red_dungeon=None, green_dungeon=None,
-                               red_count=4, green_count=2, refill_red=False, refill_green=False, refill_cat=True)
+                               red_count=4, green_count=2, refill_red=False, refill_green=False, refill_cat=True,
+                               auto_phantom=False)
         self.assertEqual([n for _, n in parse_skip_plan(dungeon_params(args), self.catalog)], [4, 2])
+        self.assertFalse(parse_auto_phantom(dungeon_params(args)))
+        args.auto_phantom = True
+        self.assertTrue(parse_auto_phantom(dungeon_params(args)))
         args.dungeon = 'moon_forest_h'
         with self.assertRaisesRegex(ValueError, '不能.*混用'):
             dungeon_params(args)
@@ -435,7 +604,7 @@ class DungeonPlan(unittest.TestCase):
         args = SimpleNamespace(dungeon=None, count=None, dungeon_route=None,
                                red_dungeon='red_id', green_dungeon='green_id', red_count=1, green_count=2,
                                red_route='red_route', green_route='green_route',
-                               refill_red=False, refill_green=False, refill_cat=False)
+                               refill_red=False, refill_green=False, refill_cat=False, auto_phantom=False)
         self.assertEqual(dungeon_params(args)['routes'], {'red_id': 'red_route', 'green_id': 'green_route'})
         args.dungeon = 'legacy_id'
         with self.assertRaisesRegex(ValueError, '不能.*混用'):
@@ -451,7 +620,7 @@ class DungeonCatalog(unittest.TestCase):
         context = SimpleNamespace(run_task=Mock(return_value=SimpleNamespace(
             status=SimpleNamespace(succeeded=True), nodes=[SimpleNamespace(name='DungeonMenuReady')]
         )))
-        params = {'target': 'snake_damak_vh', 'count': 2, 'refill_cat': True}
+        params = {'target': 'snake_damak_vh', 'count': 2, 'refill_cat': True, 'auto_phantom': True}
         with patch('dungeons.DungeonNavigator') as ctor:
             ctor.return_value.party_matches.return_value = False
             ctor.return_value.skip.return_value = 2
@@ -459,6 +628,7 @@ class DungeonCatalog(unittest.TestCase):
             context.run_task.assert_called_once_with('DungeonEntrance')
             self.assertEqual(ctor.return_value.skip.call_args.args[2],
                              {'red': False, 'green': False, 'cat': True})
+            self.assertEqual(ctor.return_value.skip.call_args.kwargs, {'auto_phantom': True})
 
     def test_failed_entrance_never_submits_skip(self):
         context = SimpleNamespace(run_task=Mock(return_value=SimpleNamespace(

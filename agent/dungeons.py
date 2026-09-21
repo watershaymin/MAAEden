@@ -26,7 +26,7 @@ def read_interface_options(context, params, catalog):
         return params
     names = ["DungeonTarget", "DungeonCount", "DungeonRedTarget", "DungeonRedCount",
              "DungeonGreenTarget", "DungeonGreenCount", "DungeonRefillRed", "DungeonRefillGreen",
-             "DungeonRefillCat"]
+             "DungeonRefillCat", "DungeonAutoPhantom"]
     names.extend("DungeonRoute_" + target["id"] for target in catalog["dungeons"] if target.get("skip_routes"))
     merged = dict(params)
     for name in names:
@@ -129,6 +129,13 @@ def parse_refill_policy(params):
     return policy
 
 
+def parse_auto_phantom(params):
+    value = params.get("auto_phantom", False)
+    if type(value) is not bool:
+        raise ValueError("auto_phantom 必须为布尔值")
+    return value
+
+
 def refill_ticket(text):
     """只有完整补充询问才判定票券不足，奖励加成文字不算补票弹窗。"""
     offers = re.findall(r"回复(红色解锁卡|绿色解锁卡|猫掌特急券)吗", normalize(text))
@@ -161,6 +168,29 @@ def blank_map_point(rows):
 
 
 class DungeonNavigator(Navigator):
+    def handle_white_ticket(self, pending=False):
+        """白票最多持有一张，先使用再继续原副本的剩余场数。"""
+        from phantom import PhantomRunner
+        if not pending:
+            frame = self.frame()
+            if self.reco("DungeonReturnParty", frame):
+                self.reopen_menu()
+                frame = self.frame()
+            if not (self.reco("DungeonMenuReady", frame)
+                    and self.reco("PhantomWhiteAvailable", frame)):
+                return False
+        started = time.monotonic()
+        PhantomRunner(self.context).run()
+        # 幻璃境有独立的 10 分钟上限，不挤占后续扫荡的结算时间。
+        self.deadline += time.monotonic() - started
+        return True
+
+    def reopen_menu(self):
+        result = self.context.run_task("DungeonEntrance")
+        if (not result or not result.status.succeeded or not result.nodes
+                or result.nodes[-1].name != "DungeonMenuReady"):
+            raise RuntimeError("使用白票后未能重新打开副本选择页")
+
     def select_category(self, era):
         point = CATEGORIES[era]
         if era in ("封域", "异境"):
@@ -358,12 +388,54 @@ class DungeonNavigator(Navigator):
                 self.search_routes = regions[name].get("search_routes", {})
         if path[0] not in ("封域", "异境"):
             self.select_label(target["difficulty"], allow_pan=False)
-        frame = self.frame()
+        frame = self.refill_before_party(target, self.frame())
         text = " ".join(v.text for v in self.text(frame) if v.box[1] < 100)
         if not verify_party(text, target):
             raise RuntimeError(f"副本、难度或票数核对失败：{text}")
         if not self.reco("DungeonSkipActive", frame):
+            if self.reco("DungeonCatEmpty", frame):
+                if not getattr(self, "refill_policy", {}).get("cat", False):
+                    raise RuntimeError("猫掌特急券不足，未启用星天之证补充，停止")
+                self.refill_empty_cat(target)
+                return
             raise DungeonSkipUnavailable("跳过按钮未启用；不会改为正常进入副本")
+
+    def refill_before_party(self, target, frame):
+        """详情页票数不足时，选择难度会先弹补票框，还没有进入队伍页。"""
+        text = " ".join(v.text for v in self.text(frame))
+        ticket = refill_ticket(text)
+        if not ticket:
+            return frame
+        if ticket != target["ticket"] or not getattr(self, "refill_policy", {}).get(ticket, False):
+            raise RuntimeError("进入队伍页前票不足，未允许补充该票种")
+        if not self.reco("DungeonProofRefill", frame):
+            frame = self.wait("DungeonProofRefill", 5)
+            text = " ".join(v.text for v in self.text(frame))
+        self.refill(target, None, text, ticket)
+        self.settle()
+        # 先核对是否已自动进入队伍页；仍在详情页才重新选择难度。
+        frame = self.frame()
+        header = " ".join(v.text for v in self.text(frame) if v.box[1] < 100)
+        if not verify_party(header, target) and self.reco("DungeonCloseDetail", frame):
+            self.select_label(target["difficulty"], allow_pan=False)
+            frame = self.frame()
+        return frame
+
+    def refill_empty_cat(self, target):
+        """猫掌券为零时跳过按钮变灰，只能从详情页的 + 请求补充。"""
+        self.action("DungeonReturnParty")
+        self.settle()
+        frame = self.frame()
+        if not self.reco("DungeonCatEmpty", frame) or not self.reco("DungeonCloseDetail", frame):
+            raise RuntimeError("猫掌补充前没有确认详情页的零余额")
+        self.action("DungeonCatRefillPlus")
+        frame = self.wait("DungeonProofRefill", 10)
+        text = " ".join(v.text for v in self.text(frame))
+        self.refill(target, None, text, "cat")
+        self.settle()
+        self.select_label(target["difficulty"], allow_pan=False)
+        if not self.party_matches(target):
+            raise RuntimeError("猫掌补充后未确认目标队伍页和启用的跳过按钮")
 
     def refill(self, target, source_action, text, ticket):
         if ticket not in (target["ticket"], "cat") or not proof_refill_allowed(text, ticket):
@@ -378,6 +450,8 @@ class DungeonNavigator(Navigator):
                 raise RuntimeError("使用导证之力后未确认获得对应票券")
         self.action("DungeonProofReceived")
         LOG.warning("DungeonSkip %s: 已确认 %s 补充到账", target["id"], TICKETS[ticket])
+        if source_action is None:
+            return
         # 补票会返回此前的队伍/继续页面，本身不会执行下一次跳过。
         self.wait(source_action, 15)
         if source_action == "DungeonSkipActive" and not self.party_matches(target):
@@ -440,15 +514,21 @@ class DungeonNavigator(Navigator):
                 raise RuntimeError("选择扫荡区域后弹窗未离开")
         LOG.warning("DungeonSkip %s: 已选择扫荡区域 %s", target["id"], region)
 
-    def skip(self, target, count, refill_policy=None):
+    def skip(self, target, count, refill_policy=None, *, auto_phantom=False):
         if refill_policy is None:
             refill_policy = parse_refill_policy({})
+        self.refill_policy = refill_policy
+        if auto_phantom and self.handle_white_ticket():
+            self.reopen_menu()
         self.choose(target)
         self.action("DungeonSkipActive")
         source_action = "DungeonSkipActive"
         refills_for_run = set()
         completed = 0
+        self.last_completed = 0
         region_selected = False
+        white_pending = False
+        settlement_seen = False
         cycle_deadline = time.monotonic() + 90
         while completed < count:
             frame = self.frame()
@@ -463,7 +543,10 @@ class DungeonNavigator(Navigator):
                 if ticket in refills_for_run:
                     raise RuntimeError(f"本次跳过补票后仍再次要求补票（{TICKETS[ticket]}），停止")
                 if not self.reco("DungeonProofRefill", frame):
-                    raise RuntimeError(f"补票弹窗未通过核对，已完成 {completed}/{count} 次")
+                    # 弹窗淡入时全屏 OCR 可能先读出票种，标题/额度 ROI 尚未稳定。
+                    # 等完整弹窗成立后重新读取消费字段，不沿用过渡帧文本。
+                    frame = self.wait("DungeonProofRefill", 5)
+                    text = " ".join(v.text for v in self.text(frame))
                 self.refill(target, source_action, text, ticket)
                 refills_for_run.add(ticket)
                 cycle_deadline = time.monotonic() + 90
@@ -473,23 +556,41 @@ class DungeonNavigator(Navigator):
                     raise RuntimeError("同一场重复出现区域选择，停止避免重复提交")
                 self.select_skip_region(target, frame)
                 region_selected = True
-            elif self.reco("DungeonContinuePage", frame):
+            elif self.reco("DungeonContinuePage", frame) and settlement_seen:
                 completed += 1
+                self.last_completed = completed
+                if auto_phantom:
+                    white_pending = white_pending or bool(self.reco("PhantomWhiteWarning", frame))
                 region_selected = False
                 refills_for_run.clear()
                 LOG.warning("DungeonSkip %s: 已完成 %s/%s", target["id"], completed, count)
-                if completed == count:
+                if completed == count or white_pending:
                     self.action("DungeonEndSkip")
                     self.wait("StartUpWorldReady", 20)
-                    return completed
+                    if white_pending:
+                        self.handle_white_ticket(pending=True)
+                        white_pending = False
+                    if completed == count:
+                        return completed
+                    self.reopen_menu()
+                    self.choose(target)
+                    source_action = "DungeonSkipActive"
+                    self.action(source_action)
+                    settlement_seen = False
+                    cycle_deadline = time.monotonic() + 90
+                    continue
                 source_action = "DungeonContinueSkip"
                 self.action(source_action)
+                settlement_seen = False
                 # 必须看到上一轮继续页离开，避免把未生效点击重复计数。
                 self.leave_continue_page()
                 cycle_deadline = time.monotonic() + 90
             elif self.reco("DungeonCongratulations", frame):
+                settlement_seen = True
                 self.action("DungeonCongratulations")
             elif self.reco("DungeonWhiteCardReward", frame):
+                settlement_seen = True
+                white_pending = auto_phantom
                 self.action("DungeonWhiteCardReward")
             elif time.monotonic() >= cycle_deadline:
                 raise RuntimeError(f"结算超时，已确认完成 {completed}/{count} 次")
@@ -505,6 +606,7 @@ class DungeonSkip(CustomAction):
                 params = read_interface_options(context, params, catalog)
             plan = parse_skip_plan(params, catalog)
             refill_policy = parse_refill_policy(params)
+            auto_phantom = parse_auto_phantom(params)
             for target, count in plan:
                 # 上一组结束后已回到主界面，每组重新进入蓝门并独立计数。
                 nav = DungeonNavigator(context)
@@ -516,7 +618,7 @@ class DungeonSkip(CustomAction):
                 nav.deadline = time.monotonic() + 600 + count * 90
                 LOG.warning("DungeonSkip %s: %s，计划 %s 次，消耗 %s 张入场券",
                             TICKETS[target["ticket"]], target["id"], count, count * target["ticket_cost"])
-                if nav.skip(target, count, refill_policy) != count:
+                if nav.skip(target, count, refill_policy, auto_phantom=auto_phantom) != count:
                     raise RuntimeError(f"{TICKETS[target['ticket']]}未完成指定次数")
             return True
         except Exception:
@@ -550,6 +652,8 @@ class DungeonMenuRecognition(CustomRecognition):
 
 
 def register(resource):
-    return (resource.register_custom_action("DungeonSkip", DungeonSkip())
+    from phantom import register as register_phantom
+    return (register_phantom(resource)
+            and resource.register_custom_action("DungeonSkip", DungeonSkip())
             and resource.register_custom_action("DungeonDismissDetail", DungeonDismissDetail())
             and resource.register_custom_recognition("DungeonMenuReady", DungeonMenuRecognition()))

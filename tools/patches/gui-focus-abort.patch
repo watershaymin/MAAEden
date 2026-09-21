@@ -1,0 +1,27 @@
+--- a/MFAAvalonia/Extensions/MaaFW/MaaProcessor.cs
++++ b/MFAAvalonia/Extensions/MaaFW/MaaProcessor.cs
+@@ -2141,7 +2141,8 @@
+             // 获取当前截图用于新协议 {image} 占位符替换
+             // 优先通过 GetRecognitionDetail 获取识别结果图片，失败后 fallback 到 GetCachedImage
+             MaaImageBuffer? focusImageBuffer = null;
+-            if (tasker != null)
++            // Plain-text focus must not re-enter the native action lock for an unused image.
++            if (tasker != null && jObject["focus"]!.ToString().Contains("{image}", StringComparison.Ordinal))
+             {
+                 try
+                 {
+@@ -2193,6 +2194,13 @@
+             try
+             {
+-                _focusHandler.DisplayFocus(jObject, args.Message, args.Details, focusImageBuffer);
++                _focusHandler.DisplayFocus(jObject, args.Message, args.Details, focusImageBuffer, onAborted: () =>
++                {
++                    // Cancel synchronously so the next queued task cannot start when native
++                    // post_stop completes with Succeeded. Perform cleanup outside this callback.
++                    TaskQueue.Clear();
++                    CancellationTokenSource?.SafeCancel();
++                    Stop(MFATask.MFATaskStatus.STOPPED, finished: true);
++                });
+             }
+             finally
+             {

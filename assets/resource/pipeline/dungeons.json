@@ -406,6 +406,35 @@
         ],
         "timeout": 10000
     },
+    "DungeonCatEmpty": {
+        "recognition": "OCR",
+        "roi": [
+            1095,
+            650,
+            85,
+            50
+        ],
+        "expected": [
+            "^0/50$"
+        ]
+    },
+    "DungeonCatRefillPlus": {
+        "recognition": "OCR",
+        "roi": [
+            1095,
+            650,
+            85,
+            50
+        ],
+        "expected": [
+            "^0/50$"
+        ],
+        "action": "Click",
+        "target": [
+            1225,
+            675
+        ]
+    },
     "DungeonReadText": {
         "recognition": "OCR",
         "roi": [
@@ -508,6 +537,7 @@
             "refill_red": false,
             "refill_green": false,
             "refill_cat": false,
+            "auto_phantom": false,
             "use_interface_options": true
         },
         "next": [
@@ -915,6 +945,10 @@
         "attach": {}
     },
     "DungeonSkipOption_DungeonRefillCat": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "DungeonSkipOption_DungeonAutoPhantom": {
         "action": "DoNothing",
         "attach": {}
     },

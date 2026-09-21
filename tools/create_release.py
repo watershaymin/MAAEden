@@ -16,7 +16,7 @@ REQUIRED_FILES = (
     'resource/model/ocr/det.onnx', 'resource/model/ocr/rec.onnx', 'resource/model/ocr/keys.txt',
     'runtimes/win-x64/native/MaaFramework.dll', 'runtimes/win-x64/native/MaaAgentClient.dll',
     'interface.json', 'build-info.json', 'LICENSE', 'licenses/MFAAvalonia-GPL-3.0.txt',
-    'licenses/gui-agent-temp.patch', 'licenses/SOURCES.txt', 'python/LICENSE.txt',
+    'licenses/gui-agent-temp.patch', 'licenses/gui-focus-abort.patch', 'licenses/SOURCES.txt', 'python/LICENSE.txt',
 )
 PRIVATE_DIRECTORIES = {'config', 'debug', 'logs', 'log', 'temp', 'backup', '.git'}
 
