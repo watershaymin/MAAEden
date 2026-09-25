@@ -1,0 +1,55 @@
+{
+    "TeamSelectionMarker": {
+        "desc": "1280x720 实机入场页选中圆点；红绿票与梅纳斯的圆点纵坐标相差约 6 像素。",
+        "recognition": "TemplateMatch",
+        "template": "TeamSelection/Selected.png",
+        "roi": [
+            490,
+            544,
+            300,
+            38
+        ],
+        "threshold": 0.96,
+        "method": 5
+    },
+    "TeamSelectionLeft": {
+        "desc": "仅由 Python 在确认入场队伍页和当前栏位后调用；等待卡片滑动动画结束。",
+        "action": "Click",
+        "target": [
+            80,
+            333
+        ],
+        "post_wait_freezes": {
+            "time": 300,
+            "target": [
+                140,
+                215,
+                985,
+                295
+            ],
+            "threshold": 0.99,
+            "rate_limit": 100,
+            "timeout": 5000
+        }
+    },
+    "TeamSelectionRight": {
+        "desc": "仅由 Python 在确认入场队伍页和当前栏位后调用；等待卡片滑动动画结束。",
+        "action": "Click",
+        "target": [
+            1200,
+            333
+        ],
+        "post_wait_freezes": {
+            "time": 300,
+            "target": [
+                140,
+                215,
+                985,
+                295
+            ],
+            "threshold": 0.99,
+            "rate_limit": 100,
+            "timeout": 5000
+        }
+    }
+}

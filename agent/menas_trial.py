@@ -8,6 +8,7 @@ import time
 from maa.custom_action import CustomAction
 
 from navigation import Navigator
+from team_selection import parse_team, select_team
 
 
 LOG = logging.getLogger(__name__)
@@ -15,6 +16,20 @@ ROUND_NODES = (
     "MenasTrialOpenActivities", "MenasTrialOpenTrial", "MenasTrialSelectSS",
     "MenasTrialChallenge", "MenasTrialAttack", "MenasTrialRewards", "MenasTrialCongratulations",
 )
+
+
+def read_interface_options(context, params):
+    if not isinstance(params, dict):
+        raise ValueError("梅纳斯参数必须是对象")
+    if params.get("use_interface_options") is not True:
+        return params
+    merged = dict(params)
+    for name in ("MenasTrialCount", "MenasTrialTeam"):
+        node = context.get_node_data("MenasTrialOption_" + name)
+        if not node or not isinstance(node.get("attach"), dict):
+            raise ValueError(f"梅纳斯配置节点缺失或无效：{name}")
+        merged.update(node["attach"])
+    return merged
 
 
 def parse_count(params):
@@ -43,9 +58,9 @@ class MenasNavigator(Navigator):
         if time.monotonic() >= self.deadline:
             raise RuntimeError("梅纳斯试炼超过运行时间上限")
 
-    def pipeline(self, entry, completion):
+    def pipeline(self, entry, completion, override=None):
         self.check()
-        result = self.context.run_task(entry)
+        result = self.context.run_task(entry, override) if override is not None else self.context.run_task(entry)
         if (not result or not result.status.succeeded or not result.nodes
                 or result.nodes[-1].name != completion):
             raise RuntimeError(f"梅纳斯流程未完成：{entry} → {completion}")
@@ -68,7 +83,7 @@ class MenasNavigator(Navigator):
             raise RuntimeError("连续两次读取的梅纳斯入场券数量不一致")
         return quantities[0]
 
-    def run_trials(self, count):
+    def run_trials(self, count, team=0):
         self.deadline = time.monotonic() + 180
         tickets = self.prepare()
         planned = tickets if count == 0 else min(count, tickets)
@@ -87,7 +102,15 @@ class MenasNavigator(Navigator):
                 if remaining != tickets - completed:
                     raise RuntimeError(f"入场券变化不符，已完成 {completed} 次；"
                                        f"预期 {tickets - completed}，实际 {remaining}，停止核查")
-            self.pipeline("MenasTrialRunOnce", "MenasTrialComplete")
+            if team:
+                # 先停在挑战确认页切队，确认后才允许提交消耗入场券的挑战。
+                self.pipeline("MenasTrialRunOnce", "MenasTrialPartyReady", {
+                    "MenasTrialSelectSS": {"next": ["MenasTrialPartyReady"]},
+                })
+                select_team(self, team, "MenasTrialPartyReady")
+                self.pipeline("MenasTrialChallenge", "MenasTrialComplete")
+            else:
+                self.pipeline("MenasTrialRunOnce", "MenasTrialComplete")
             completed += 1
             LOG.warning("MenasTrial 已完成 %s/%s 次，确认返回主界面", completed, planned)
         if count > completed:
@@ -98,8 +121,10 @@ class MenasNavigator(Navigator):
 class MenasTrial(CustomAction):
     def run(self, context, argv):
         try:
-            count = parse_count(json.loads(argv.custom_action_param))
-            completed = MenasNavigator(context).run_trials(count)
+            params = read_interface_options(context, json.loads(argv.custom_action_param))
+            count = parse_count(params)
+            team = parse_team(params.get("team", 0))
+            completed = MenasNavigator(context).run_trials(count, team)
             return count == 0 or completed == count
         except Exception:
             LOG.exception("MenasTrial 失败")

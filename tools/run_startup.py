@@ -32,16 +32,20 @@ TASKS = {
 
 def dungeon_params(args):
     split = {"red_target": args.red_dungeon, "red_count": args.red_count,
-             "green_target": args.green_dungeon, "green_count": args.green_count}
+             "green_target": args.green_dungeon, "green_count": args.green_count,
+             "red_team": getattr(args, "red_team", None), "green_team": getattr(args, "green_team", None)}
     split_routes = {"red": getattr(args, "red_route", None), "green": getattr(args, "green_route", None)}
     legacy_route = getattr(args, "dungeon_route", None)
-    if args.dungeon is not None or args.count is not None or legacy_route is not None:
+    legacy_team = getattr(args, "team", None)
+    if args.dungeon is not None or args.count is not None or legacy_route is not None or legacy_team is not None:
         if any(value is not None for value in [*split.values(), *split_routes.values()]):
             raise ValueError("旧 --dungeon/--count 不能与红绿票独立参数混用")
         params = {"target": args.dungeon or "snake_damak_vh",
                   "count": args.count if args.count is not None else 1}
         if legacy_route is not None:
             params["routes"] = {params["target"]: legacy_route}
+        if legacy_team is not None:
+            params["team"] = legacy_team
     else:
         params = {key: value for key, value in split.items() if value is not None}
         defaults = {"red": "snake_damak_vh", "green": "moon_forest_h"}
@@ -66,10 +70,13 @@ def main() -> int:
     parser.add_argument("--max-steps", type=int, default=60, help="小地图导航移动步数上限")
     parser.add_argument("--dungeon", help="兼容旧单副本模式，默认蛇肝达玛克非常困难")
     parser.add_argument("--count", type=int, help="梅纳斯默认 0（全部入场券）；副本旧单副本模式默认 1")
+    parser.add_argument("--team", type=int, choices=range(11), help="梅纳斯或旧单副本队伍：1～10，0 保持当前")
     parser.add_argument("--red-dungeon", help="红票副本 ID，默认 snake_damak_vh")
     parser.add_argument("--green-dungeon", help="绿票副本 ID，默认 moon_forest_h")
     parser.add_argument("--red-count", type=int, help="红票每次运行跳过场数，默认 4，0 为不执行")
     parser.add_argument("--green-count", type=int, help="绿票每次运行跳过场数，默认 4，0 为不执行")
+    parser.add_argument("--red-team", type=int, choices=range(11), help="红票队伍：1～10，0 保持当前")
+    parser.add_argument("--green-team", type=int, choices=range(11), help="绿票队伍：1～10，0 保持当前")
     parser.add_argument("--red-route", help="红票副本扫荡路线 ID，见副本目录 skip_routes")
     parser.add_argument("--green-route", help="绿票副本扫荡路线 ID，见副本目录 skip_routes")
     parser.add_argument("--dungeon-route", help="旧单副本模式的扫荡路线 ID")
@@ -216,7 +223,7 @@ def main() -> int:
     if args.task == "MenasAppraisal":
         override = {"MenasAppraisal": {"custom_action_param": appraisal_params}}
     if args.task == "MenasTrial":
-        override = {"MenasTrial": {"custom_action_param": {"count": args.count}}}
+        override = {"MenasTrial": {"custom_action_param": {"count": args.count, "team": args.team or 0}}}
     if args.task == "DungeonSkip":
         override = {"DungeonSkip": {"custom_action_param": skip_params}}
     if args.task == "NavigationMove":

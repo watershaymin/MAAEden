@@ -114,6 +114,25 @@ class NativeDungeonOptions(unittest.TestCase):
         self.assertEqual([(t['id'], count) for t, count in plan], [('moon_forest_h', 1)])
         self.assertFalse(auto_phantom)
 
+    def test_independent_teams_survive_other_options_and_do_not_leak(self):
+        overrides = [self.case('DungeonRedTeam', 10), self.count('DungeonRedCount', 2),
+                     self.case('DungeonGreenTeam', 1), self.count('DungeonGreenCount', 3),
+                     self.case('DungeonAutoPhantom', 1), self.case('DungeonRefillCat', 1)]
+        for ordered in (overrides, list(reversed(overrides))):
+            plan, policy, phantom = self.run_options(ordered)
+            self.assertEqual([(t['ticket'], t['team'], n) for t, n in plan],
+                             [('red', 10, 2), ('green', 1, 3)])
+            self.assertTrue(phantom)
+            self.assertTrue(policy['cat'])
+        plan, _, _ = self.run_options([])
+        self.assertEqual([t.get('team', 0) for t, _ in plan], [0, 0])
+
+    def test_team_cli_override_does_not_inherit_gui_team(self):
+        plan, _, _ = self.run_options([self.case('DungeonRedTeam', 10), {
+            'DungeonSkip': {'custom_action_param': {'target': 'moon_forest_h', 'count': 1, 'team': 3}},
+        }])
+        self.assertEqual([(t['ticket'], t['team'], n) for t, n in plan], [('green', 3, 1)])
+
 
 if __name__ == '__main__':
     unittest.main()

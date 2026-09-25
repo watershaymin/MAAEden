@@ -72,11 +72,19 @@ python -X utf8 tools/run_startup.py --adb-path '<adb.exe 路径>' --address '<AD
 下拉列表只包含消耗对应票种且已确认可跳过的入口。默认红票为蛇肝达玛克（非常困难）、
 绿票为月影森林（困难），各 4 次；任一组设为 0 时不进入该组副本，两组均为 0 时原地成功结束。
 
+红票、绿票可分别选择“保持当前队伍”或“队伍 1～10”，默认保持当前队伍。
+编号对应游戏队伍页底部圆点从左到右的位置，与玩家自定义队伍名称无关。
+只切换已配置的队伍，不修改成员、技能或装备；任务不会主动恢复运行前的队伍。
+每组首次跳过前在入场确认页切换并复核；补票回到该页、幻璃境结束后恢复扫荡时也会再次核对。
+0 次的组不切队。识别失败、切换未生效或切换后跳过按钮不可用时停止，不提交跳过。
+实现与实机记录见[队伍选择](team_selection.md)。
+
 按当前游戏规则，红绿票每 6 小时各恢复 1 张，每天各 4 张。次数表示跳过场数，
 不会按剩余票数或时间自动推算；绿票 ×2 的副本设为 2 次会消耗 4 张绿票。
 每次任务运行都会重新执行设定的场数，本功能不负责定时触发，也不记录每日已消耗额度。
 
-Custom 参数使用 `red_target`、`red_count`、`green_target`、`green_count`。
+Custom 参数使用 `red_target`、`red_count`、`green_target`、`green_count`，
+队伍参数为 `red_team`、`green_team`（0 保持当前，1～10 选择对应栏位）。
 次数支持 0～999；执行前校验所有启用组的目标、票种和次数。每组完成后确认返回主界面，
 下一组重新调用蓝门前置，单独计数。任一组失败或票不足且无法按配置补充时，整个任务停止。
 
@@ -136,16 +144,21 @@ Custom 参数使用 `red_target`、`red_count`、`green_target`、`green_count`�
 ```powershell
 # 红票 4 场、绿票 2 场；未指定副本时使用各自默认入口
 python -X utf8 tools/run_startup.py --adb-path '<adb.exe 路径>' --address '<ADB 地址>' --task DungeonSkip --red-count 4 --green-count 2
+# 红票使用队伍 3、绿票使用队伍 1
+python -X utf8 tools/run_startup.py --adb-path '<adb.exe 路径>' --address '<ADB 地址>' --task DungeonSkip --red-count 4 --red-team 3 --green-count 2 --green-team 1
 # 只执行绿票月影森林困难 4 场
 python -X utf8 tools/run_startup.py --adb-path '<adb.exe 路径>' --address '<ADB 地址>' --task DungeonSkip --red-count 0 --green-dungeon moon_forest_h --green-count 4
 # 兼容旧单副本调用，只执行该副本，不追加另一票种
 python -X utf8 tools/run_startup.py --adb-path '<adb.exe 路径>' --address '<ADB 地址>' --task DungeonSkip --dungeon snake_damak_vh --count 2
+# 旧单副本模式指定队伍
+python -X utf8 tools/run_startup.py --adb-path '<adb.exe 路径>' --address '<ADB 地址>' --task DungeonSkip --dungeon snake_damak_vh --count 2 --team 3
 # 仅启用红票、猫掌券补充；绿票仍不补充
 python -X utf8 tools/run_startup.py --adb-path '<adb.exe 路径>' --address '<ADB 地址>' --task DungeonSkip --dungeon snake_damak_vh --count 2 --refill-red --refill-cat
 ```
 
 不传副本参数时执行默认双组计划。旧 `--dungeon` / `--count` 不可与
 `--red-dungeon` / `--red-count` / `--green-dungeon` / `--green-count` 混用。
+`--red-team` / `--green-team` 同属独立参数，旧单副本的 `--team` 不能与独立参数混用。
 
 2026-09-10 红绿票拆分验证：36 项副本测试、20 项月度副本测试，以及 Schema、maa-tools 校验通过。
 新增测试覆盖两组顺序和独立次数、每次运行重置、0 次禁用、票种不符、执行前完整校验、

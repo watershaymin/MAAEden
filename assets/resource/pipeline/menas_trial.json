@@ -4,7 +4,9 @@
         "action": "Custom",
         "custom_action": "MenasTrial",
         "custom_action_param": {
-            "count": 0
+            "count": 0,
+            "team": 0,
+            "use_interface_options": true
         },
         "next": [
             "MenasTrialComplete"
@@ -96,7 +98,7 @@
         ],
         "threshold": 0.9,
         "method": 10001,
-        "desc": "只提交一次挑战，消耗一张入场券；不编辑或切换队伍。",
+        "desc": "确认队伍后只提交一次挑战，消耗一张入场券。",
         "action": "Click",
         "max_hit": 1,
         "timeout": 180000,
@@ -302,5 +304,44 @@
             "MenasTrialComplete"
         ],
         "timeout": 15000
+    },
+    "MenasTrialPartyReady": {
+        "desc": "指定队伍时先停在此页，切队验证成功后再提交挑战。",
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "MenasTrial/Challenge.png",
+                "roi": [
+                    680,
+                    605,
+                    215,
+                    85
+                ],
+                "threshold": 0.9,
+                "method": 10001
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    370,
+                    25,
+                    550,
+                    55
+                ],
+                "expected": [
+                    "消耗梅纳斯入场券1"
+                ]
+            }
+        ],
+        "timeout": 15000
+    },
+    "MenasTrialOption_MenasTrialCount": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "MenasTrialOption_MenasTrialTeam": {
+        "action": "DoNothing",
+        "attach": {}
     }
 }

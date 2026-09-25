@@ -538,7 +538,9 @@
             "refill_green": false,
             "refill_cat": false,
             "auto_phantom": false,
-            "use_interface_options": true
+            "use_interface_options": true,
+            "red_team": 0,
+            "green_team": 0
         },
         "next": [
             "DungeonSkipComplete"
@@ -1005,6 +1007,14 @@
         "attach": {}
     },
     "DungeonSkipOption_DungeonRoute_dungeon_9772881c46d4": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "DungeonSkipOption_DungeonRedTeam": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "DungeonSkipOption_DungeonGreenTeam": {
         "action": "DoNothing",
         "attach": {}
     }

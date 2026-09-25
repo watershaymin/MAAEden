@@ -115,6 +115,38 @@ class Counting(unittest.TestCase):
             self.assertFalse(MenasTrial().run(None, SimpleNamespace(custom_action_param='{"count": 3}')))
             self.assertTrue(MenasTrial().run(None, SimpleNamespace(custom_action_param='{"count": 0}')))
 
+    def test_team_is_verified_before_each_challenge(self):
+        nav = self.navigator([2, 1])
+        events = []
+        nav.pipeline.side_effect = lambda entry, *args: events.append(entry)
+        with patch('menas_trial.select_team', side_effect=lambda *args: events.append('select-team')) as select:
+            self.assertEqual(nav.run_trials(2, 7), 2)
+        self.assertEqual(events, ['MenasTrialRunOnce', 'select-team', 'MenasTrialChallenge'] * 2)
+        self.assertEqual(select.call_count, 2)
+        select.assert_called_with(nav, 7, 'MenasTrialPartyReady')
+        first = nav.pipeline.call_args_list[0]
+        self.assertEqual(first.args[1], 'MenasTrialPartyReady')
+        self.assertEqual(first.args[2]['MenasTrialSelectSS']['next'], ['MenasTrialPartyReady'])
+
+    def test_team_failure_does_not_submit_challenge(self):
+        nav = self.navigator([2])
+        with patch('menas_trial.select_team', side_effect=RuntimeError('队伍切换未确认')):
+            with self.assertRaisesRegex(RuntimeError, '队伍切换'):
+                nav.run_trials(1, 4)
+        self.assertEqual(nav.pipeline.call_count, 1)
+        self.assertEqual(nav.pipeline.call_args.args[1], 'MenasTrialPartyReady')
+
+    def test_zero_tickets_and_current_team_do_not_switch(self):
+        with patch('menas_trial.select_team') as select:
+            self.assertEqual(self.navigator([0]).run_trials(0, 7), 0)
+            self.assertEqual(self.navigator([1]).run_trials(1), 1)
+            select.assert_not_called()
+
+    def test_invalid_team_rejected_before_navigation(self):
+        with patch('menas_trial.MenasNavigator') as nav:
+            self.assertFalse(MenasTrial().run(None, SimpleNamespace(custom_action_param='{"team":11}')))
+            nav.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()

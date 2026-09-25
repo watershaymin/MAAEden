@@ -56,6 +56,24 @@ class FakeDungeon(DungeonNavigator):
 
 
 class DungeonCounting(unittest.TestCase):
+    def test_team_is_restored_after_phantom_before_resuming_skip(self):
+        nav = FakeDungeon(['DungeonWhiteCardReward', 'DungeonContinuePage',
+                           'DungeonCongratulations', 'DungeonContinuePage'])
+        target = {'id': 'test', 'team': 3}
+        nav.select_team = Mock(side_effect=lambda t: nav.actions.append('team:' + str(t['team'])))
+        self.assertEqual(nav.skip(target, 2, auto_phantom=True), 2)
+        self.assertEqual(nav.select_team.call_count, 2)
+        for index, action in enumerate(nav.actions):
+            if action == 'DungeonSkipActive':
+                self.assertEqual(nav.actions[index - 1], 'team:3')
+
+    def test_team_failure_never_submits_first_skip(self):
+        nav = FakeDungeon([])
+        nav.select_team = Mock(side_effect=RuntimeError('队伍切换未确认'))
+        with self.assertRaisesRegex(RuntimeError, '队伍切换'):
+            nav.skip({'id': 'test', 'team': 2}, 1)
+        self.assertNotIn('DungeonSkipActive', nav.actions)
+
     def test_fading_refill_waits_and_rechecks_fresh_consumption_text(self):
         nav = FakeDungeon(['fade', 'DungeonCongratulations', 'DungeonContinuePage'])
         original_text = nav.text
@@ -453,6 +471,35 @@ class DungeonPlan(unittest.TestCase):
             self.assertEqual([(target['ticket'], count) for target, count in plan], [('red', 4), ('green', 4)])
         plan = parse_skip_plan({'red_count': '3', 'green_count': '2'}, self.catalog)
         self.assertEqual([count for _, count in plan], [3, 2])
+
+    def test_teams_are_independent_and_catalog_is_not_mutated(self):
+        plan = parse_skip_plan({'red_team': 3, 'green_team': '10'}, self.catalog)
+        self.assertEqual([t['team'] for t, _ in plan], [3, 10])
+        self.assertTrue(all('team' not in t for t in self.catalog['dungeons']))
+        legacy = parse_skip_plan({'target': 'moon_forest_h', 'count': 2, 'team': 5,
+                                  'red_team': 1, 'green_team': 9}, self.catalog)
+        self.assertEqual([(t['team'], count) for t, count in legacy], [(5, 2)])
+
+    def test_invalid_second_team_is_rejected_before_first_group(self):
+        context = SimpleNamespace(run_task=Mock())
+        with patch('dungeons.DungeonNavigator') as nav:
+            self.assertFalse(DungeonSkip().run(context, SimpleNamespace(custom_action_param='{"green_team":11}')))
+            nav.assert_not_called()
+            context.run_task.assert_not_called()
+        plan = parse_skip_plan({'green_count': 0, 'green_team': 'unused'}, self.catalog)
+        self.assertEqual(len(plan), 1)
+
+    def test_cli_teams_follow_split_and_legacy_modes(self):
+        from run_startup import dungeon_params
+        args = SimpleNamespace(dungeon=None, count=None, red_dungeon=None, green_dungeon=None,
+                               red_count=1, green_count=2, refill_red=False, refill_green=False,
+                               refill_cat=False, auto_phantom=False, red_team=2, green_team=8, team=None)
+        self.assertEqual([t['team'] for t, _ in parse_skip_plan(dungeon_params(args), self.catalog)], [2, 8])
+        args.team = 4
+        with self.assertRaisesRegex(ValueError, '不能.*混用'):
+            dungeon_params(args)
+        args.red_count = args.green_count = args.red_team = args.green_team = None
+        self.assertEqual(parse_skip_plan(dungeon_params(args), self.catalog)[0][0]['team'], 4)
 
     def test_route_selection_is_per_target_and_does_not_mutate_catalog(self):
         target = next(d for d in self.catalog['dungeons'] if d['id'] == 'dungeon_d6bebfdd633b')

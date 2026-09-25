@@ -11,6 +11,7 @@ from maa.custom_action import CustomAction
 from maa.custom_recognition import CustomRecognition
 
 from navigation import Navigator
+from team_selection import parse_team, select_team
 
 
 LOG = logging.getLogger(__name__)
@@ -26,7 +27,7 @@ def read_interface_options(context, params, catalog):
         return params
     names = ["DungeonTarget", "DungeonCount", "DungeonRedTarget", "DungeonRedCount",
              "DungeonGreenTarget", "DungeonGreenCount", "DungeonRefillRed", "DungeonRefillGreen",
-             "DungeonRefillCat", "DungeonAutoPhantom"]
+             "DungeonRefillCat", "DungeonAutoPhantom", "DungeonRedTeam", "DungeonGreenTeam"]
     names.extend("DungeonRoute_" + target["id"] for target in catalog["dungeons"] if target.get("skip_routes"))
     merged = dict(params)
     for name in names:
@@ -80,6 +81,9 @@ def parse_request(params, catalog):
         target = dict(target, skip_region=matched[0]["name"], skip_route_id=matched[0]["id"])
     elif selected is not None:
         raise ValueError(f"{target['name']}没有已验证的可选扫荡路线")
+    team = parse_team(params.get("team", 0))
+    if team:
+        target = dict(target, team=team)
     return target, count
 
 
@@ -110,6 +114,7 @@ def parse_skip_plan(params, catalog):
         target, count = parse_request({
             "target": params.get(ticket + "_target", default_target), "count": count,
             "routes": params.get("routes", {}),
+            "team": params.get(ticket + "_team", 0),
         }, catalog)
         if target["ticket"] != ticket:
             raise ValueError(f"{TICKETS[ticket]}配置的副本使用了其他票种")
@@ -456,6 +461,8 @@ class DungeonNavigator(Navigator):
         self.wait(source_action, 15)
         if source_action == "DungeonSkipActive" and not self.party_matches(target):
             raise RuntimeError("补票返回后副本或队伍确认页发生变化")
+        if source_action == "DungeonSkipActive":
+            self.select_team(target)
         self.action(source_action)
         if source_action == "DungeonContinueSkip":
             self.leave_continue_page()
@@ -521,6 +528,7 @@ class DungeonNavigator(Navigator):
         if auto_phantom and self.handle_white_ticket():
             self.reopen_menu()
         self.choose(target)
+        self.select_team(target)
         self.action("DungeonSkipActive")
         source_action = "DungeonSkipActive"
         refills_for_run = set()
@@ -574,6 +582,7 @@ class DungeonNavigator(Navigator):
                         return completed
                     self.reopen_menu()
                     self.choose(target)
+                    self.select_team(target)
                     source_action = "DungeonSkipActive"
                     self.action(source_action)
                     settlement_seen = False
@@ -595,6 +604,13 @@ class DungeonNavigator(Navigator):
             elif time.monotonic() >= cycle_deadline:
                 raise RuntimeError(f"结算超时，已确认完成 {completed}/{count} 次")
         return completed
+
+    def select_team(self, target):
+        team = target.get("team", 0)
+        if team:
+            select_team(self, team, "DungeonReturnParty")
+            if not self.party_matches(target):
+                raise RuntimeError("切换队伍后副本、难度、票耗或跳过按钮未通过复核")
 
 
 class DungeonSkip(CustomAction):

@@ -6,7 +6,7 @@
     "license": "MIT",
     "welcome": "请先在模拟器中手动完成账号登录，再运行启动并登录任务。",
     "github": "https://github.com/watershaymin/MAAEden",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "controller": [
         {
             "name": "安卓端",
@@ -33,9 +33,10 @@
             "name": "MenasTrial",
             "label": "梅纳斯试炼",
             "entry": "MenasTrial",
-            "description": "挑战 STAGE SS，每场消耗 1 张梅纳斯入场券。可指定次数，0 表示用完本次开始时持有的全部入场券；票不足时停止，不购买。战斗仅点击攻击，确认结算后计数并返回主界面。请提前设置队伍和技能预设。",
+            "description": "挑战 STAGE SS，每场消耗 1 张梅纳斯入场券。可指定次数，0 表示用完本次开始时持有的全部入场券；票不足时停止，不购买。战斗仅点击攻击，确认结算后计数并返回主界面。可指定队伍 1～10，默认保持当前队伍。请提前配置对应队伍的成员和技能预设。",
             "option": [
-                "MenasTrialCount"
+                "MenasTrialCount",
+                "MenasTrialTeam"
             ]
         },
         {
@@ -79,13 +80,15 @@
             "name": "DungeonSkip",
             "label": "副本跳过",
             "entry": "DungeonSkip",
-            "description": "红票、绿票分别设置副本和跳过次数，每次运行先执行红票，再执行绿票；各默认 4 次，设为 0 则不执行该票种。有扫荡分支的副本会显示路线选项，各副本独立保存选择。红绿票每 6 小时各恢复 1 张，每天各 4 张；部分绿票副本每场消耗 2 张，次数按场数计算。自动前往次元夹缝蓝门，核对副本、难度和票耗。可勾选“获得白票时自动刷幻璃境”：持有或掉落白票时先处理幻璃境，再继续剩余扫荡；默认关闭，获得白票后继续跳过。进入终境即停止并提示“你撞大运了”，交给玩家处理。红票、绿票和猫掌券不足时可分别启用导证之力补充，默认不补充；未允许补充、额度不足或执行失败时停止整个任务。禁止使用克洛诺斯之石。",
+            "description": "红票、绿票分别设置副本、跳过次数和队伍（默认保持当前队伍），每次运行先执行红票，再执行绿票；各默认 4 次，设为 0 则不执行该票种。有扫荡分支的副本会显示路线选项，各副本独立保存选择。红绿票每 6 小时各恢复 1 张，每天各 4 张；部分绿票副本每场消耗 2 张，次数按场数计算。自动前往次元夹缝蓝门，核对副本、难度和票耗。可勾选“获得白票时自动刷幻璃境”：持有或掉落白票时先处理幻璃境，再继续剩余扫荡；默认关闭，获得白票后继续跳过。进入终境即停止并提示“你撞大运了”，交给玩家处理。红票、绿票和猫掌券不足时可分别启用导证之力补充，默认不补充；未允许补充、额度不足或执行失败时停止整个任务。禁止使用克洛诺斯之石。",
             "option": [
                 "DungeonRedTarget",
                 "DungeonRedCount",
+                "DungeonRedTeam",
                 "DungeonRefillRed",
                 "DungeonGreenTarget",
                 "DungeonGreenCount",
+                "DungeonGreenTeam",
                 "DungeonRefillGreen",
                 "DungeonRefillCat",
                 "DungeonAutoPhantom"
@@ -113,8 +116,8 @@
                 }
             ],
             "pipeline_override": {
-                "MenasTrial": {
-                    "custom_action_param": {
+                "MenasTrialOption_MenasTrialCount": {
+                    "attach": {
                         "count": "{count}"
                     }
                 }
@@ -2854,6 +2857,393 @@
                                 "routes": {
                                     "dungeon_9772881c46d4": "route_45c9899a79"
                                 }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "DungeonRedTeam": {
+            "type": "select",
+            "label": "红票队伍",
+            "description": "按游戏队伍页底部圆点从左到右编号（1～10）。仅切换已配置的队伍，不修改成员和技能；任务结束后保留所选队伍。",
+            "default_case": "current",
+            "cases": [
+                {
+                    "name": "current",
+                    "label": "保持当前队伍",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonRedTeam": {
+                            "attach": {
+                                "red_team": 0
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "1",
+                    "label": "队伍 1",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonRedTeam": {
+                            "attach": {
+                                "red_team": 1
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "2",
+                    "label": "队伍 2",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonRedTeam": {
+                            "attach": {
+                                "red_team": 2
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "3",
+                    "label": "队伍 3",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonRedTeam": {
+                            "attach": {
+                                "red_team": 3
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "4",
+                    "label": "队伍 4",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonRedTeam": {
+                            "attach": {
+                                "red_team": 4
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "5",
+                    "label": "队伍 5",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonRedTeam": {
+                            "attach": {
+                                "red_team": 5
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "6",
+                    "label": "队伍 6",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonRedTeam": {
+                            "attach": {
+                                "red_team": 6
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "7",
+                    "label": "队伍 7",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonRedTeam": {
+                            "attach": {
+                                "red_team": 7
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "8",
+                    "label": "队伍 8",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonRedTeam": {
+                            "attach": {
+                                "red_team": 8
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "9",
+                    "label": "队伍 9",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonRedTeam": {
+                            "attach": {
+                                "red_team": 9
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "10",
+                    "label": "队伍 10",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonRedTeam": {
+                            "attach": {
+                                "red_team": 10
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "DungeonGreenTeam": {
+            "type": "select",
+            "label": "绿票队伍",
+            "description": "按游戏队伍页底部圆点从左到右编号（1～10）。仅切换已配置的队伍，不修改成员和技能；任务结束后保留所选队伍。",
+            "default_case": "current",
+            "cases": [
+                {
+                    "name": "current",
+                    "label": "保持当前队伍",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonGreenTeam": {
+                            "attach": {
+                                "green_team": 0
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "1",
+                    "label": "队伍 1",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonGreenTeam": {
+                            "attach": {
+                                "green_team": 1
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "2",
+                    "label": "队伍 2",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonGreenTeam": {
+                            "attach": {
+                                "green_team": 2
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "3",
+                    "label": "队伍 3",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonGreenTeam": {
+                            "attach": {
+                                "green_team": 3
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "4",
+                    "label": "队伍 4",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonGreenTeam": {
+                            "attach": {
+                                "green_team": 4
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "5",
+                    "label": "队伍 5",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonGreenTeam": {
+                            "attach": {
+                                "green_team": 5
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "6",
+                    "label": "队伍 6",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonGreenTeam": {
+                            "attach": {
+                                "green_team": 6
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "7",
+                    "label": "队伍 7",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonGreenTeam": {
+                            "attach": {
+                                "green_team": 7
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "8",
+                    "label": "队伍 8",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonGreenTeam": {
+                            "attach": {
+                                "green_team": 8
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "9",
+                    "label": "队伍 9",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonGreenTeam": {
+                            "attach": {
+                                "green_team": 9
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "10",
+                    "label": "队伍 10",
+                    "pipeline_override": {
+                        "DungeonSkipOption_DungeonGreenTeam": {
+                            "attach": {
+                                "green_team": 10
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "MenasTrialTeam": {
+            "type": "select",
+            "label": "挑战队伍",
+            "description": "按游戏队伍页底部圆点从左到右编号（1～10）。仅切换已配置的队伍，不修改成员和技能；任务结束后保留所选队伍。",
+            "default_case": "current",
+            "cases": [
+                {
+                    "name": "current",
+                    "label": "保持当前队伍",
+                    "pipeline_override": {
+                        "MenasTrialOption_MenasTrialTeam": {
+                            "attach": {
+                                "team": 0
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "1",
+                    "label": "队伍 1",
+                    "pipeline_override": {
+                        "MenasTrialOption_MenasTrialTeam": {
+                            "attach": {
+                                "team": 1
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "2",
+                    "label": "队伍 2",
+                    "pipeline_override": {
+                        "MenasTrialOption_MenasTrialTeam": {
+                            "attach": {
+                                "team": 2
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "3",
+                    "label": "队伍 3",
+                    "pipeline_override": {
+                        "MenasTrialOption_MenasTrialTeam": {
+                            "attach": {
+                                "team": 3
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "4",
+                    "label": "队伍 4",
+                    "pipeline_override": {
+                        "MenasTrialOption_MenasTrialTeam": {
+                            "attach": {
+                                "team": 4
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "5",
+                    "label": "队伍 5",
+                    "pipeline_override": {
+                        "MenasTrialOption_MenasTrialTeam": {
+                            "attach": {
+                                "team": 5
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "6",
+                    "label": "队伍 6",
+                    "pipeline_override": {
+                        "MenasTrialOption_MenasTrialTeam": {
+                            "attach": {
+                                "team": 6
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "7",
+                    "label": "队伍 7",
+                    "pipeline_override": {
+                        "MenasTrialOption_MenasTrialTeam": {
+                            "attach": {
+                                "team": 7
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "8",
+                    "label": "队伍 8",
+                    "pipeline_override": {
+                        "MenasTrialOption_MenasTrialTeam": {
+                            "attach": {
+                                "team": 8
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "9",
+                    "label": "队伍 9",
+                    "pipeline_override": {
+                        "MenasTrialOption_MenasTrialTeam": {
+                            "attach": {
+                                "team": 9
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "10",
+                    "label": "队伍 10",
+                    "pipeline_override": {
+                        "MenasTrialOption_MenasTrialTeam": {
+                            "attach": {
+                                "team": 10
                             }
                         }
                     }
