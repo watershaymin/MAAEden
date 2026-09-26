@@ -6,6 +6,7 @@
         "timeout": 180000,
         "next": [
             "StartUpCloseAnnouncement",
+            "StartUpCloseMenasStages",
             "StartUpLoadGame",
             "StartUpWorldReady"
         ]
@@ -26,6 +27,7 @@
         "timeout": 180000,
         "next": [
             "StartUpCloseAnnouncement",
+            "StartUpCloseMenasStages",
             "StartUpWorldReady",
             "StartUpLoadGame"
         ]
@@ -47,7 +49,25 @@
         "timeout": 120000,
         "next": [
             "StartUpCloseAnnouncement",
+            "StartUpCloseMenasStages",
             "StartUpWorldReady"
+        ]
+    },
+    "StartUpCloseMenasStages": {
+        "desc": "恢复到梅纳斯试炼选关页时，标题、SS 标志和关闭键同时可见才返回主界面。",
+        "recognition": "And",
+        "all_of": [
+            "MenasTrialStagesReady",
+            "CatDiaryCloseButton"
+        ],
+        "box_index": 1,
+        "action": "Click",
+        "max_hit": 2,
+        "timeout": 15000,
+        "next": [
+            "StartUpCloseAnnouncement",
+            "StartUpWorldReady",
+            "StartUpCloseMenasStages"
         ]
     },
     "StartUpWorldReady": {

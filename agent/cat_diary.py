@@ -259,10 +259,11 @@ class RoadMap:
                     if (point[0] - segment[0], point[1] - segment[1]) != (dx, dy):
                         break
                     segment = point
-        elif dx and abs(segment[0] - position[0]) <= 8:
+        if dx and abs(segment[0] - position[0]) <= 8:
             # 破晓之岛的最短横移也有约 14px，不能用它校正路口处 4～8px
             # 的误差。只有下一段确实是纵向连接路时才直接换道，排除路宽内
             # 几像素的投影折线；实机从 x=551 向上会自动对齐 x=547 的路口。
+            # 前面忽略纵向投影后，也要检查新得到的横向短段，避免在路口左右折返。
             turn = path.index(segment)
             if turn + 1 < len(path) and path[turn + 1][0] == segment[0]:
                 following = path[turn + 1]
@@ -399,6 +400,16 @@ class CatDiaryRunner(Navigator):
 
     def diary_ready(self, frame):
         return self.reco("CatDiaryPanel", frame) and self.reco("CatDiaryTitle", frame)
+
+    def navigation_interrupted(self, frame):
+        if super().navigation_interrupted(frame):
+            return True
+        # 羽毛按钮可能在滑动结束后的定位采样期间才出现。追猫时优先
+        # 完成已识别交互，不让后续开图或图例重叠阻断；仍须实际回到日记。
+        if (self.tracking_cat and self.reco("StartUpWorldReady", frame)
+                and self.reco("CatDiaryInteract", frame) and self.interact()):
+            raise DiaryOpened("导航采样期间完成猫交互并返回日记")
+        return False
 
     def open_diary(self):
         frame = self.frame()
@@ -554,8 +565,9 @@ class CatDiaryRunner(Navigator):
             label = self.reco("CatDiaryDestination", frame, {"CatDiaryDestination": {"expected": [outer_expected]}})
             if label:
                 self.click(label)
-                if "world_entry" in entry:
-                    # 蛇骨岛先展开独立地图；入口名称不能作为最终传送目的地的别名。
+                if "world_panel" in entry:
+                    # 蛇骨岛先展开独立地图；城镇子菜单则由 wait_confirm 处理。
+                    # 两种入口名称都不能作为最终传送目的地的别名。
                     label = self.wait_world_destination(entry, expected)
                     self.click(label)
                 selected = label.best_result.text
@@ -582,8 +594,8 @@ class CatDiaryRunner(Navigator):
             frame = self.frame()
             # 弹图展开时地形和标签陆续出现；同帧确认分区与最终标签后才点击。
             if self.reco(entry["world_panel"], frame):
-                label = self.reco("CatDiaryDestination", frame,
-                                  {"CatDiaryDestination": {"expected": [expected]}})
+                label = self.reco("CatDiaryIslandDestination", frame,
+                                  {"CatDiaryIslandDestination": {"expected": [expected]}})
                 if label:
                     return label
             time.sleep(0.1)
@@ -742,7 +754,9 @@ class CatDiaryRunner(Navigator):
         self.reset_navigation()
         until = min(self.deadline, time.monotonic() + 10)
         while time.monotonic() < until:
-            if not self.reco("StartUpWorldReady", self.frame()):
+            self.check()
+            frame = self.frame()
+            if not self.reco("StartUpWorldReady", frame):
                 self.world()
                 return
             time.sleep(0.1)
@@ -774,6 +788,7 @@ class CatDiaryRunner(Navigator):
 
     def wait_confirm(self, target, expected, names=None):
         until = min(self.deadline, time.monotonic() + 10)
+        submenu_clicked = False
         while time.monotonic() < until:
             frame = self.frame()
             # 城镇前缀与名称可能被 OCR 分成多个框；只读取确认框第一行，按横坐标合并。
@@ -783,11 +798,13 @@ class CatDiaryRunner(Navigator):
             confirm = self.reco("CatDiaryConfirmYes", frame)
             if confirm and destination in accepted and question:
                 return confirm
-            if not confirm and self.reco("CatDiarySubmenu", frame):
+            if not confirm and not submenu_clicked and self.reco("CatDiarySubmenu", frame):
                 label = self.reco("CatDiarySubDestination", frame, {"CatDiarySubDestination": {"expected": [expected]}})
                 if label:
                     target = label.best_result.text
                     self.click(label)
+                    # 图书区标签与确认框的“是”重叠；动画中的旧菜单帧不能触发第二次点击。
+                    submenu_clicked = True
         raise RuntimeError(f"传送确认文字不符：{target}")
 
     def locate(self, expected, previous=None, movement=None):
@@ -889,6 +906,17 @@ class CatDiaryRunner(Navigator):
             return name, position, targets, road
         raise RuntimeError(f"{reason}，保留现场")
 
+    def refresh_cat_button(self, button):
+        # 佐见的猫会带着按钮水平移动；全画面多尺寸匹配耗时会使第一次坐标过期。
+        # 用新截图在附近重识别，失去按钮或退出主界面时不沿用旧坐标。
+        x, y, w, h = button.best_result.box
+        left, top = max(0, x - 120), max(100, y - 60)
+        roi = [left, top, min(1280, x + w + 120) - left, min(580, y + h + 60) - top]
+        frame = self.frame()
+        if not self.reco("StartUpWorldReady", frame):
+            return None
+        return self.reco("CatDiaryInteract", frame, {"CatDiaryInteract": {"roi": roi}})
+
     def interact(self):
         until = min(self.deadline, time.monotonic() + 40)
         clicks = 0
@@ -904,6 +932,8 @@ class CatDiaryRunner(Navigator):
                 dialogues += 1
                 continue
             button = self.reco("CatDiaryInteract", frame) if self.reco("StartUpWorldReady", frame) else None
+            if button:
+                button = self.refresh_cat_button(button)
             if button:
                 if clicks >= 10:
                     raise RuntimeError("猫交互按钮连续点击落空")
@@ -945,8 +975,39 @@ class CatDiaryRunner(Navigator):
             previous = (stage, x)
         raise RuntimeError("温泉超过 8 步仍未找到猫")
 
+    def chase_snake_head(self):
+        # 此处没有小地图。只走通了传送落点向左一次，远景树右移约 87px。
+        # 不把已发滑动当成位移，也不在未采集的场景继续扩大搜索。
+        previous_x = None
+        for step in range(2):
+            self.check()
+            landmark = self.reco("CatDiarySnakeHeadTree", self.world())
+            if not landmark:
+                raise RuntimeError("蛇头梅兹基塔场景标志不符，停止无小地图寻猫")
+            x = landmark.best_result.box[0]
+            if previous_x is not None and not 30 <= x - previous_x <= 160:
+                raise RuntimeError("蛇头梅兹基塔横移未产生预期场景位移")
+            if step == 1:
+                # 接近后的羽毛有出现动画；等待按钮识别就绪，不继续盲走。
+                self.wait("CatDiaryInteract", seconds=3)
+            if self.interact():
+                return
+            if step == 1:
+                break
+            if not 310 <= x <= 350:
+                raise RuntimeError("蛇头梅兹基塔不在已验证的传送落点")
+            LOG.warning("CatDiary 蛇头梅兹基塔无小地图追踪：left 600ms，场景标志 x=%s", x)
+            self.action("CatDiarySwipe", {"CatDiarySwipe": {
+                "begin": [600, 450], "end": [420, 450], "duration": 600,
+            }})
+            previous_x = x
+        raise RuntimeError("蛇头梅兹基塔已验证路段内未找到猫，保留现场")
+
     def chase(self, entry):
         self.tracking_cat = True
+        if entry.get("chase_mode") == "snake_head":
+            self.chase_snake_head()
+            return
         if entry.get("chase_mode") == "hot_spring":
             self.chase_hot_spring()
             return

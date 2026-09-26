@@ -194,8 +194,12 @@ def pulse_candidates(frames, roi=MINI_ROI, previous=None, max_distance=150):
     return candidates
 
 
-def pulse_position(frames, roi=MINI_ROI, previous=None, max_distance=150):
+def pulse_position(frames, roi=MINI_ROI, previous=None, max_distance=150, *, excluded=()):
     candidates = pulse_candidates(frames, roi, previous, max_distance)
+    # 移动的金色羽毛也可能形成脉动圆，排除同帧已经识别的羽毛框。
+    # 所有候选被排除或仍有多个候选时继续拒绝定位。
+    candidates = [point for point in candidates if not any(
+        x <= point[0] <= x+w and y <= point[1] <= y+h for x, y, w, h in excluded)]
     if len(candidates) != 1:
         raise LocalizationLost(f"呼吸环候选不唯一：{len(candidates)}")
     return candidates[0]
@@ -415,6 +419,8 @@ class MiniMapNavigator:
         from cat_diary import RoadMap, compact
         nav = self.runner
         before = nav.world()
+        if nav.navigation_interrupted(before):
+            raise NavigationInterrupted('展开地图前场景已改变')
         epoch = nav.navigation_epoch
         nav.action('NavigationToggleLocalMap')
         self.map_opens += 1
@@ -437,7 +443,9 @@ class MiniMapNavigator:
         road_keys = [key for key in nav.maps if name == key or name.endswith(key)]
         road_key = self.road_key or (road_keys[0] if len(road_keys) == 1 else name)
         offset = map_offset(nav, frames[-1], road_key)
-        screen_position = pulse_position(frames, MAP_ROI)
+        marker = nav.reco('CatDiaryMarker', frames[-1])
+        excluded = [match.box for match in marker.filtered_results] if marker else []
+        screen_position = pulse_position(frames, MAP_ROI, excluded=excluded)
         position = tuple(a-b for a, b in zip(screen_position, offset))
         self.last_map_position = position
         if audit and self.position is not None:
@@ -488,7 +496,17 @@ class MiniMapNavigator:
         if self.transitions:
             from minimap_transitions import add_landings
             road = add_landings(road, self.transitions)
-        road.nearest(position)
+        try:
+            road.nearest(position)
+        except RuntimeError:
+            # 路端的角色环和邻近图例可能遮断本次差分道路。全名、机位偏移
+            # 和本次独立整图坐标均须符合旧模型，才可复用此前确认的道路。
+            # 传送/跨层会清空会话；首次建模没有旧道路时仍保留失败现场。
+            if self.atlas is None or self.road is None or name != self.map_name or offset != self.offset:
+                raise
+            self.road.nearest(position)
+            road = self.road
+            LOG.warning('MiniMap reused confirmed road %s position=%s after occlusion', name, position)
         atlas = MapAtlas(base, frames, name, screen_position, feather_points(nav, frames[-1]))
         # 整图与小地图必须在同一机位交叉核验，避免接受另一组相似图例。
         self.frames = self.burst()

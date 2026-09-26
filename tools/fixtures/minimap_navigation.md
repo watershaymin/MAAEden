@@ -49,7 +49,25 @@
 `xeno_gold` 是 2026-09-19 控制所入口金色出口按钮的真实画面（仅保留按钮识别 ROI），
 模板 `CatDiary/XenoDoorGold.png` 裁自其中 `[456,176,61,61]`；已实机点击并核验研究中心落点。
 
-`minimap_titles.npz` 包含 3 组原始标题 ROI `(15,10,640,53)`：
+`minimap_titles.npz` 包含 6 组原始标题 ROI `(15,10,640,53)`：
 `kms` 来自 `repair/kms/final1/frame-16.png` 的“I旧”误识别；`acid` 来自
 `survey/cat_08/run1/frame-00.png` 的白色过滤误识别；`tower` 来自 `repair/cat_10/run1/frame-00.png`。
+`ishana_start`、`ishana_east` 来自 2026-09-20 的 `debug/cat/2026-09-20/ishana-map.png`
+与 `fixed5/CatDiary-final.png`，验证“巳之国伊刹那”起点彩色 OCR 将“巳”读为“已”时，
+以完整预期名称触发现有灰度补充识别，并与东侧正确标题保持一致。
+`pador` 来自 2026-09-25 的 `debug/cat/2026-09-25/initial/CatDiary-final.png`，
+实际标题为“古代树之村 帕德列”；旧地点配置仅为简称“帕德列”，不能通过显式地图名称的精确校验。
+回放同时读取地点配置，检查完整实机标题可接受，而缺少前缀的简称或附加楼层不能接受。
 `tools/test_minimap_ocr.py` 用不允许任何输入的离线控制器运行真实 Maa OCR，并确认错误楼层不能通过。
+
+`cat_diary_sami.npz` 来自 2026-09-20 佐见 `debug/cat/2026-09-20/sami-pulse.npz` 的 10 帧序列，
+保留角色区域 `[620,369,70,70]` 与移动羽毛区域 `[714,170,82,70]` 的原始 BGR 像素。
+不排除羽毛时产生两个脉动候选 `(756.5,205.5)`、`(653.05,402.70)`；排除同帧羽毛识别框后只保留后者。
+`tools/test_minimap_navigation.py` 验证该反例，以及排除后零候选或仍有两个候选的停止边界。
+
+`cat_diary_konim_road.npz` 来自 2026-09-22 柯尼姆失败现场的 `konim-base.png`、`konim-map.png`，
+原图及遮挡框记录保存在 `debug/cat/2026-09-22/`。仅保留 `[600,320,240,80]` 的原始 BGR 像素，
+附实际识别的图例遮挡框及整图呼吸环圆心 `(783.88,360.17)`。
+角色环与旁边图例共同遮住路端，新提取道路不能接受该圆心；这张样本不允许扩大补路范围。
+`tools/test_navigation_sessions.py` 回放此失败，验证同图且独立坐标符合旧道路时可复用先前道路，
+并覆盖首次建模没有旧图、旧道路不覆盖当前位置、地图偏移变化三种仍须停止的情况。

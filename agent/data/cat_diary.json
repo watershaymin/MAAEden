@@ -394,6 +394,9 @@
             "region": "本土大陆",
             "location": "蛇头梅兹基塔",
             "teleport": "蛇头梅兹基塔",
+            "chase_mode": "snake_head",
+            "world_entry": "蛇骨岛",
+            "world_panel": "CatDiarySnakeIsland",
             "clues": [
                 "好美的夕阳"
             ],
@@ -559,15 +562,19 @@
             "id": "cat_41",
             "era": "未来",
             "region": "本土大陆",
-            "location": "马克米纳尔图书馆（图书馆区域）",
-            "teleport": "马克米纳尔图书馆",
+            "location": "马克米纳尔博物馆（图书区域）",
+            "teleport": "博物馆 图书区",
+            "world_entry": "尼尔瓦",
             "clues": [
                 "博物馆里有好多书"
             ],
             "world_names": [
-                "马克米纳尔图书馆",
-                "马克米纳尔图书馆（图书馆区域）"
-            ]
+                "博物馆 图书区"
+            ],
+            "map_names": [
+                "马克米纳尔博物馆图书区域"
+            ],
+            "road_map": "马克米纳尔博物馆图书区域入口"
         },
         {
             "id": "cat_42",
@@ -759,7 +766,7 @@
                 "古代树之村 帕德列"
             ],
             "map_names": [
-                "帕德列"
+                "古代树之村帕德列"
             ],
             "road_map": "古代树之村帕德列"
         },
@@ -795,6 +802,10 @@
             "region": "东方",
             "location": "巳之国 伊刹那",
             "teleport": "伊刹那",
+            "road_map": "巳之国伊刹那",
+            "map_names": [
+                "巳之国伊刹那"
+            ],
             "clues": [
                 "好雄伟的灯笼"
             ],

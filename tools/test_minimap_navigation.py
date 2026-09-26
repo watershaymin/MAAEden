@@ -51,6 +51,23 @@ class PulseTests(unittest.TestCase):
             with self.assertRaises(LocalizationLost):
                 pulse_position(frames)
 
+    def test_sami_moving_feather_is_excluded_by_recognized_box(self):
+        with np.load(Path(__file__).parent / 'fixtures/cat_diary_sami.npz') as samples:
+            frames = np.zeros((len(samples['player']), 720, 1280, 3), np.uint8)
+            frames[:, 369:439, 620:690] = samples['player']
+            frames[:, 170:240, 714:796] = samples['feather']
+        with self.assertRaisesRegex(LocalizationLost, '候选不唯一：2'):
+            pulse_position(frames, MAP_ROI)
+        point = pulse_position(frames, MAP_ROI, excluded=[[723,188,53,50]])
+        self.assertLess(math.dist(point, (653,403)), 1)
+
+    def test_feather_exclusion_preserves_missing_and_ambiguous_failures(self):
+        with patch('minimap_navigation.pulse_candidates', return_value=[(450,340), (550,340)]):
+            with self.assertRaisesRegex(LocalizationLost, '候选不唯一：0'):
+                pulse_position([], MAP_ROI, excluded=[[440,330,120,20]])
+            with self.assertRaisesRegex(LocalizationLost, '候选不唯一：2'):
+                pulse_position([], MAP_ROI, excluded=[[400,200,30,30]])
+
 
 class ControlTests(unittest.TestCase):
     def session(self):

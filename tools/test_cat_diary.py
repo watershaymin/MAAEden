@@ -4,6 +4,7 @@ import json
 import sys
 import time
 import unittest
+from itertools import product
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
@@ -32,6 +33,46 @@ class CatDiaryTests(unittest.TestCase):
             self.assertEqual([end[i] - begin[i] for i in range(2)],
                              [pan[i + 2] - pan[i] for i in range(2)])
             self.assertTrue(80 <= end[0] <= 1100 and 240 <= end[1] <= 600)
+
+    def snake_head_runner(self, positions, interactions):
+        runner = self.runner()
+        runner.world = Mock(side_effect=positions)
+        runner.reco = Mock(side_effect=lambda node, x: None if x is None else
+                           SimpleNamespace(best_result=SimpleNamespace(box=[x, 335, 60, 55])))
+        runner.action = Mock()
+        runner.wait = Mock()
+        runner.interact = Mock(side_effect=interactions)
+        return runner
+
+    def test_snake_head_requires_landmark_displacement_and_interaction(self):
+        runner = self.snake_head_runner([330, 417], [False, True])
+        runner.chase(next(e for e in runner.catalog if e['id'] == 'cat_29'))
+        runner.action.assert_called_once()
+        self.assertEqual(runner.action.call_args.args[0], 'CatDiarySwipe')
+        runner.wait.assert_called_once_with('CatDiaryInteract', seconds=3)
+
+    def test_snake_head_rejects_unknown_scene_origin_and_wrong_movement(self):
+        for positions, reason, moves in [([None], '场景标志不符', 0),
+                                          ([417], '传送落点', 0),
+                                          ([330, 330], '预期场景位移', 1),
+                                          ([330, 290], '预期场景位移', 1),
+                                          ([330, 510], '预期场景位移', 1)]:
+            with self.subTest(positions=positions):
+                runner = self.snake_head_runner(positions, [False, False])
+                with self.assertRaisesRegex(RuntimeError, reason):
+                    runner.chase_snake_head()
+                self.assertEqual(runner.action.call_count, moves)
+
+    def test_snake_head_stops_after_verified_segment_without_cat(self):
+        runner = self.snake_head_runner([330, 417], [False, False])
+        with self.assertRaisesRegex(RuntimeError, '已验证路段内未找到猫'):
+            runner.chase_snake_head()
+        runner.action.assert_called_once()
+        stopped = self.snake_head_runner([330], [False])
+        self.context.tasker.stopping = True
+        with self.assertRaisesRegex(RuntimeError, '用户停止'):
+            stopped.chase_snake_head()
+        stopped.action.assert_not_called()
 
     def hot_spring_runner(self, frames):
         runner = self.runner()
@@ -325,10 +366,14 @@ class CatDiaryTests(unittest.TestCase):
 
     def test_xeno_transition_times_out_without_opening_another_map(self):
         runner = self.runner()
-        runner.frame = Mock(return_value=object())
+        clock = [0]
+        def expired_frame():
+            clock[0] = 11
+            return object()
+        runner.frame = Mock(side_effect=expired_frame)
         runner.reco = Mock(return_value=object())
         runner.world = Mock()
-        with patch("cat_diary.time.monotonic", side_effect=[0, 0, 11]), patch("cat_diary.time.sleep"):
+        with patch("cat_diary.time.monotonic", side_effect=lambda: clock[0]), patch("cat_diary.time.sleep"):
             with self.assertRaisesRegex(RuntimeError, "未开始切换"):
                 runner.wait_area_transition()
         runner.world.assert_not_called()
@@ -536,12 +581,13 @@ class CatDiaryTests(unittest.TestCase):
                                      [447 if region == "冥峡界" else 203, 115])
 
     def test_island_entry_requires_panel_and_keeps_final_destination_exact(self):
-        for panel_visible, destination_visible in ((True, True), (False, True), (True, False)):
-            with self.subTest(panel=panel_visible, destination=destination_visible):
+        for entry_id, (panel_visible, destination_visible) in product(
+                ("cat_27", "cat_29"), ((True, True), (False, True), (True, False))):
+            with self.subTest(entry=entry_id, panel=panel_visible, destination=destination_visible):
                 runner = self.runner()
-                entry = next(e for e in runner.catalog if e["id"] == "cat_27")
+                entry = next(e for e in runner.catalog if e["id"] == entry_id)
                 outer = SimpleNamespace(best_result=SimpleNamespace(text="蛇骨岛"))
-                inner = SimpleNamespace(best_result=SimpleNamespace(text="魔兽村落 柯尼姆"))
+                inner = SimpleNamespace(best_result=SimpleNamespace(text=entry["world_names"][0]))
                 yes = object()
                 runner.world = Mock()
                 runner.frame = Mock()
@@ -553,8 +599,9 @@ class CatDiaryTests(unittest.TestCase):
 
                 def recognize(node, frame, override=None):
                     if node == "CatDiaryDestination":
-                        pattern = override[node]["expected"][0]
-                        return (outer if "蛇" in pattern else inner if destination_visible else None)
+                        return outer
+                    if node == "CatDiaryIslandDestination":
+                        return inner if destination_visible else None
                     if node == "CatDiarySnakeIsland":
                         return panel_visible
                     return node in ("CatDiaryEraSelected", "CatDiaryWorldMap")
@@ -564,9 +611,9 @@ class CatDiaryTests(unittest.TestCase):
                     runner.teleport(entry)
                     self.assertEqual([c.args[0] for c in runner.click.call_args_list], [outer, inner, yes])
                     target, pattern, names = runner.wait_confirm.call_args.args
-                    self.assertEqual(target, "魔兽村落 柯尼姆")
-                    self.assertEqual(names, ["魔兽村落 柯尼姆"])
-                    self.assertNotIn("蛇", pattern)
+                    self.assertEqual(target, entry["world_names"][0])
+                    self.assertEqual(names, entry["world_names"])
+                    self.assertNotIn("骨", pattern)
                 else:
                     with patch("cat_diary.time.monotonic", side_effect=range(100)), patch("cat_diary.time.sleep"):
                         with self.assertRaises(RuntimeError):
@@ -826,6 +873,21 @@ class CatDiaryTests(unittest.TestCase):
         road.path = Mock(return_value=[(542, 354), (546, 354), (546, 350),
                                        (550, 350), (554, 350), (558, 350)])
         self.assertEqual(road.step((543, 354), (638, 350))[0], "right")
+
+    def test_junction_turn_after_discarding_vertical_projection(self):
+        road = RoadMap.from_segments(self.runner().maps["空中城郭伊斯亚"])
+        # 2026-09-24 实机：短纵向投影后还有 4px 横向对齐，再接完整的下行路。
+        # 旧判断只去掉纵向投影，接着反复左右横移，无法立即走入连接路。
+        for position, goal in (
+            ((587.7525, 279.0764), (491.4064, 361.4720)),
+            ((592.1838, 279.3269), (478.0635, 362.0498)),
+            ((586.3530, 279.7183), (472.4209, 362.4101)),
+        ):
+            with self.subTest(position=position):
+                self.assertEqual(road.step(position, goal)[0], "down")
+        # 同一道路上的目标和远离路口的位置仍沿横路移动。
+        self.assertEqual(road.step((587.7525, 279.0764), (700, 281))[0], "right")
+        self.assertEqual(road.step((620, 279), (480, 361))[0], "left")
 
     def test_stopping_and_timeout_do_not_click(self):
         runner = self.runner()

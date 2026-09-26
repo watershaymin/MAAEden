@@ -179,7 +179,8 @@
             "CatDiary/Feather33.png",
             "CatDiary/Feather36.png",
             "CatDiary/Feather40.png",
-            "CatDiary/Feather43.png"
+            "CatDiary/Feather43.png",
+            "CatDiary/FeatherSunset.png"
         ],
         "roi": [
             0,
@@ -370,6 +371,31 @@
             "(?!)"
         ]
     },
+    "CatDiaryIslandDestination": {
+        "desc": "蛇骨岛弹出地图的目的地范围，包含顶部蛇头传送点；仅在分区标志同帧通过后使用。",
+        "recognition": "OCR",
+        "roi": [
+            80,
+            90,
+            1100,
+            550
+        ],
+        "expected": [
+            "(?!)"
+        ]
+    },
+    "CatDiarySnakeHeadTree": {
+        "desc": "蛇头梅兹基塔夕阳下的远景树与海面；仅用于传送落点后一次已实走的向左移动。",
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/SnakeHeadTree.png",
+        "roi": [
+            280,
+            315,
+            260,
+            95
+        ],
+        "threshold": 0.9
+    },
     "CatDiaryMiglanceStairs": {
         "desc": "仅在米格兰斯城1楼已确认的传送落点附近点击正前方上楼图标。",
         "recognition": "TemplateMatch",
@@ -410,7 +436,7 @@
         "threshold": 0.75
     },
     "CatDiarySnakeIsland": {
-        "desc": "蛇骨岛弹出地图内固定的蛇首伊格玛文字，确认进入独立地图后才选择村落。",
+        "desc": "蛇骨岛弹出地图内固定的蛇首伊格玛文字，确认进入独立地图后才选择最终目的地。",
         "recognition": "TemplateMatch",
         "template": "CatDiary/SnakeIsland.png",
         "roi": [
@@ -506,6 +532,20 @@
         ]
     },
     "CatDiaryDialogue": {
+        "desc": "普通对话或已采集的体育场海报说明；仍受原有 20 页及任务时间上限约束。",
+        "recognition": "Or",
+        "any_of": [
+            "CatDiaryOrdinaryDialogue",
+            "CatDiaryStadiumPoster"
+        ],
+        "action": "Click",
+        "target": [
+            320,
+            665
+        ],
+        "post_delay": 150
+    },
+    "CatDiaryOrdinaryDialogue": {
         "recognition": "And",
         "all_of": [
             {
@@ -534,13 +574,38 @@
                 ],
                 "threshold": 0.88
             }
-        ],
-        "action": "Click",
-        "target": [
-            320,
-            665
-        ],
-        "post_delay": 150
+        ]
+    },
+    "CatDiaryStadiumPoster": {
+        "desc": "莎蒂拉体育场海报的两页说明，要求顶部边框和已实测文字同时可见。",
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "TemplateMatch",
+                "template": "CatDiary/StadiumPosterBorder.png",
+                "roi": [
+                    140,
+                    10,
+                    85,
+                    86
+                ],
+                "threshold": 0.9,
+                "method": 10001
+            },
+            {
+                "recognition": "OCR",
+                "roi": [
+                    460,
+                    26,
+                    370,
+                    44
+                ],
+                "expected": [
+                    "^循着来自宇宙的通讯$",
+                    "^宇宙的神秘以及$"
+                ]
+            }
+        ]
     },
     "CatDiaryConfirmQuestion": {
         "recognition": "OCR",

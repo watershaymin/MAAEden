@@ -10,7 +10,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'agent'))
 from navigation import Navigator
-from cat_diary import CatDiaryRunner
+from cat_diary import CatDiaryRunner, RoadMap
 from monthly_trial import MonthlyNavigator
 from minimap_navigation import (MiniMapNavigator, NavigationInterrupted, LocalizationLost,
                                 Observation, project_point, map_offset)
@@ -150,6 +150,40 @@ class SessionTests(unittest.TestCase):
         self.assertEqual(nav.locate({'teleport': '研究中心', 'location': '研究中心'})[2], [])
         session.cat_targets.assert_not_called()
 
+    def test_cat_interaction_appearing_during_sampling_returns_to_diary(self):
+        for stage in ('burst', 'calibrate'):
+            with self.subTest(stage=stage):
+                nav = self.runner(CatDiaryRunner)
+                nav.tracking_cat = True
+                frame = {'StartUpWorldReady', 'CatDiaryInteract'}
+                nav.reco = lambda node, image: node in image
+                nav.frame = nav.world = Mock(return_value=frame)
+                nav.interact = Mock(return_value=True)
+                nav.action = Mock()
+                session = MiniMapNavigator(nav, '再生村落安格尔')
+                nav.locate = Mock(side_effect=lambda *args: getattr(session, stage)())
+                # 第一次循环检查尚无按钮；采样时才出现，由原追踪流程接住日记。
+                nav.interact.side_effect = [False, True]
+                nav.chase(nav.catalog[0])
+                self.assertEqual(nav.interact.call_count, 2)
+                nav.action.assert_not_called()
+
+    def test_navigation_cat_interaction_requires_tracking_world_and_diary_return(self):
+        for tracking, frame in [(False, {'StartUpWorldReady', 'CatDiaryInteract'}),
+                                (True, {'NavigationLocalMap', 'CatDiaryInteract'}),
+                                (True, {'StartUpWorldReady'})]:
+            nav = self.runner(CatDiaryRunner)
+            nav.tracking_cat = tracking
+            nav.reco = lambda node, image: node in image
+            nav.interact = Mock()
+            self.assertFalse(nav.navigation_interrupted(frame))
+            nav.interact.assert_not_called()
+        nav.interact = Mock(return_value=False)
+        self.assertFalse(nav.navigation_interrupted({'StartUpWorldReady', 'CatDiaryInteract'}))
+        nav.interact = Mock(side_effect=RuntimeError('用户停止'))
+        with self.assertRaisesRegex(RuntimeError, '用户停止'):
+            nav.navigation_interrupted({'StartUpWorldReady', 'CatDiaryInteract'})
+
     def test_anchor_offset_and_projection_use_same_coordinates(self):
         nav = self.runner()
         nav.reco = Mock(return_value=SimpleNamespace(box=SimpleNamespace(x=932.5, y=212, w=20, h=20),
@@ -173,7 +207,7 @@ class SessionTests(unittest.TestCase):
     def test_final_audit_closes_map_without_rebuilding_at_farming_point(self):
         nav = self.runner()
         nav.world, nav.action = Mock(), Mock()
-        nav.reco = Mock(return_value=True)
+        nav.reco = Mock(side_effect=lambda node, *args: node == 'NavigationLocalMap')
         nav.text = Mock(return_value='地图')
         session = MiniMapNavigator(nav, '地图')
         session.atlas, session.position = object(), (600, 339)
@@ -233,6 +267,54 @@ class SessionTests(unittest.TestCase):
         self.assertEqual(session.locate('left'), (600,339))
         session.observe_only.assert_not_called()
         session.calibrate.assert_called_once()
+
+    def konim_recalibration(self, old_end=800, old_atlas=True, offset=(0., 0.)):
+        with np.load(Path(__file__).parent / 'fixtures/cat_diary_konim_road.npz') as sample:
+            base = np.zeros((720, 1280, 3), np.uint8)
+            full = base.copy()
+            base[320:400, 600:840] = sample['base']
+            full[320:400, 600:840] = sample['map']
+            anchor = tuple(sample['anchor'])
+            occluded = RoadMap(base, full, sample['boxes'], anchor)
+        # 真实重叠图例令新提取的道路与角色相距超过 24px。
+        with self.assertRaisesRegex(RuntimeError, '没有已确认道路'):
+            occluded.nearest(anchor)
+        nav = self.runner()
+        nav.world, nav.action = Mock(return_value=base), Mock()
+        nav.text = Mock(return_value='魔兽村落柯尼姆')
+        nav.reco = lambda node, *args: True if node == 'NavigationLocalMap' else None
+        session = MiniMapNavigator(nav, '魔兽村落柯尼姆')
+        session.atlas = object() if old_atlas else None
+        session.road = RoadMap.from_segments([[599, 360, old_end, 360]])
+        session.wait_map = Mock()
+        session.burst = Mock(return_value=[full]*10)
+        atlas = Mock()
+        atlas.observe.return_value = Observation(anchor, 20, .5)
+        return session, occluded, atlas, anchor, offset
+
+    def run_konim_recalibration(self, session, occluded, atlas, anchor, offset):
+        with patch('cat_diary.RoadMap', return_value=occluded), \
+                patch('minimap_navigation.MapAtlas', return_value=atlas), \
+                patch('minimap_navigation.pulse_position', return_value=tuple(a+b for a,b in zip(anchor, offset))), \
+                patch('minimap_navigation.map_offset', return_value=offset), \
+                patch('minimap_navigation.time.sleep'):
+            return session.calibrate()
+
+    def test_occluded_endpoint_reuses_independently_confirmed_same_map_road(self):
+        args = self.konim_recalibration()
+        session, _, _, anchor, _ = args
+        old_road = session.road
+        self.assertEqual(self.run_konim_recalibration(*args), anchor)
+        self.assertIs(session.road, old_road)
+        self.assertEqual(session.road.step(anchor, (620, 360))[0], 'left')
+
+    def test_occlusion_without_same_map_road_evidence_still_stops(self):
+        for kwargs in ({'old_atlas': False}, {'old_end': 700}, {'offset': (0., 10.)}):
+            with self.subTest(**kwargs):
+                args = self.konim_recalibration(**kwargs)
+                with self.assertRaisesRegex(RuntimeError, '没有已确认道路'):
+                    self.run_konim_recalibration(*args)
+                args[2].observe.assert_not_called()
 
 
 class TargetTests(unittest.TestCase):

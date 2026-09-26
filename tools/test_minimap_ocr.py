@@ -14,7 +14,7 @@ from maa.toolkit import Toolkit
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'agent'))
 from cat_diary import CatDiaryRunner
-from minimap_navigation import read_map_name
+from minimap_navigation import MiniMapNavigator, read_map_name
 
 
 class OfflineController(CustomController):
@@ -32,12 +32,22 @@ class CheckTitles(CustomAction):
         try:
             runner = CatDiaryRunner(context)
             with np.load(ROOT / 'tools/fixtures/minimap_titles.npz') as samples:
-                for key, expected in [('kms','旧KMS总部副入口'), ('acid','酸性沼泽'), ('tower','时之塔1楼')]:
+                for key, expected in [('kms','旧KMS总部副入口'), ('acid','酸性沼泽'), ('tower','时之塔1楼'),
+                                      ('ishana_start','巳之国伊刹那'), ('ishana_east','巳之国伊刹那'),
+                                      ('pador','古代树之村帕德列')]:
                     frame = np.zeros((720,1280,3), np.uint8)
                     frame[10:63,15:655] = samples[key]
                     assert read_map_name(runner, frame, expected) == expected, key
                     if key == 'tower':
                         assert read_map_name(runner, frame, '时之塔2楼') != '时之塔2楼'
+                    if key == 'pador':
+                        entry = next(e for e in runner.catalog if e['id'] == 'cat_54')
+                        session = MiniMapNavigator(runner, entry['map_names'][0],
+                                                   aliases=entry['map_names'], exact=True)
+                        name = read_map_name(runner, frame, session.map_name)
+                        assert session.accepts_name(name), (entry['map_names'], name)
+                        assert not session.accepts_name('帕德列')
+                        assert not session.accepts_name('古代树之村帕德列2楼')
                     print('PASS', key, flush=True)
             return True
         except Exception:

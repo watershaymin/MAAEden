@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'agent'))
 from test_minimap_ocr import OfflineController
 from cat_diary import CatDiaryRunner
-from minimap_navigation import MapAtlas, feather_points, project_point
+from minimap_navigation import MAP_ROI, MapAtlas, feather_points, project_point, pulse_position
 
 
 class CheckTargets(CustomAction):
@@ -42,6 +42,16 @@ class CheckTargets(CustomAction):
                     assert not runner.reco('CatDiaryXenoDoor', samples[key+'_base'], {
                         'CatDiaryXenoDoor': {'template': ['CatDiary/XenoDoorGold.png']}})
                 print('PASS xeno gold door / negatives', flush=True)
+            with np.load(ROOT / 'tools/fixtures/cat_diary_sami.npz') as samples:
+                frames = np.zeros((len(samples['player']),720,1280,3), np.uint8)
+                frames[:,369:439,620:690] = samples['player']
+                frames[:,170:240,714:796] = samples['feather']
+                marker = runner.reco('CatDiaryMarker', frames[-1])
+                assert marker, '佐见移动羽毛未识别'
+                boxes = [match.box for match in marker.filtered_results]
+                position = pulse_position(frames, MAP_ROI, excluded=boxes)
+                assert math.dist(position, (653,403)) < 1, position
+                print('PASS sami moving feather / player separation', flush=True)
             return True
         except Exception:
             traceback.print_exc()
