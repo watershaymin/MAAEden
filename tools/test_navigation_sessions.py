@@ -366,6 +366,41 @@ class TargetTests(unittest.TestCase):
             session.cat_targets()
         session.calibrate.assert_called_once()
 
+    def test_empty_cached_map_is_replaced_with_new_observation(self):
+        session = self.session()
+        session.target_positions = []
+        fresh_map = object()
+        session.calibrate.side_effect = lambda: setattr(session, 'map_frames', [fresh_map])
+        with patch('minimap_navigation.feather_points', side_effect=lambda runner, frame, miniature=False:
+                   [(556, 270)] if frame is fresh_map else []):
+            self.assertEqual(session.cat_targets(), [(556, 270)])
+        session.calibrate.assert_called_once()
+
+    def test_fresh_empty_map_is_used_once_then_reobserved(self):
+        session = self.session()
+        session.target_time = session.last_calibration - 1
+        with patch('minimap_navigation.feather_points', return_value=[]):
+            self.assertEqual(session.cat_targets(), [])
+            session.calibrate.assert_not_called()
+            self.assertEqual(session.cat_targets(), [])
+        session.calibrate.assert_called_once()
+
+    def test_minimap_reappearance_avoids_empty_map_refresh(self):
+        session = self.session()
+        session.target_positions = []
+        with patch('minimap_navigation.feather_points', side_effect=[[(120, 100)], [(122, 100)]]):
+            self.assertEqual(session.cat_targets(), [(644, 400)])
+        session.calibrate.assert_not_called()
+
+    def test_empty_target_refresh_propagates_stop(self):
+        session = self.session()
+        session.target_positions = []
+        session.calibrate.side_effect = RuntimeError('用户停止')
+        with patch('minimap_navigation.feather_points', return_value=[]), \
+             self.assertRaisesRegex(RuntimeError, '用户停止'):
+            session.cat_targets()
+        session.runner.action.assert_not_called()
+
 
 if __name__ == '__main__':
     unittest.main()

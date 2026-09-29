@@ -514,6 +514,11 @@ class CatDiaryRunner(Navigator):
             self.teleport(source)
             self.walk_nazrik_east(source)
             return
+        if entry.get("approach") == "konium_igoma":
+            source = next(e for e in self.catalog if e["id"] == "cat_27")
+            self.teleport(source)
+            self.walk_konium_igoma(source, entry)
+            return
         self.world()
         self.action("NavigationOpenWorldMap")
         self.wait("CatDiaryWorldMap")
@@ -601,7 +606,7 @@ class CatDiaryRunner(Navigator):
             time.sleep(0.1)
         raise RuntimeError(f"{entry['world_entry']} 分区或传送点未就绪：{entry['teleport']}")
 
-    def crossing_map_name(self):
+    def crossing_map_name(self, expected_names=()):
         """跨图连接路可能没有小地图；已有地图但标题读不到时不能继续移动。"""
         self.world()
         if self.navigation_session is not None:
@@ -614,13 +619,24 @@ class CatDiaryRunner(Navigator):
                 self.reset_navigation()
                 self.world()
         self.action("NavigationToggleLocalMap")
-        until = min(self.deadline, time.monotonic() + 2)
+        until = min(self.deadline, time.monotonic() + (4 if expected_names else 2))
         visible = False
         while time.monotonic() < until:
             frame = self.frame()
             if self.reco("NavigationLocalMap", frame):
                 visible = True
-                name = compact(self.text("CatDiaryMapName", frame, single_line=True))
+                # 跨图淡入时首字可能尚不完整。已声明源/目标全名时沿用共享定位的
+                # 原图与灰度重读，有界等待正确标题；不能把错字添加成目的地别名。
+                if expected_names:
+                    from minimap_navigation import read_map_name
+                    name = ""
+                    for expected in expected_names:
+                        candidate = read_map_name(self, frame, expected)
+                        if candidate in expected_names:
+                            name = candidate
+                            break
+                else:
+                    name = compact(self.text("NavigationMapName", frame, single_line=True))
                 if name:
                     self.action("NavigationToggleLocalMap")
                     self.world()
@@ -654,6 +670,80 @@ class CatDiaryRunner(Navigator):
             }})
             self.navigation_movement = 'right'
         raise RuntimeError("纳兹里克东侧路线超过 18 步，未确认进入冻时领域")
+
+    def walk_konium_igoma(self, source, entry):
+        # 蛇首在世界地图上只有地名，没有传送按钮。先沿柯尼姆已实走的主街西行，
+        # 再通过无小地图连接路；码头所在的下方道路不属于这条路线。
+        previous = None
+        stalled = 0
+        for step in range(19):
+            self.check()
+            name, position, _, _ = self.locate(source, previous, "left" if previous else None)
+            if name != "魔兽村落柯尼姆" or (previous is None and math.dist(position, (604, 359)) > 20):
+                raise RuntimeError(f"柯尼姆西行起点不符：{name} {position}")
+            if previous is not None and (abs(position[1] - 359) > 12 or not 340 <= position[0] <= 630):
+                LOG.warning("CatDiary 柯尼姆小图偏离主街，先独立展开整图复核：%s", position)
+                self.reset_navigation()
+                name, position, _, _ = self.locate(source)
+                if name != "魔兽村落柯尼姆":
+                    raise RuntimeError(f"柯尼姆西行复核地图不符：{name}")
+            if abs(position[1] - 359) > 12 or not 340 <= position[0] <= 630:
+                raise RuntimeError(f"柯尼姆西行偏离已验证主街：{position}")
+            if position[0] <= 385:
+                break
+            if previous is not None:
+                stalled = stalled + 1 if previous[0] - position[0] < 3 else 0
+                if stalled >= 3:
+                    raise RuntimeError("柯尼姆西行连续三步没有预期位移")
+            if step == 18:
+                raise RuntimeError("柯尼姆西行超过 18 步未到连接路")
+            LOG.warning("CatDiary 跨区 魔兽村落柯尼姆 第%s步：%s，left 600ms", step + 1, position)
+            self.action("CatDiarySwipe", {"CatDiarySwipe": {
+                "begin": [200, 450], "end": [20, 450], "duration": 600, "post_delay": 200,
+            }})
+            previous = position
+
+        self.reset_navigation()
+        previous_landmark = None
+        stalled = 0
+        nodes = ("CatDiaryKoniumWestFlag", "CatDiaryKoniumWestSkull")
+        for step in range(9):
+            self.check()
+            name = self.crossing_map_name(("魔兽村落柯尼姆", "蛇首伊格玛"))
+            if name == "蛇首伊格玛":
+                self.reset_navigation()
+                name, position, _, _ = self.locate(entry)
+                if name != "蛇首伊格玛" or math.dist(position, (1044, 444)) > 20:
+                    raise RuntimeError(f"未确认蛇首伊格玛东侧落点：{name} {position}")
+                LOG.warning("CatDiary 已从柯尼姆进入蛇首伊格玛，连接路移动 %s 步", step)
+                return
+            if name == "魔兽村落柯尼姆" and previous_landmark is None:
+                _, position, _, _ = self.locate(source)
+                if abs(position[1] - 359) > 12 or not 330 <= position[0] <= 395:
+                    raise RuntimeError(f"柯尼姆连接路起点偏离：{position}")
+            elif name is None:
+                frame = self.world()
+                matches = [(stage, result.best_result.box[0]) for stage, node in enumerate(nodes)
+                           if (result := self.reco(node, frame))]
+                if not matches:
+                    raise RuntimeError("柯尼姆西侧连接路场景标志不符")
+                stage, x = max(matches)
+                if previous_landmark is not None:
+                    if stage < previous_landmark[0]:
+                        raise RuntimeError("柯尼姆西侧连接路场景顺序异常")
+                    stalled = stalled + 1 if stage == previous_landmark[0] and x - previous_landmark[1] < 3 else 0
+                    if stalled >= 3:
+                        raise RuntimeError("柯尼姆西侧连接路连续三步没有预期场景位移")
+                previous_landmark = (stage, x)
+            else:
+                raise RuntimeError(f"柯尼姆西侧出现意外地图：{name}")
+            if step == 8:
+                break
+            LOG.warning("CatDiary 跨区 柯尼姆西侧连接路 第%s步，left 600ms", step + 1)
+            self.action("CatDiarySwipe", {"CatDiarySwipe": {
+                "begin": [200, 450], "end": [20, 450], "duration": 600, "post_delay": 200,
+            }})
+        raise RuntimeError("柯尼姆西侧连接路超过 8 步，未确认进入蛇首伊格玛")
 
     def slide_to_kunlun(self, source, entry):
         previous = None
@@ -988,12 +1078,17 @@ class CatDiaryRunner(Navigator):
             if previous_x is not None and not 30 <= x - previous_x <= 160:
                 raise RuntimeError("蛇头梅兹基塔横移未产生预期场景位移")
             if step == 1:
-                # 接近后的羽毛有出现动画；等待按钮识别就绪，不继续盲走。
-                self.wait("CatDiaryInteract", seconds=3)
+                # 猫会走出交互范围，按钮也可能在重识别前消失。实测约 15 秒后返回；
+                # 只在已确认的落点原地等待，不能把看见过按钮当成交互成功。
+                until = min(self.deadline, time.monotonic() + 30)
+                while time.monotonic() < until:
+                    self.check()
+                    if self.interact():
+                        return
+                    time.sleep(0.1)
+                break
             if self.interact():
                 return
-            if step == 1:
-                break
             if not 310 <= x <= 350:
                 raise RuntimeError("蛇头梅兹基塔不在已验证的传送落点")
             LOG.warning("CatDiary 蛇头梅兹基塔无小地图追踪：left 600ms，场景标志 x=%s", x)
@@ -1079,6 +1174,10 @@ class CatDiaryRunner(Navigator):
                 raise RuntimeError("已接近日记图例但未发现交互按钮")
             direction, duration = next_step
             dx, dy = DIRECTIONS[direction]
+            # 蛇首的纵向换道要求短促划动；实机 600ms 不进入，150ms 才到达
+            # 中层。只覆盖已实测地点的纵向输入，位置仍由下一次观测确认。
+            if dy:
+                duration = entry.get("vertical_swipe_ms", duration)
             LOG.warning("CatDiary 追踪 %s 第%s步：%s -> %s，%s %sms", name, step_index + 1, position, target, direction, duration)
             self.action("CatDiarySwipe", {"CatDiarySwipe": {
                 "begin": [200, 450], "end": [200 + dx * 180, 450 + dy * 180], "duration": duration,

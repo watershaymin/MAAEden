@@ -385,7 +385,7 @@
         ]
     },
     "CatDiarySnakeHeadTree": {
-        "desc": "蛇头梅兹基塔夕阳下的远景树与海面；仅用于传送落点后一次已实走的向左移动。",
+        "desc": "蛇头梅兹基塔夕阳下的远景树冠与海面，排除下方会被猫遮挡的草地；仅用于传送落点后一次已实走的向左移动。",
         "recognition": "TemplateMatch",
         "template": "CatDiary/SnakeHeadTree.png",
         "roi": [
@@ -434,6 +434,20 @@
             420
         ],
         "threshold": 0.75
+    },
+    "CatDiaryKoniumWestFlag": {
+        "desc": "柯尼姆西侧无小地图连接路的前景旗杆顶端，仅在已核验的主街西端之后使用。",
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/KoniumWestFlag.png",
+        "roi": [30, 380, 1220, 150],
+        "threshold": 0.9
+    },
+    "CatDiaryKoniumWestSkull": {
+        "desc": "柯尼姆西侧连接路靠近蛇首的兽骨，核验场景顺序与实际位移；不代替到达地图名。",
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/KoniumWestSkull.png",
+        "roi": [30, 100, 1220, 220],
+        "threshold": 0.9
     },
     "CatDiarySnakeIsland": {
         "desc": "蛇骨岛弹出地图内固定的蛇首伊格玛文字，确认进入独立地图后才选择最终目的地。",

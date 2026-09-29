@@ -421,13 +421,18 @@
             "id": "cat_31",
             "era": "现代",
             "region": "本土大陆",
-            "location": "蛇首伊戈玛",
-            "teleport": "蛇首伊戈玛",
+            "location": "蛇首伊格玛",
+            "teleport": "魔兽村落 柯尼姆",
+            "approach": "konium_igoma",
+            "vertical_swipe_ms": 150,
             "clues": [
                 "蛇颈有个岩石拱桥"
             ],
             "world_names": [
-                "蛇首伊戈玛"
+                "魔兽村落 柯尼姆"
+            ],
+            "map_names": [
+                "蛇首伊格玛"
             ]
         },
         {

@@ -131,6 +131,9 @@ def pulse_candidates(frames, roi=MINI_ROI, previous=None, max_distance=150):
     count, labels, stats, _ = cv2.connectedComponentsWithStats(dynamic, 8)
     factor = 2 if roi == MAP_ROI else 1
     circles = temporal_circles(energy * gold.any(axis=0), factor)
+    # 相邻任务菱形与角色光晕相接时，外侧金色能量可能拟合成两者之间的圆。
+    # 优先用角色较亮的内圈拟合；没有亮圈证据的区域仍沿用原圆周检测。
+    bright_circles = temporal_circles(energy * (gold & (g > 220)).any(axis=0), factor)
     candidates = []
     for label in range(1, count):
         x, y, w, h, area = stats[label]
@@ -138,6 +141,9 @@ def pulse_candidates(frames, roi=MINI_ROI, previous=None, max_distance=150):
                 and area >= 18 * factor * factor):
             continue
         arcs = [c for c in circles if x <= c[0] <= x + w and y <= c[1] <= y + h]
+        bright_arcs = [c for c in bright_circles if x <= c[0] <= x + w and y <= c[1] <= y + h]
+        if bright_arcs:
+            arcs = bright_arcs
         centers = []
         for mask in gold:
             contours, hierarchy = cv2.findContours(mask.astype(np.uint8), cv2.RETR_CCOMP,
@@ -160,6 +166,10 @@ def pulse_candidates(frames, roi=MINI_ROI, previous=None, max_distance=150):
                     continue
                 moments = cv2.moments(contour)
                 cx, cy = moments['m10'] / size, moments['m01'] / size
+                # 相邻任务图例的小孔会借到角色外环的变化量；即使落在外圆内，
+                # 靠近圆周的孔也不是角色圆心。先筛去它，避免占据时序多数。
+                if arcs and not any(math.dist((cx, cy), arc[:2]) <= min(arc[2], 5 * factor) for arc in arcs):
+                    continue
                 if x <= cx <= x + w and y <= cy <= y + h:
                     options.append((size, cx, cy))
             if options:
@@ -179,10 +189,9 @@ def pulse_candidates(frames, roi=MINI_ROI, previous=None, max_distance=150):
                 refined = np.median(stable, axis=0)
                 score = max(circle_support(energy * gold.any(axis=0), *refined, radius, factor)
                             for radius in range(4 * factor, 12 * factor + 1))
-                # 内孔应位于检测到的脉动圆内部。出口箭头重叠时，Hough 圆心
-                # 会偏移数像素；固定圆心距离会否决稳定内孔并选中偏移外圈。
-                # 仍要求圆周时序支持，且拒绝圆外另一图例的小孔。
-                if score >= 13 and (not arcs or any(math.dist(refined, arc[:2]) <= arc[2] for arc in arcs)):
+                # 保留出口箭头造成的数像素拟合偏差，同时限制在圆内且距离不超过
+                # 小图 5px / 整图 10px，避免选中相邻图例靠近外沿的小孔。
+                if score >= 13 and (not arcs or any(math.dist(refined, arc[:2]) <= min(arc[2], 5 * factor) for arc in arcs)):
                     center = refined
         if center is None and len(arcs) == 1:
             center = np.asarray(arcs[0][:2])
@@ -593,9 +602,12 @@ class MiniMapNavigator:
             return self.target_positions
         # 视野外的目标可引导走向搜索区域；进入 45px 邻域、曾可见却丢失，
         # 或 20 秒仍未进入视野时，先刷新整图，不能用过期羽毛宣布到达。
-        refresh = (self.target_source == 'minimap' or now-self.target_time > 20 or
+        # 空结果也必须重新观察，不能让同一张空地图缓存耗尽原任务的四次缺失上限。
+        refresh = (not self.target_positions or self.target_source == 'minimap' or now-self.target_time > 20 or
                    any(math.dist(self.position, target) < 45 for target in self.target_positions))
         if refresh:
+            if not self.target_positions:
+                LOG.warning('MiniMap refresh empty cat target from new full-map observation')
             self.calibrate()
             self.target_positions = [tuple(a-b for a, b in zip(point, self.offset))
                                      for point in feather_points(self.runner, self.map_frames[-1])]

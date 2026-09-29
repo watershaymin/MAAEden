@@ -49,7 +49,7 @@ class CatDiaryTests(unittest.TestCase):
         runner.chase(next(e for e in runner.catalog if e['id'] == 'cat_29'))
         runner.action.assert_called_once()
         self.assertEqual(runner.action.call_args.args[0], 'CatDiarySwipe')
-        runner.wait.assert_called_once_with('CatDiaryInteract', seconds=3)
+        runner.wait.assert_not_called()
 
     def test_snake_head_rejects_unknown_scene_origin_and_wrong_movement(self):
         for positions, reason, moves in [([None], '场景标志不符', 0),
@@ -65,14 +65,43 @@ class CatDiaryTests(unittest.TestCase):
 
     def test_snake_head_stops_after_verified_segment_without_cat(self):
         runner = self.snake_head_runner([330, 417], [False, False])
-        with self.assertRaisesRegex(RuntimeError, '已验证路段内未找到猫'):
-            runner.chase_snake_head()
+        runner.interact = Mock(return_value=False)
+        clock = [0]
+        with patch('cat_diary.time.monotonic', side_effect=lambda: clock[0]), \
+             patch('cat_diary.time.sleep', side_effect=lambda _: clock.__setitem__(0, clock[0] + 10)):
+            with self.assertRaisesRegex(RuntimeError, '已验证路段内未找到猫'):
+                runner.chase_snake_head()
+        self.assertEqual(clock[0], 30)
         runner.action.assert_called_once()
         stopped = self.snake_head_runner([330], [False])
         self.context.tasker.stopping = True
         with self.assertRaisesRegex(RuntimeError, '用户停止'):
             stopped.chase_snake_head()
         stopped.action.assert_not_called()
+
+    def test_snake_head_waits_for_cat_to_return_without_more_movement(self):
+        # 初始无按钮；左移后两次交互均未成功（包括按钮移出），22 秒后才回日记。
+        runner = self.snake_head_runner([330, 419], [False, False, False, True])
+        clock = [0]
+        with patch('cat_diary.time.monotonic', side_effect=lambda: clock[0]), \
+             patch('cat_diary.time.sleep', side_effect=lambda _: clock.__setitem__(0, clock[0] + 11)):
+            runner.chase_snake_head()
+        self.assertEqual(clock[0], 22)
+        self.assertEqual(runner.interact.call_count, 4)
+        runner.action.assert_called_once()
+        runner.wait.assert_not_called()
+
+    def test_snake_head_wait_honors_user_stop(self):
+        runner = self.snake_head_runner([330, 419], [])
+        def no_cat():
+            if runner.interact.call_count == 2:
+                self.context.tasker.stopping = True
+            return False
+        runner.interact.side_effect = no_cat
+        with patch('cat_diary.time.sleep'), self.assertRaisesRegex(RuntimeError, '用户停止'):
+            runner.chase_snake_head()
+        runner.action.assert_called_once()
+        self.assertEqual(runner.interact.call_count, 2)
 
     def hot_spring_runner(self, frames):
         runner = self.runner()
@@ -122,6 +151,168 @@ class CatDiaryTests(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             runner.chase_hot_spring()
         runner.action.assert_not_called()
+
+    def igoma_runner(self, names, landmarks=(), landing=('蛇首伊格玛', (1044,444))):
+        runner = self.runner()
+        runner.locate = Mock(side_effect=[('魔兽村落柯尼姆',(604,359),[],None),
+                                         ('魔兽村落柯尼姆',(375,359),[],None),
+                                         (landing[0],landing[1],[],None)])
+        runner.crossing_map_name = Mock(side_effect=names)
+        runner.world = Mock(side_effect=landmarks)
+        nodes = ('CatDiaryKoniumWestFlag', 'CatDiaryKoniumWestSkull')
+        runner.reco = Mock(side_effect=lambda node, frame: SimpleNamespace(
+            best_result=SimpleNamespace(box=[frame[1],0,30,30]))
+            if frame is not None and nodes[frame[0]] == node else None)
+        runner.action = Mock()
+        runner.reset_navigation = Mock()
+        return runner
+
+    def test_igoma_teleport_uses_konium_then_verified_passage(self):
+        runner = self.runner()
+        entry = next(e for e in runner.catalog if e['id'] == 'cat_31')
+        runner.teleport = Mock()
+        runner.walk_konium_igoma = Mock()
+        CatDiaryRunner.teleport(runner, entry)
+        source = runner.teleport.call_args.args[0]
+        self.assertEqual(source['id'], 'cat_27')
+        self.assertEqual(entry['map_names'], ['蛇首伊格玛'])
+        runner.walk_konium_igoma.assert_called_once_with(source, entry)
+
+    def test_igoma_passage_checks_landmarks_and_independent_landing(self):
+        runner = self.igoma_runner([None,None,None,None,'蛇首伊格玛'],
+                                  [(0,220),(0,900),(1,173),(1,615)])
+        runner.walk_konium_igoma({}, {})
+        self.assertEqual(runner.action.call_count, 5)
+        self.assertEqual(runner.reset_navigation.call_count, 2)
+        self.assertEqual(runner.locate.call_count, 3)
+
+    def test_igoma_rejects_wrong_source_or_southern_port_road(self):
+        for name, position in [('其他地图',(604,359)), ('魔兽村落柯尼姆',(604,445)),
+                               ('魔兽村落柯尼姆',(400,359))]:
+            runner = self.igoma_runner([])
+            runner.locate = Mock(return_value=(name,position,[],None))
+            with self.subTest(name=name, position=position), self.assertRaises(RuntimeError):
+                runner.walk_konium_igoma({}, {})
+            runner.action.assert_not_called()
+
+    def test_igoma_main_street_stall_stops_before_passage(self):
+        runner = self.igoma_runner([])
+        runner.locate = Mock(return_value=('魔兽村落柯尼姆',(604,359),[],None))
+        with self.assertRaisesRegex(RuntimeError, '连续三步'):
+            runner.walk_konium_igoma({}, {})
+        self.assertEqual(runner.action.call_count, 3)
+        runner.crossing_map_name.assert_not_called()
+
+    def test_igoma_off_street_minimap_requires_independent_recovery(self):
+        runner = self.igoma_runner(['蛇首伊格玛'])
+        runner.locate = Mock(side_effect=[
+            ('魔兽村落柯尼姆',(604,359),[],None),
+            ('魔兽村落柯尼姆',(579,340),[],None),
+            ('魔兽村落柯尼姆',(577,359),[],None),
+            ('魔兽村落柯尼姆',(375,359),[],None),
+            ('蛇首伊格玛',(1044,444),[],None),
+        ])
+        runner.walk_konium_igoma({}, {})
+        self.assertEqual(runner.reset_navigation.call_count, 3)
+        self.assertEqual(runner.action.call_count, 2)
+        self.assertEqual(runner.locate.call_args_list[2].args, ({},))
+
+    def test_igoma_recovery_still_rejects_wrong_map_or_off_street(self):
+        for name, point in [('魔兽村落柯尼姆',(579,340)), ('其他地图',(577,359))]:
+            with self.subTest(name=name):
+                runner = self.igoma_runner([])
+                runner.locate = Mock(side_effect=[
+                    ('魔兽村落柯尼姆',(604,359),[],None),
+                    ('魔兽村落柯尼姆',(579,340),[],None), (name,point,[],None),
+                ])
+                with self.assertRaises(RuntimeError):
+                    runner.walk_konium_igoma({}, {})
+                self.assertEqual(runner.action.call_count, 1)
+                runner.crossing_map_name.assert_not_called()
+
+    def test_igoma_passage_rejects_unknown_reversed_or_stalled_scene(self):
+        cases = [(['其他地图'], [], '意外地图', 1),
+                 ([None], [None], '场景标志不符', 1),
+                 ([None,None], [(1,200),(0,900)], '顺序异常', 2),
+                 ([None]*4, [(0,220)]*4, '连续三步', 4)]
+        for names, landmarks, reason, actions in cases:
+            with self.subTest(reason=reason):
+                runner = self.igoma_runner(names, landmarks)
+                with self.assertRaisesRegex(RuntimeError, reason):
+                    runner.walk_konium_igoma({}, {})
+                self.assertEqual(runner.action.call_count, actions)
+
+    def test_igoma_passage_limit_and_landing_guards(self):
+        runner = self.igoma_runner([None]*9, [(1,100+20*i) for i in range(9)])
+        with self.assertRaisesRegex(RuntimeError, '超过 8 步'):
+            runner.walk_konium_igoma({}, {})
+        self.assertEqual(runner.action.call_count, 9)
+        for landing in [('蛇首伊格玛',(800,360)), ('魔兽村落柯尼姆',(1044,444))]:
+            runner = self.igoma_runner(['蛇首伊格玛'], landing=landing)
+            with self.subTest(landing=landing), self.assertRaisesRegex(RuntimeError, '未确认蛇首'):
+                runner.walk_konium_igoma({}, {})
+            self.assertEqual(runner.action.call_count, 1)
+
+    def test_igoma_user_stop_prevents_movement(self):
+        runner = self.igoma_runner([])
+        runner.context.tasker.stopping = True
+        with self.assertRaisesRegex(RuntimeError, '用户停止'):
+            runner.walk_konium_igoma({}, {})
+        runner.action.assert_not_called()
+
+    def test_igoma_middle_level_uses_east_junction_not_crossing_tunnel(self):
+        road = RoadMap.from_segments(self.runner().maps['蛇首伊格玛'])
+        self.assertEqual(road.step((1044,444), (600,361))[0], 'left')
+        self.assertEqual(road.step((818,444), (600,361))[0], 'up')
+        self.assertEqual(road.step((713,444), (600,361))[0], 'right')
+        self.assertEqual(road.step((819,359), (600,361))[0], 'left')
+        # 中央洞道从 y=444 直达 y=275，与中层的图像交叉点并不连通。
+        with self.assertRaises(RuntimeError):
+            road.path((716,274), (600,361))
+
+    def test_verified_vertical_swipe_preserves_horizontal_and_other_maps(self):
+        for cat_id, direction, duration in [('cat_31','up',150), ('cat_31','down',150),
+                                           ('cat_31','left',600), ('cat_27','up',600)]:
+            with self.subTest(cat_id=cat_id, direction=direction):
+                runner = self.runner()
+                entry = next(e for e in runner.catalog if e['id'] == cat_id)
+                road = SimpleNamespace(path=Mock(return_value=[(818,444),(818,360)]),
+                                       step=Mock(return_value=(direction,600)))
+                runner.interact = Mock(side_effect=[False,True])
+                runner.locate = Mock(return_value=(entry['location'],(818,444),[(600,360)],road))
+                runner.action = Mock()
+                runner.chase(entry)
+                self.assertEqual(runner.action.call_args.args[1]['CatDiarySwipe']['duration'], duration)
+
+    def test_crossing_title_keeps_antialiased_text(self):
+        runner = self.runner()
+        runner.world = Mock()
+        runner.frame = Mock(return_value=object())
+        runner.reco = Mock(return_value=True)
+        runner.text = Mock(side_effect=lambda node, *args, **kwargs:
+                           '蛇首 伊格玛' if node == 'NavigationMapName' else '')
+        runner.action = Mock()
+        self.assertEqual(runner.crossing_map_name(), '蛇首伊格玛')
+        self.assertEqual(runner.action.call_count, 2)
+
+    def test_crossing_title_waits_for_exact_name_and_preserves_unknown_map(self):
+        names = ('魔兽村落柯尼姆', '蛇首伊格玛')
+        for recognized, expected in [(['无首伊格玛','无首伊格玛','蛇首伊格玛'], '蛇首伊格玛'),
+                                      (['其他地图']*20, None)]:
+            runner = self.runner()
+            runner.world = Mock()
+            runner.frame = Mock(return_value=object())
+            runner.reco = Mock(return_value=True)
+            runner.action = Mock()
+            with patch('minimap_navigation.read_map_name', side_effect=recognized), \
+                 patch('cat_diary.time.monotonic', side_effect=range(20)), patch('cat_diary.time.sleep'):
+                if expected:
+                    self.assertEqual(runner.crossing_map_name(names), expected)
+                    self.assertEqual(runner.action.call_count, 2)
+                else:
+                    with self.assertRaisesRegex(RuntimeError, '标题无法确认'):
+                        runner.crossing_map_name(names)
+                    runner.action.assert_called_once_with('NavigationToggleLocalMap')
 
     def kunlun_runner(self, locations):
         runner = self.runner()

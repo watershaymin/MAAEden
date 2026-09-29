@@ -52,6 +52,15 @@ class CheckTargets(CustomAction):
                 position = pulse_position(frames, MAP_ROI, excluded=boxes)
                 assert math.dist(position, (653,403)) < 1, position
                 print('PASS sami moving feather / player separation', flush=True)
+            with np.load(ROOT / 'tools/fixtures/minimap_stadium_edge.npz') as samples:
+                world = np.zeros((720,1280,3), np.uint8)
+                world[20:175,1020:1262] = samples['mini']
+                full = np.zeros_like(world)
+                full[225:290,510:625] = samples['full_marker']
+                assert not feather_points(runner, world, True), '顶部裁切的小图羽毛不能作为完整目标'
+                targets = feather_points(runner, full)
+                assert len(targets) == 1 and math.dist(targets[0], (556,270.5)) < 1, targets
+                print('PASS stadium clipped minimap / fresh full-map feather', flush=True)
             return True
         except Exception:
             traceback.print_exc()

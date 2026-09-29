@@ -7,6 +7,7 @@
         "next": [
             "StartUpCloseAnnouncement",
             "StartUpCloseMenasStages",
+            "StartUpCloseLocalMap",
             "StartUpLoadGame",
             "StartUpWorldReady"
         ]
@@ -28,6 +29,7 @@
         "next": [
             "StartUpCloseAnnouncement",
             "StartUpCloseMenasStages",
+            "StartUpCloseLocalMap",
             "StartUpWorldReady",
             "StartUpLoadGame"
         ]
@@ -50,6 +52,7 @@
         "next": [
             "StartUpCloseAnnouncement",
             "StartUpCloseMenasStages",
+            "StartUpCloseLocalMap",
             "StartUpWorldReady"
         ]
     },
@@ -66,8 +69,31 @@
         "timeout": 15000,
         "next": [
             "StartUpCloseAnnouncement",
+            "StartUpCloseLocalMap",
             "StartUpWorldReady",
             "StartUpCloseMenasStages"
+        ]
+    },
+    "StartUpCloseLocalMap": {
+        "desc": "登录后恢复到展开的区域地图时，同时确认标题装饰和地图名称，再收起地图并核验主界面。",
+        "recognition": "And",
+        "all_of": [
+            "NavigationLocalMap",
+            {
+                "recognition": "OCR",
+                "roi": [15, 10, 640, 53],
+                "expected": [".+"],
+                "threshold": 0.8
+            }
+        ],
+        "action": "Click",
+        "target": [1150, 140],
+        "max_hit": 1,
+        "timeout": 15000,
+        "next": [
+            "StartUpCloseAnnouncement",
+            "StartUpCloseMenasStages",
+            "StartUpWorldReady"
         ]
     },
     "StartUpWorldReady": {

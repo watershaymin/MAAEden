@@ -51,6 +51,20 @@ class PulseTests(unittest.TestCase):
             with self.assertRaises(LocalizationLost):
                 pulse_position(frames)
 
+    def test_konium_adjacent_quest_hole_cannot_borrow_outer_ring_motion(self):
+        with np.load(Path(__file__).parent / 'fixtures/minimap_konium_quest_overlap.npz') as data:
+            for key, roi, expected in [('large',MAP_ROI,(577.067,359.067)),
+                                        ('mini',MINI_ROI,(1110.5,94.864)),
+                                        ('large_halo',MAP_ROI,(578,359)),
+                                        ('mini_halo',MINI_ROI,(1111,94.7)),
+                                        ('mini_recalibrated',MINI_ROI,(1111,94.7))]:
+                frames = np.zeros((len(data[key]),720,1280,3), np.uint8)
+                x,y,w,h = data[key+'_roi']
+                frames[:,y:y+h,x:x+w] = data[key]
+                with self.subTest(key=key):
+                    tolerance = 3 if key == 'large_halo' else 1
+                    self.assertLess(math.dist(pulse_position(frames, roi), expected), tolerance)
+
     def test_sami_moving_feather_is_excluded_by_recognized_box(self):
         with np.load(Path(__file__).parent / 'fixtures/cat_diary_sami.npz') as samples:
             frames = np.zeros((len(samples['player']), 720, 1280, 3), np.uint8)
