@@ -734,6 +734,39 @@ class CatDiaryTests(unittest.TestCase):
         runner.reco = Mock(return_value=SimpleNamespace(all_results=rows))
         self.assertEqual(runner.text("CatDiaryMapName", None, single_line=True), "影之镇纳茲里克")
 
+    def test_overlapping_title_boxes_reread_only_unshared_pixels(self):
+        runner = self.runner()
+        rows = [SimpleNamespace(text="影之镇", box=[20, 18, 131, 41], score=.996),
+                SimpleNamespace(text="真纳兹里克", box=[124, 17, 221, 43], score=.980)]
+        replacement = SimpleNamespace(text="纳兹里克", box=[151, 17, 194, 43], score=.958)
+        runner.reco = Mock(side_effect=[SimpleNamespace(all_results=rows),
+                                       SimpleNamespace(all_results=[replacement])])
+        frame = object()
+        self.assertEqual(runner.text("NavigationMapName", frame, single_line=True), "影之镇纳兹里克")
+        self.assertEqual(runner.reco.call_args.args,
+                         ("NavigationMapName", frame,
+                          {"NavigationMapName": {"roi": [151, 17, 194, 43], "only_rec": True}}))
+
+    def test_overlapping_title_reread_failure_never_drops_text_to_match(self):
+        rows = [SimpleNamespace(text="影之镇", box=[20, 18, 131, 41], score=.996),
+                SimpleNamespace(text="真纳兹里克", box=[124, 17, 221, 43], score=.980)]
+        for replacement, expected in [(None, ""),
+                                       (SimpleNamespace(all_results=[SimpleNamespace(text="纳兹里克", score=.79)]), ""),
+                                       (SimpleNamespace(all_results=[SimpleNamespace(text="真纳兹里克", score=.99)]),
+                                        "影之镇真纳兹里克")]:
+            with self.subTest(expected=expected, replacement=replacement):
+                runner = self.runner()
+                runner.reco = Mock(side_effect=[SimpleNamespace(all_results=rows), replacement])
+                self.assertEqual(runner.text("CatDiaryMapName", None, single_line=True), expected)
+
+    def test_contained_title_box_is_rejected_without_guessing(self):
+        runner = self.runner()
+        rows = [SimpleNamespace(text="影之镇", box=[20, 18, 131, 41], score=.996),
+                SimpleNamespace(text="真", box=[124, 17, 20, 43], score=.980)]
+        runner.reco = Mock(return_value=SimpleNamespace(all_results=rows))
+        self.assertEqual(runner.text("NavigationMapName", None, single_line=True), "")
+        runner.reco.assert_called_once()
+
     def test_teleport_only_clicks_era_when_it_is_not_already_selected(self):
         for entry_id, region, initially_selected in (("cat_70", "东方", True), ("cat_70", "东方", False),
                                                      ("cat_43", "冥峡界", True), ("cat_43", "冥峡界", False)):

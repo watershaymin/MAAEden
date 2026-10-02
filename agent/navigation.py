@@ -74,10 +74,28 @@ class Navigator:
         result = self.reco(node, frame, {node: {'roi': roi}} if roi else None)
         rows = [r for r in result.all_results if r.score >= .8] if result else []
         if single_line and rows:
+            # 确认句末标点可能被读成小号数字，只排除小字框，保留正常字号数字。
             height = max(r.box[3] for r in rows)
             rows = [r for r in rows if r.box[3] >= height * .5]
         order = (lambda r: r.box[0]) if single_line else (lambda r: (r.box[1], r.box[0]))
-        return ''.join(r.text for r in sorted(rows, key=order))
+        parts, right = [], 0
+        for row in sorted(rows, key=order):
+            text = row.text
+            if single_line and node in ('NavigationMapName', 'CatDiaryMapName') and row.box[0] < right:
+                # 标题分框会把前一框末字重复读入后一框。只重读不重叠的真实像素，
+                # 不按预期地图名称删字；重读不足时仍拒绝本帧。
+                x, y, w, h = row.box
+                width = x + w - right
+                if width <= 0:
+                    return ''
+                reread = self.reco(node, frame, {node: {'roi': [right, y, width, h], 'only_rec': True}})
+                candidates = [r for r in reread.all_results if r.score >= .8] if reread else []
+                if len(candidates) != 1:
+                    return ''
+                text = candidates[0].text
+            parts.append(text)
+            right = max(right, row.box[0] + row.box[2])
+        return ''.join(parts)
 
     def navigation_interrupted(self, frame):
         return bool(self.reco('NavigationBattle', frame) or self.reco('NavigationRewards', frame))

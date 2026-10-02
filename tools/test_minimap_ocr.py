@@ -34,7 +34,7 @@ class CheckTitles(CustomAction):
             with np.load(ROOT / 'tools/fixtures/minimap_titles.npz') as samples:
                 for key, expected in [('kms','旧KMS总部副入口'), ('acid','酸性沼泽'), ('tower','时之塔1楼'),
                                       ('ishana_start','巳之国伊刹那'), ('ishana_east','巳之国伊刹那'),
-                                      ('pador','古代树之村帕德列')]:
+                                      ('pador','古代树之村帕德列'), ('nazrik_overlap','影之镇纳兹里克')]:
                     frame = np.zeros((720,1280,3), np.uint8)
                     frame[10:63,15:655] = samples[key]
                     assert read_map_name(runner, frame, expected) == expected, key
@@ -48,6 +48,12 @@ class CheckTitles(CustomAction):
                         assert session.accepts_name(name), (entry['map_names'], name)
                         assert not session.accepts_name('帕德列')
                         assert not session.accepts_name('古代树之村帕德列2楼')
+                    if key == 'nazrik_overlap':
+                        raw = runner.reco('NavigationMapName', frame)
+                        old_name = ''.join(r.text for r in sorted(raw.all_results, key=lambda r: r.box[0]))
+                        assert old_name == '影之镇真纳兹里克', old_name
+                        for wrong in ('影之镇真纳兹里克', '影之镇纳兹里克2楼', '冻时领域'):
+                            assert read_map_name(runner, frame, wrong) != wrong, wrong
                     print('PASS', key, flush=True)
             return True
         except Exception:

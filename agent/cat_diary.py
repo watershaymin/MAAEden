@@ -345,17 +345,7 @@ class CatDiaryRunner(Navigator):
             raise RuntimeError("猫咪日记点击失败")
 
     def text(self, node, frame, roi=None, single_line=False):
-        result = self.reco(node, frame, {node: {"roi": roi}} if roi else None)
-        if not result:
-            return ""
-        rows = [r for r in result.all_results if r.score >= 0.8]
-        if single_line and rows:
-            # 埃尔吉昂确认句末的句号会单独 OCR 成小号“2”。仅保留与正文同字号的框，
-            # 不直接删除数字，避免把真正不同的目的地归并成同一名称。
-            height = max(r.box[3] for r in rows)
-            rows = [r for r in rows if r.box[3] >= height * 0.5]
-        order = (lambda r: r.box[0]) if single_line else (lambda r: (r.box[1], r.box[0]))
-        return "".join(r.text for r in sorted(rows, key=order))
+        return super().text(node, frame, roi=roi, single_line=single_line)
 
     def world(self):
         until = min(self.deadline, time.monotonic() + 90)

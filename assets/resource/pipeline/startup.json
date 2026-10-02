@@ -1,8 +1,20 @@
 {
     "StartUp": {
-        "desc": "启动另一个伊甸，复用设备上已有的登录状态。",
+        "desc": "先处理已识别的游戏页面；其他画面再启动另一个伊甸，复用已有登录状态。",
+        "next": [
+            "StartUpCloseAnnouncement",
+            "StartUpCloseMenasStages",
+            "StartUpCloseLocalMap",
+            "StartUpLoadGame",
+            "StartUpWorldReady",
+            "StartUpLaunch"
+        ]
+    },
+    "StartUpLaunch": {
+        "desc": "当前画面不属于已知游戏页面时启动应用一次，再沿既有流程核验主界面。",
         "action": "StartApp",
         "package": "com.xd.anothereden/net.wrightflyer.toybox.AppActivity",
+        "max_hit": 1,
         "timeout": 180000,
         "next": [
             "StartUpCloseAnnouncement",
