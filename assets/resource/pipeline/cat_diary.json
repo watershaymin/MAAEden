@@ -53,7 +53,7 @@
                 "method": 10001
             }
         ],
-        "desc": "日记标题、面板和三只猫的红色完成爪印同时可见。"
+        "desc": "自定义动作先核对全部列表条目完成，再确认日记标题、面板和顶部三行红爪印。"
     },
     "CatDiaryOpen": {
         "recognition": "TemplateMatch",
@@ -242,6 +242,19 @@
         ],
         "threshold": 0.85
     },
+    "CatDiaryScrollList": {
+        "desc": "仅在已识别日记页中滚动线索列表；滚动条端点及上下页重叠条目由 Agent 核验。",
+        "action": "Swipe",
+        "begin": [780, 175],
+        "end": [780, 430],
+        "duration": 600,
+        "post_wait_freezes": {
+            "time": 300,
+            "timeout": 3000,
+            "target": [330, 140, 610, 310],
+            "threshold": 0.98
+        }
+    },
     "CatDiarySwipe": {
         "action": "Swipe",
         "begin": [
@@ -394,6 +407,19 @@
             260,
             95
         ],
+        "threshold": 0.9
+    },
+    "CatDiaryTimeTowerExit": {
+        "desc": "仅在时之塔1楼完整标题和已验证落点通过后，识别通往克鲁利大道的出口按钮。",
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/TimeTowerExit.png",
+        "roi": [
+            570,
+            530,
+            140,
+            120
+        ],
+        "method": 10001,
         "threshold": 0.9
     },
     "CatDiaryMiglanceStairs": {
@@ -722,9 +748,12 @@
         "threshold": 0.9
     },
     "CatDiaryHotSpringBath": {
-        "desc": "温泉无小地图场景标志；仅用于已确认传送后的向左寻猫。",
+        "desc": "温泉浴场蓝招牌的两个实机外观；仅用于已确认传送后的向左寻猫。",
         "recognition": "TemplateMatch",
-        "template": "CatDiary/HotSpringBath.png",
+        "template": [
+            "CatDiary/HotSpringBath.png",
+            "CatDiary/HotSpringBathAlternate.png"
+        ],
         "roi": [
             0,
             0,

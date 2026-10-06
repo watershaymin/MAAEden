@@ -49,7 +49,7 @@
 `xeno_gold` 是 2026-09-19 控制所入口金色出口按钮的真实画面（仅保留按钮识别 ROI），
 模板 `CatDiary/XenoDoorGold.png` 裁自其中 `[456,176,61,61]`；已实机点击并核验研究中心落点。
 
-`minimap_titles.npz` 包含 7 组原始标题 ROI `(15,10,640,53)`：
+`minimap_titles.npz` 包含 8 组原始标题 ROI `(15,10,640,53)`：
 `kms` 来自 `repair/kms/final1/frame-16.png` 的“I旧”误识别；`acid` 来自
 `survey/cat_08/run1/frame-00.png` 的白色过滤误识别；`tower` 来自 `repair/cat_10/run1/frame-00.png`。
 `ishana_start`、`ishana_east` 来自 2026-09-20 的 `debug/cat/2026-09-20/ishana-map.png`
@@ -63,6 +63,10 @@
 原生 OCR 框 `[20,18,131,41]`“影之镇”与 `[124,17,221,43]`“真纳兹里克”横向重叠；
 旧拼接稳定得到错误全名“影之镇真纳兹里克”。重读未共享的 `[151,17,194,43]` 像素后得到实际标题，
 回放同时拒绝错误全名、附加“2楼”和无关地图，不将错字加入地图别名。
+`sarupa` 来自 2026-10-03 的 `debug/cat/2026-10-03/initial/CatDiary-final.png`。
+实际完整标题为“草原村落 萨露帕”，旧 `cat_13.map_names` 仅为“萨露帕”；
+回放通过真实 OCR 读取标题并校验地点配置，复现旧简称配置拒绝实际全名，
+验证新全名配置接受该画面，并拒绝简称、附加“2楼”和错误前缀。
 
 `cat_diary_sami.npz` 来自 2026-09-20 佐见 `debug/cat/2026-09-20/sami-pulse.npz` 的 10 帧序列，
 保留角色区域 `[620,369,70,70]` 与移动羽毛区域 `[714,170,82,70]` 的原始 BGR 像素。

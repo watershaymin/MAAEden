@@ -116,12 +116,17 @@
             "location": "克鲁利大道",
             "teleport": "克鲁利大道",
             "clues": [
-                "伫立在路旁的独台",
+                "伫立在路旁的",
+                "那些火焰的燃烧方式好诡异",
                 "燃烧的样子真令人毛骨悚然"
             ],
             "world_names": [
                 "克鲁利大道"
-            ]
+            ],
+            "map_names": [
+                "克鲁利大道"
+            ],
+            "approach": "time_tower_exit"
         },
         {
             "id": "cat_10",
@@ -178,7 +183,7 @@
                 "萨鲁帕"
             ],
             "map_names": [
-                "萨露帕"
+                "草原村落萨露帕"
             ]
         },
         {
@@ -219,7 +224,11 @@
             ],
             "world_names": [
                 "克鲁利大道"
-            ]
+            ],
+            "map_names": [
+                "克鲁利大道"
+            ],
+            "approach": "time_tower_exit"
         },
         {
             "id": "cat_17",
@@ -408,13 +417,15 @@
             "id": "cat_30",
             "era": "现代",
             "region": "本土大陆",
-            "location": "蛇肝达马克",
-            "teleport": "蛇肝达马克",
+            "location": "蛇肝达玛克",
+            "teleport": "蛇肝达玛克",
+            "world_entry": "蛇骨岛",
+            "world_panel": "CatDiarySnakeIsland",
             "clues": [
                 "这颗不可思议的球"
             ],
             "world_names": [
-                "蛇肝达马克"
+                "蛇肝达玛克"
             ]
         },
         {

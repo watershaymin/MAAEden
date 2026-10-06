@@ -34,20 +34,26 @@ class CheckTitles(CustomAction):
             with np.load(ROOT / 'tools/fixtures/minimap_titles.npz') as samples:
                 for key, expected in [('kms','旧KMS总部副入口'), ('acid','酸性沼泽'), ('tower','时之塔1楼'),
                                       ('ishana_start','巳之国伊刹那'), ('ishana_east','巳之国伊刹那'),
-                                      ('pador','古代树之村帕德列'), ('nazrik_overlap','影之镇纳兹里克')]:
+                                      ('pador','古代树之村帕德列'), ('nazrik_overlap','影之镇纳兹里克'),
+                                      ('sarupa','草原村落萨露帕')]:
                     frame = np.zeros((720,1280,3), np.uint8)
                     frame[10:63,15:655] = samples[key]
                     assert read_map_name(runner, frame, expected) == expected, key
                     if key == 'tower':
                         assert read_map_name(runner, frame, '时之塔2楼') != '时之塔2楼'
-                    if key == 'pador':
-                        entry = next(e for e in runner.catalog if e['id'] == 'cat_54')
+                    if key in ('pador', 'sarupa'):
+                        entry_id = 'cat_54' if key == 'pador' else 'cat_13'
+                        entry = next(e for e in runner.catalog if e['id'] == entry_id)
                         session = MiniMapNavigator(runner, entry['map_names'][0],
                                                    aliases=entry['map_names'], exact=True)
                         name = read_map_name(runner, frame, session.map_name)
                         assert session.accepts_name(name), (entry['map_names'], name)
-                        assert not session.accepts_name('帕德列')
-                        assert not session.accepts_name('古代树之村帕德列2楼')
+                        short_name = entry['teleport']
+                        old_session = MiniMapNavigator(runner, short_name, aliases=[short_name], exact=True)
+                        assert not old_session.accepts_name(name)
+                        assert not session.accepts_name(short_name)
+                        assert not session.accepts_name(name + '2楼')
+                        assert not session.accepts_name('旧' + name)
                     if key == 'nazrik_overlap':
                         raw = runner.reco('NavigationMapName', frame)
                         old_name = ''.join(r.text for r in sorted(raw.all_results, key=lambda r: r.box[0]))

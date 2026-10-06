@@ -12,7 +12,7 @@ from unittest.mock import Mock, patch
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "agent"))
-from cat_diary import CatDiary, CatDiaryRunner, DiaryState, RoadMap, count_stamps, load_catalog, match_clue, remaining_seconds, verify_change, world_pan_points
+from cat_diary import CatDiary, CatDiaryRunner, DiaryState, RoadMap, count_stamps, diary_scrollbar, load_catalog, match_clue, remaining_seconds, verify_change, world_pan_points
 
 
 class CatDiaryTests(unittest.TestCase):
@@ -630,6 +630,13 @@ class CatDiaryTests(unittest.TestCase):
             with self.subTest(location=location):
                 self.assertEqual(match_clue(text, catalog)["location"], location)
 
+    def test_live_candlestick_clue_and_generic_fire_text(self):
+        catalog = load_catalog()
+        text = "伫立在路旁的……是烛台吗喵?那些火焰的燃烧方式好诡异喵…"
+        self.assertEqual(match_clue(text, catalog)["id"], "cat_09")
+        with self.assertRaisesRegex(ValueError, "无法匹配"):
+            match_clue("火焰的燃烧方式", catalog)
+
     def test_same_location_with_new_stamp_is_processed_again(self):
         runner = self.runner()
         target = runner.catalog[0]["id"]
@@ -681,9 +688,83 @@ class CatDiaryTests(unittest.TestCase):
         runner.diary_ready = Mock(return_value=True)
         runner.reco = Mock(side_effect=lambda node, *args: True if node == "CatDiaryCloseButton" else None)
         runner.text = Mock(return_value="")
-        with patch("cat_diary.time.monotonic", side_effect=[0, 0, 30]), patch("cat_diary.time.sleep"):
+        runner.check = Mock()
+        with patch("cat_diary.time.monotonic", side_effect=[0, 0, 30]), patch("cat_diary.time.sleep"), \
+                patch("cat_diary.diary_scrollbar", return_value=(134, 453, 3)):
             with self.assertRaisesRegex(RuntimeError, "没有文字"):
-                runner.read_diary()
+                runner.read_diary_page("top")
+
+    def test_four_row_diary_keeps_hidden_pending_cat(self):
+        runner = self.runner()
+        runner.open_diary = Mock()
+        top = ((None, None, None), 5, 4)
+        bottom = ((None, None, 'cat_19'), 5, 4)
+        runner.read_diary_page = Mock(side_effect=[(top, 7200), (bottom, 7199), (top, 7198)])
+        self.assertEqual(runner.read_diary(), DiaryState((None, None, None, 'cat_19'), 5))
+        self.assertEqual([c.args[0] for c in runner.read_diary_page.call_args_list], ['top', 'bottom', 'top'])
+
+    def test_four_row_diary_rejects_overlap_stamp_or_top_change(self):
+        top = (('cat_01', 'cat_02', 'cat_03'), 3, 4)
+        valid = (('cat_02', 'cat_03', 'cat_04'), 3, 4)
+        for bottom, restored in [((('cat_03', 'cat_02', 'cat_04'), 3, 4), top),
+                                 ((valid[0], 4, 4), top), ((valid[0], 3, 3), top),
+                                 (valid, (('cat_05', 'cat_02', 'cat_03'), 3, 4))]:
+            with self.subTest(bottom=bottom, restored=restored):
+                runner = self.runner()
+                runner.open_diary = Mock()
+                runner.read_diary_page = Mock(side_effect=[(top, 7200), (bottom, 7200), (restored, 7200)])
+                with self.assertRaisesRegex(RuntimeError, '不一致|变化'):
+                    runner.read_diary()
+
+    def test_diary_scrollbar_layout_and_unknown_size(self):
+        for top, bottom, expected in [(134, 453, 3), (134, 373, 4), (213, 453, 4), (150, 350, None)]:
+            frame = np.zeros((720, 1280, 3), np.uint8)
+            frame[top:bottom, 962:966] = [53, 80, 103]
+            if expected:
+                self.assertEqual(diary_scrollbar(frame), (top, bottom, expected))
+            else:
+                with self.assertRaisesRegex(ValueError, '未验证'):
+                    diary_scrollbar(frame)
+        with self.assertRaisesRegex(ValueError, '不能确认'):
+            diary_scrollbar(np.zeros((720, 1280, 3), np.uint8))
+
+    def test_diary_count_change_is_not_accepted_as_progress(self):
+        with self.assertRaisesRegex(RuntimeError, '条目数量变化'):
+            verify_change(DiaryState((None, 'cat_01', 'cat_02'), 3),
+                          DiaryState((None, 'cat_03', 'cat_02', 'cat_04'), 4))
+
+    def test_hidden_fourth_cat_is_chased_before_completion(self):
+        runner = self.runner()
+        runner.read_diary = Mock(side_effect=[DiaryState((None, None, None, 'cat_19'), 5),
+                                             DiaryState((None, None, None, None), 6)])
+        runner.close_diary = Mock()
+        runner.teleport = Mock()
+        runner.chase = Mock()
+        runner.run()
+        self.assertEqual(runner.chase.call_args.args[0]['id'], 'cat_19')
+
+    def test_diary_scroll_stops_after_three_unchanged_inputs(self):
+        runner = self.runner()
+        runner.frame = Mock(return_value=np.zeros((720, 1280, 3), np.uint8))
+        runner.diary_ready = Mock(return_value=True)
+        runner.reco = Mock(side_effect=lambda node, *args: node == 'CatDiaryCloseButton')
+        runner.action = Mock()
+        runner.text = Mock()
+        with patch('cat_diary.diary_scrollbar', return_value=(213, 453, 4)):
+            with self.assertRaisesRegex(RuntimeError, '三次滚动'):
+                runner.read_diary_page('top')
+        self.assertEqual(runner.action.call_count, 3)
+        runner.text.assert_not_called()
+
+    def test_diary_read_user_stop_prevents_scroll(self):
+        runner = self.runner()
+        runner.context.tasker.stopping = True
+        runner.frame = Mock()
+        runner.action = Mock()
+        with self.assertRaisesRegex(RuntimeError, '用户停止'):
+            runner.read_diary_page('top')
+        runner.frame.assert_not_called()
+        runner.action.assert_not_called()
 
     def test_late_reward_is_dismissed_before_closing_diary(self):
         runner = self.runner()

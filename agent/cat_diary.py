@@ -50,7 +50,7 @@ def match_clue(text, catalog):
 
 @dataclass(frozen=True)
 class DiaryState:
-    # 固定三个猫槽位，不能将某条 OCR 漏识别当成该猫已完成。
+    # 按列表顶部的固定顺序保存全部猫，不能将 OCR 漏识别当成已完成。
     targets: tuple
     stamps: int
 
@@ -67,12 +67,33 @@ def count_stamps(frame):
 
 
 def verify_change(before, after):
+    if len(before.targets) != len(after.targets):
+        raise RuntimeError("日记条目数量变化，可能进入新一轮日记")
     if after.stamps < before.stamps and (before.stamps, after.stamps) != (7, 1):
         raise RuntimeError("日记印章减少，可能跨过刷新时间；停止本轮")
     if after == before:
         raise RuntimeError("交互后日记任务和印章均未变化，不能确认找到猫")
     if any(old is None and new is not None for old, new in zip(before.targets, after.targets)):
         raise RuntimeError("已结束的猫重新出现任务，可能进入新一轮日记")
+
+
+def diary_scrollbar(frame):
+    """识别已采集布局的滚动条；未知长度不按三只猫处理。"""
+    patch = frame[130:458, 962:966].astype(np.int16)
+    b, g, r = patch[:, :, 0], patch[:, :, 1], patch[:, :, 2]
+    dark = (30 <= b) & (b <= 75) & (60 <= g) & (g <= 100) & (85 <= r) & (r <= 125)
+    rows = np.flatnonzero(np.count_nonzero(dark, axis=1) >= 3)
+    if not len(rows) or np.any(np.diff(rows) > 1):
+        raise ValueError("不能确认日记列表滚动条")
+    top, bottom = int(rows[0]) + 130, int(rows[-1]) + 131
+    height = bottom - top
+    if 305 <= height <= 325:
+        count = 3
+    elif 230 <= height <= 247:
+        count = 4
+    else:
+        raise ValueError(f"未验证的日记列表长度：{height}")
+    return top, bottom, count
 
 
 def remaining_seconds(text):
@@ -414,12 +435,13 @@ class CatDiaryRunner(Navigator):
         self.action("CatDiaryOpen")
         self.wait("CatDiaryTitle")
 
-    def read_diary(self):
-        self.open_diary()
+    def read_diary_page(self, position):
         last = None
-        until = min(self.deadline, time.monotonic() + 25)
+        until = min(self.deadline, time.monotonic() + 12)
         reason = "日记尚未稳定"
+        scrolls = 0
         while time.monotonic() < until:
+            self.check()
             frame = self.frame()
             if not self.diary_ready(frame):
                 last = None
@@ -435,6 +457,16 @@ class CatDiaryRunner(Navigator):
                 time.sleep(0.1)
                 continue
             try:
+                top, bottom, count = diary_scrollbar(frame)
+                aligned = top <= 139 if position == "top" else bottom >= 449
+                if not aligned:
+                    if scrolls >= 3:
+                        raise RuntimeError("日记列表三次滚动仍未对齐")
+                    begin, end = ((780, 175), (780, 430)) if position == "top" else ((780, 430), (780, 175))
+                    self.action("CatDiaryScrollList", {"CatDiaryScrollList": {"begin": begin, "end": end}})
+                    scrolls += 1
+                    last = None
+                    continue
                 targets = []
                 for slot, roi in enumerate(SLOT_ROIS):
                     done_roi = [390, 180 + slot * 108, 54, 48]
@@ -445,22 +477,38 @@ class CatDiaryRunner(Navigator):
                         if not content:
                             raise ValueError("某个猫槽位没有文字，不能当成完成")
                         targets.append(match_clue(content, self.catalog)["id"])
-                state = DiaryState(tuple(targets), count_stamps(frame))
-                if state == last:
-                    if any(target is not None for target in state.targets):
-                        ttl = remaining_seconds(self.text("CatDiaryRemaining", frame))
-                        # 采用显示值的保守下界；后续读取不能延长本轮截止时间。
-                        expires = time.monotonic() + ttl
-                        self.round_deadline = min(self.round_deadline or expires, expires)
-                        self.check()
-                    LOG.warning("CatDiary 日记 %s，印章 %s/7", state.targets, state.stamps)
-                    return state
-                last = state
+                page = (tuple(targets), count_stamps(frame), count)
+                if page == last:
+                    ttl = remaining_seconds(self.text("CatDiaryRemaining", frame))
+                    return page, ttl
+                last = page
             except ValueError as exc:
                 reason = str(exc)
                 last = None
             time.sleep(0.2)
         raise RuntimeError(reason)
+
+    def read_diary(self):
+        self.open_diary()
+        top, ttl = self.read_diary_page("top")
+        targets, stamps, count = top
+        if count == 4:
+            bottom, bottom_ttl = self.read_diary_page("bottom")
+            if bottom[2] != count or bottom[1] != stamps or targets[1:] != bottom[0][:2]:
+                raise RuntimeError("日记上下页条目或印章不一致，停止拼接")
+            restored, restored_ttl = self.read_diary_page("top")
+            if restored != top:
+                raise RuntimeError("日记滚动期间顶部条目变化，停止读取")
+            targets += bottom[0][2:]
+            ttl = min(ttl, bottom_ttl, restored_ttl)
+        state = DiaryState(targets, stamps)
+        if any(target is not None for target in targets):
+            # 采用显示值的保守下界；后续读取不能延长本轮截止时间。
+            expires = time.monotonic() + ttl
+            self.round_deadline = min(self.round_deadline or expires, expires)
+            self.check()
+        LOG.warning("CatDiary 日记 %s，印章 %s/7", state.targets, state.stamps)
+        return state
 
     def close_diary(self):
         if not self.diary_ready(self.frame()):
@@ -508,6 +556,12 @@ class CatDiaryRunner(Navigator):
             source = next(e for e in self.catalog if e["id"] == "cat_27")
             self.teleport(source)
             self.walk_konium_igoma(source, entry)
+            return
+        if entry.get("approach") == "time_tower_exit":
+            source = dict(next(e for e in self.catalog if e["id"] == "cat_10"),
+                          map_names=["时之塔1楼"])
+            self.teleport(source)
+            self.leave_time_tower(source, entry)
             return
         self.world()
         self.action("NavigationOpenWorldMap")
@@ -816,6 +870,19 @@ class CatDiaryRunner(Navigator):
         if name != "异元晶控制所研究中心" or math.dist(position, (498, 462)) > 20:
             raise RuntimeError(f"未确认进入研究中心深处：{name} {position}")
         LOG.warning("CatDiary 已确认进入异元晶控制所研究中心深处")
+
+    def leave_time_tower(self, source, entry):
+        # 克鲁利大道只有世界地图地名；实走确认时之塔一楼落点前的门通往该区域。
+        name, position, _, _ = self.locate(source)
+        if name != "时之塔1楼" or math.dist(position, (655, 457)) > 20:
+            raise RuntimeError(f"时之塔出口起点不符：{name} {position}")
+        frame = self.wait("CatDiaryTimeTowerExit")
+        self.click(self.reco("CatDiaryTimeTowerExit", frame))
+        self.wait_area_transition()
+        name, position, _, _ = self.locate(entry)
+        if name != "克鲁利大道" or math.dist(position, (226, 232)) > 20:
+            raise RuntimeError(f"未确认时之塔出口到达克鲁利大道：{name} {position}")
+        LOG.warning("CatDiary 已从时之塔1楼进入克鲁利大道，进场移动 0 步")
 
     def climb_miglance_castle(self, entry):
         first_floor = dict(entry, map_names=["米格兰斯城1楼"])
@@ -1183,7 +1250,7 @@ class CatDiaryRunner(Navigator):
             active = [target for target in state.targets if target is not None]
             if not active:
                 return
-            # 每次重新读取游戏状态，不能用旧三项队列或“已访问地点”集合跳过刷新。
+            # 每次重新读取全部条目，不能用旧队列或“已访问地点”集合跳过刷新。
             entry = next(e for e in self.catalog if e["id"] == active[0])
             self.close_diary()
             self.teleport(entry)
