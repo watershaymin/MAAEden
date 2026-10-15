@@ -917,9 +917,14 @@
             "location": "红叶街道",
             "teleport": "红叶街道",
             "clues": [
-                "火红的红叶"
+                "火红的红叶",
+                "这里有好多像是在燃烧的红叶"
             ],
             "world_names": [
+                "红叶街道"
+            ],
+            "approach": "nagsham_vermilion",
+            "map_names": [
                 "红叶街道"
             ]
         },

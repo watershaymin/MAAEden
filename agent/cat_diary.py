@@ -161,12 +161,12 @@ class RoadMap:
         # 实机区域图将场景亮度约减半，半透明道路在其上增加亮度。
         delta = overlay.astype(np.float32) - base.astype(np.float32) * 0.5
         mask = np.min(delta, axis=2) > 20
-        mask[:140] = mask[610:] = False
+        mask[:80] = mask[610:] = False
         mask[:, :165] = mask[:, 1120:] = False
         # 仅在已经识别的图例遮挡框内补齐同一直线两端的道路；不跨空白补路。
         hidden = np.zeros(mask.shape, dtype=bool)
         for x, y, w, h in occlusions:
-            hidden[max(140, y - 4):min(610, y + h + 6), max(165, x - 4):min(1120, x + w + 4)] = True
+            hidden[max(80, y - 4):min(610, y + h + 6), max(165, x - 4):min(1120, x + w + 4)] = True
         # 图例本身的白色/金色也会在差分中变亮，必须先剔除，不能当作宽路或岔路。
         mask[hidden] = False
         for source, covered in ((mask, hidden), (mask.T, hidden.T)):
@@ -346,6 +346,7 @@ class CatDiaryRunner(Navigator):
         self.map_anchors = map_data.get("anchors", {})
         self.round_deadline = None
         self.tracking_cat = False
+        self.diary_unscrollable = False
 
     def check(self):
         if self.context.tasker.stopping:
@@ -457,7 +458,15 @@ class CatDiaryRunner(Navigator):
                 time.sleep(0.1)
                 continue
             try:
-                top, bottom, count = diary_scrollbar(frame)
+                unscrollable = False
+                try:
+                    top, bottom, count = diary_scrollbar(frame)
+                except ValueError:
+                    if not self.reco("CatDiaryStaticList", frame):
+                        raise
+                    # 无滑块的实机三条布局；以完整视口作为对齐边界，稍后仍双向复核。
+                    top, bottom, count = 134, 453, 3
+                    unscrollable = True
                 aligned = top <= 139 if position == "top" else bottom >= 449
                 if not aligned:
                     if scrolls >= 3:
@@ -480,6 +489,7 @@ class CatDiaryRunner(Navigator):
                 page = (tuple(targets), count_stamps(frame), count)
                 if page == last:
                     ttl = remaining_seconds(self.text("CatDiaryRemaining", frame))
+                    self.diary_unscrollable = unscrollable
                     return page, ttl
                 last = page
             except ValueError as exc:
@@ -501,6 +511,17 @@ class CatDiaryRunner(Navigator):
                 raise RuntimeError("日记滚动期间顶部条目变化，停止读取")
             targets += bottom[0][2:]
             ttl = min(ttl, bottom_ttl, restored_ttl)
+        elif count == 3 and self.diary_unscrollable:
+            # 缺少滚动条不能单独证明没有隐藏条目。已识别的静态布局还需
+            # 双向滑动后内容、印章和布局均不变，才接受为完整三条。
+            for begin, end in (((780, 430), (780, 175)), ((780, 175), (780, 430))):
+                self.check()
+                self.action("CatDiaryScrollList", {"CatDiaryScrollList": {"begin": begin, "end": end}})
+                observed, observed_ttl = self.read_diary_page("top")
+                if observed != top or not self.diary_unscrollable:
+                    raise RuntimeError("无滚动条日记滑动后内容或布局变化，不能确认完整三条")
+                ttl = min(ttl, observed_ttl)
+            LOG.warning("CatDiary 已双向复核无滚动条三条列表")
         state = DiaryState(targets, stamps)
         if any(target is not None for target in targets):
             # 采用显示值的保守下界；后续读取不能延长本轮截止时间。
@@ -534,6 +555,11 @@ class CatDiaryRunner(Navigator):
     def teleport(self, entry):
         self.reset_navigation()
         self.tracking_cat = False
+        if entry.get("approach") == "nagsham_vermilion":
+            source = next(e for e in self.catalog if e["id"] == "cat_65")
+            self.teleport(source)
+            self.walk_nagsham_vermilion(source, entry)
+            return
         if entry.get("approach") == "kunlun_slide":
             source = next(e for e in self.catalog if e["id"] == "cat_67")
             self.teleport(source)
@@ -714,6 +740,81 @@ class CatDiaryRunner(Navigator):
             }})
             self.navigation_movement = 'right'
         raise RuntimeError("纳兹里克东侧路线超过 18 步，未确认进入冻时领域")
+
+    def walk_nagsham_vermilion(self, source, entry):
+        # 红叶街道没有传送按钮；先走已标定的那古萨无下层道路到南门。
+        previous = movement = None
+        stalled = 0
+        for step in range(19):
+            self.check()
+            name, position, _, road = self.locate(source, previous, movement)
+            if name != "辰之国那古萨无" or (previous is None and math.dist(position, (649, 445)) > 20):
+                raise RuntimeError(f"那古萨无南门起点不符：{name} {position}")
+            on_route = ((abs(position[1]-445) <= 12 and 588 <= position[0] <= 675)
+                        or (abs(position[0]-601) <= 12 and 433 <= position[1] <= 543)
+                        or (abs(position[1]-531) <= 12 and 588 <= position[0] <= 690))
+            if not on_route:
+                raise RuntimeError(f"那古萨无偏离已验证南门道路：{position}")
+            if math.dist(position, (678, 531)) <= 10:
+                break
+            if previous is not None:
+                dx, dy = DIRECTIONS[movement]
+                progress = (position[0]-previous[0])*dx + (position[1]-previous[1])*dy
+                stalled = stalled + 1 if progress < 3 else 0
+                if stalled >= 3:
+                    raise RuntimeError("那古萨无南门连续三步没有预期位移")
+            next_step = road.step(position, (678, 531))
+            if step == 18 or next_step is None:
+                raise RuntimeError("那古萨无南门未能确认出口坐标")
+            movement, duration = next_step
+            dx, dy = DIRECTIONS[movement]
+            LOG.warning("CatDiary 跨区 那古萨无南门 第%s步：%s，%s %sms", step+1, position, movement, duration)
+            self.action("CatDiarySwipe", {"CatDiarySwipe": {
+                "begin": [200, 450], "end": [200+180*dx, 450+180*dy],
+                "duration": duration, "post_delay": 1500 if dy else 200,
+            }})
+            previous = position
+        self.action("CatDiarySwipe", {"CatDiarySwipe": {
+            "begin": [200, 450], "end": [200, 630], "duration": 600, "post_delay": 1500,
+        }})
+        self.reset_navigation()
+        previous_landmark = None
+        stalled = 0
+        nodes = tuple("CatDiaryNagsham"+name for name in ("Pillar", "Vine", "Tree"))
+        for step in range(13):
+            self.check()
+            name = self.crossing_map_name(("辰之国那古萨无", "红叶街道"))
+            if name == "红叶街道":
+                self.reset_navigation()
+                name, position, _, _ = self.locate(entry)
+                if name != "红叶街道" or math.dist(position, (640, 117)) > 20:
+                    raise RuntimeError(f"未确认红叶街道西侧落点：{name} {position}")
+                LOG.warning("CatDiary 已从那古萨无南门进入红叶街道，连接路移动 %s 步", step)
+                return
+            if name is not None:
+                raise RuntimeError(f"那古萨无南门连接路出现意外地图：{name}")
+            frame = self.world()
+            matches = [(stage, result.best_result.box[0]) for stage, node in enumerate(nodes)
+                       if (result := self.reco(node, frame))]
+            if not matches:
+                raise RuntimeError("那古萨无南门连接路场景标志不符")
+            stage, x = max(matches)
+            if previous_landmark is None and stage != 0:
+                raise RuntimeError("那古萨无南门未确认城门柱起点")
+            if previous_landmark is not None:
+                if stage < previous_landmark[0]:
+                    raise RuntimeError("那古萨无南门连接路场景顺序异常")
+                stalled = stalled + 1 if stage == previous_landmark[0] and previous_landmark[1]-x < 3 else 0
+                if stalled >= 3:
+                    raise RuntimeError("那古萨无南门连接路连续三步没有预期场景位移")
+            previous_landmark = (stage, x)
+            if step == 12:
+                break
+            LOG.warning("CatDiary 跨区 那古萨无南门连接路 第%s步，right 600ms", step+1)
+            self.action("CatDiarySwipe", {"CatDiarySwipe": {
+                "begin": [200, 450], "end": [380, 450], "duration": 600, "post_delay": 200,
+            }})
+        raise RuntimeError("那古萨无南门连接路超过 12 步，未确认进入红叶街道")
 
     def walk_konium_igoma(self, source, entry):
         # 蛇首在世界地图上只有地名，没有传送按钮。先沿柯尼姆已实走的主街西行，

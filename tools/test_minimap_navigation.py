@@ -209,8 +209,9 @@ class LiveReplayTests(unittest.TestCase):
         return f
 
     def atlas(self, name):
-        base = self.full_frame(self.fixture[name + '_base'], MAP_ROI)
-        large = self.full_frame(self.fixture[name + '_map'], MAP_ROI)
+        # 旧样本保留采集时的裁剪坐标；运行时 MAP_ROI 已扩展至红叶街道上缘。
+        base = self.full_frame(self.fixture[name + '_base'], (165, 130, 955, 490))
+        large = self.full_frame(self.fixture[name + '_map'], (165, 130, 955, 490))
         return MapAtlas(base, [large], name, self.fixture[name + '_position'])
 
     def test_live_quest_overlap_does_not_select_exclamation_hole(self):
@@ -357,8 +358,8 @@ class RepairSequenceTests(unittest.TestCase):
 
     def test_both_backgrounds_remove_pose_ghost_from_tiny_map(self):
         name = 'tiny_background'
-        base = self.full_frame(np.maximum(self.fixture[name+'_before'], self.fixture[name+'_base']), MAP_ROI)
-        full = self.full_frame(self.fixture[name+'_map'], MAP_ROI)
+        base = self.full_frame(np.maximum(self.fixture[name+'_before'], self.fixture[name+'_base']), (165, 130, 955, 490))
+        full = self.full_frame(self.fixture[name+'_map'], (165, 130, 955, 490))
         atlas = MapAtlas(base, [full], name, self.fixture[name+'_position'])
         frames = [self.full_frame(f, MINI_ROI) for f in self.fixture[name+'_mini']]
         result = atlas.observe(frames, self.fixture[name+'_position'])

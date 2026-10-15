@@ -36,7 +36,7 @@ class ContourAtlas:
     def __init__(self, base, overlay, position, excluded=()):
         delta = overlay.astype(np.float32) - base.astype(np.float32) * .5
         valid = np.zeros(overlay.shape[:2], np.uint8)
-        valid[130:620, 165:1120] = 1
+        valid[80:620, 165:1120] = 1
         valid *= static_map_mask(overlay, 2)
         cv2.circle(valid, tuple(map(round, position)), 36, 0, -1)
         for x, y in excluded:

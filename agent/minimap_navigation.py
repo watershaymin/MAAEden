@@ -12,7 +12,7 @@ import numpy as np
 
 LOG = logging.getLogger(__name__)
 MINI_ROI = (1020, 20, 242, 155)
-MAP_ROI = (165, 130, 955, 490)
+MAP_ROI = (165, 80, 955, 540)
 
 
 class LocalizationLost(RuntimeError):
@@ -228,7 +228,7 @@ class MapAtlas:
         # 道路/固定图例由同机位展开前后差分给出，排除场景纹理与角色环。
         delta = self.image.astype(np.float32) - base.astype(np.float32) * .5
         mask = (delta.min(axis=2) > 20).astype(np.uint8) * 255
-        mask[:130] = mask[620:] = 0
+        mask[:80] = mask[620:] = 0
         mask[:, :165] = mask[:, 1120:] = 0
         mask = cv2.dilate(mask, np.ones((7, 7), np.uint8))
         mask *= static_map_mask(self.image, 2)
@@ -424,6 +424,24 @@ class MiniMapNavigator:
             time.sleep(.1)
         raise LocalizationLost('等待区域地图超时')
 
+    def read_full_map_position(self, frames, name, road_key):
+        nav = self.runner
+        for attempt in range(3):
+            offset = map_offset(nav, frames[-1], road_key)
+            marker = nav.reco('CatDiaryMarker', frames[-1])
+            excluded = [match.box for match in marker.filtered_results] if marker else []
+            try:
+                return frames, offset, pulse_position(frames, MAP_ROI, excluded=excluded)
+            except LocalizationLost as exc:
+                if attempt == 2:
+                    raise
+                LOG.warning('MiniMap resample full-map pulse: %s', exc)
+                frames = self.burst(10)
+                if not nav.reco('NavigationLocalMap', frames[-1]):
+                    raise NavigationInterrupted('角色重采样期间区域地图消失')
+                if read_map_name(nav, frames[-1], name) != name:
+                    raise LocalizationLost('角色重采样期间地图名称变化')
+
     def calibrate(self, audit=False):
         from cat_diary import RoadMap, compact
         nav = self.runner
@@ -451,10 +469,7 @@ class MiniMapNavigator:
             raise LocalizationLost(f"地图不符：预期 {self.map_name}，实际 {name}；保留现场")
         road_keys = [key for key in nav.maps if name == key or name.endswith(key)]
         road_key = self.road_key or (road_keys[0] if len(road_keys) == 1 else name)
-        offset = map_offset(nav, frames[-1], road_key)
-        marker = nav.reco('CatDiaryMarker', frames[-1])
-        excluded = [match.box for match in marker.filtered_results] if marker else []
-        screen_position = pulse_position(frames, MAP_ROI, excluded=excluded)
+        frames, offset, screen_position = self.read_full_map_position(frames, name, road_key)
         position = tuple(a-b for a, b in zip(screen_position, offset))
         self.last_map_position = position
         if audit and self.position is not None:

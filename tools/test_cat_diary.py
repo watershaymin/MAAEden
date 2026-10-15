@@ -637,6 +637,16 @@ class CatDiaryTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "无法匹配"):
             match_clue("火焰的燃烧方式", catalog)
 
+    def test_live_autumn_leaves_clue_keeps_unique_destination_guard(self):
+        catalog = load_catalog()
+        text = "这里有好多像是在燃烧的红叶喵！捡捡落叶感觉也很有趣呢喵！"
+        self.assertEqual(match_clue(text, catalog)["id"], "cat_64")
+        for incomplete in ("红叶", "像是在燃烧", "捡捡落叶感觉也很有趣呢喵！"):
+            with self.subTest(incomplete=incomplete), self.assertRaisesRegex(ValueError, "无法匹配"):
+                match_clue(incomplete, catalog)
+        with self.assertRaisesRegex(ValueError, "不唯一"):
+            match_clue(text + "这个村落也太冷了", catalog)
+
     def test_same_location_with_new_stamp_is_processed_again(self):
         runner = self.runner()
         target = runner.catalog[0]["id"]

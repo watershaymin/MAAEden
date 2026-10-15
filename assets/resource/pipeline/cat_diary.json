@@ -155,13 +155,14 @@
         "template": [
             "CatDiary/Marker.png",
             "CatDiary/MarkerNazrik.png",
-            "CatDiary/MarkerKunlun.png"
+            "CatDiary/MarkerKunlun.png",
+            "CatDiary/MarkerVermilion.png"
         ],
         "roi": [
             165,
-            140,
+            70,
             955,
-            470
+            540
         ],
         "threshold": 0.82
     },
@@ -204,9 +205,9 @@
         ],
         "roi": [
             165,
-            140,
+            80,
             955,
-            470
+            530
         ],
         "threshold": 0.78
     },
@@ -245,13 +246,24 @@
     "CatDiaryScrollList": {
         "desc": "仅在已识别日记页中滚动线索列表；滚动条端点及上下页重叠条目由 Agent 核验。",
         "action": "Swipe",
-        "begin": [780, 175],
-        "end": [780, 430],
+        "begin": [
+            780,
+            175
+        ],
+        "end": [
+            780,
+            430
+        ],
         "duration": 600,
         "post_wait_freezes": {
             "time": 300,
             "timeout": 3000,
-            "target": [330, 140, 610, 310],
+            "target": [
+                330,
+                140,
+                610,
+                310
+            ],
             "threshold": 0.98
         }
     },
@@ -465,14 +477,24 @@
         "desc": "柯尼姆西侧无小地图连接路的前景旗杆顶端，仅在已核验的主街西端之后使用。",
         "recognition": "TemplateMatch",
         "template": "CatDiary/KoniumWestFlag.png",
-        "roi": [30, 380, 1220, 150],
+        "roi": [
+            30,
+            380,
+            1220,
+            150
+        ],
         "threshold": 0.9
     },
     "CatDiaryKoniumWestSkull": {
         "desc": "柯尼姆西侧连接路靠近蛇首的兽骨，核验场景顺序与实际位移；不代替到达地图名。",
         "recognition": "TemplateMatch",
         "template": "CatDiary/KoniumWestSkull.png",
-        "roi": [30, 100, 1220, 220],
+        "roi": [
+            30,
+            100,
+            1220,
+            220
+        ],
         "threshold": 0.9
     },
     "CatDiarySnakeIsland": {
@@ -773,5 +795,53 @@
             150
         ],
         "threshold": 0.9
+    },
+    "CatDiaryNagshamPillar": {
+        "desc": "那古萨无南门向东连接红叶街道的实机路标；仅在核验南门落点后使用。",
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/NagshamPillar.png",
+        "roi": [
+            0,
+            0,
+            1280,
+            280
+        ],
+        "threshold": 0.9
+    },
+    "CatDiaryNagshamVine": {
+        "desc": "那古萨无南门向东连接红叶街道的实机路标；仅在核验南门落点后使用。",
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/NagshamVine.png",
+        "roi": [
+            0,
+            0,
+            1280,
+            280
+        ],
+        "threshold": 0.9
+    },
+    "CatDiaryNagshamTree": {
+        "desc": "那古萨无南门向东连接红叶街道的实机路标；仅在核验南门落点后使用。",
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/NagshamTree.png",
+        "roi": [
+            0,
+            0,
+            1280,
+            280
+        ],
+        "threshold": 0.9
+    },
+    "CatDiaryStaticList": {
+        "desc": "无滚动条三条日记的固定右边缘；必须再双向滑动复核完整内容不变。",
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/StaticList.png",
+        "roi": [
+            952,
+            128,
+            24,
+            330
+        ],
+        "threshold": 0.98
     }
 }
