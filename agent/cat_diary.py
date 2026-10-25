@@ -561,9 +561,19 @@ class CatDiaryRunner(Navigator):
             self.walk_nagsham_vermilion(source, entry)
             return
         if entry.get("approach") == "kunlun_slide":
-            source = next(e for e in self.catalog if e["id"] == "cat_67")
+            # 昆仑山从殿外冰坡进入；妖魔殿寻猫现在需要进入一楼，不能沿用该进场。
+            source = dict((key, value) for key, value in
+                          next(e for e in self.catalog if e["id"] == "cat_67").items()
+                          if key != "approach")
+            source.update(map_names=["妖魔殿"], road_map="妖魔殿")
             self.teleport(source)
             self.slide_to_kunlun(source, entry)
+            return
+        if entry.get("approach") == "youma_entrance":
+            source = {key: value for key, value in entry.items() if key != "approach"}
+            source.update(map_names=["妖魔殿"], road_map="妖魔殿")
+            self.teleport(source)
+            self.enter_youma_palace(source, entry)
             return
         if entry.get("approach") == "miglance_second_floor":
             self.teleport({key: value for key, value in entry.items() if key != "approach"})
@@ -997,6 +1007,46 @@ class CatDiaryRunner(Navigator):
         if name != "米格兰斯城2楼" or math.dist(position, (640, 410)) > 20:
             raise RuntimeError(f"未确认到达米格兰斯城2楼：{name} {position}")
         LOG.warning("CatDiary 已从米格兰斯城1楼进入2楼")
+
+    def enter_youma_palace(self, source, entry):
+        # 实机殿外北侧道路与门口按钮；这里只走已核对的传送落点至北门。
+        previous = None
+        stalled = 0
+        for step in range(4):
+            self.check()
+            name, position, _, road = self.locate(source, previous, "up" if previous else None)
+            if name != "妖魔殿" or (previous is None and math.dist(position, (650, 394)) > 20):
+                raise RuntimeError(f"妖魔殿北门起点不符：{name} {position}")
+            if abs(position[0]-653) > 12 or not 300 <= position[1] <= 408:
+                raise RuntimeError(f"妖魔殿偏离已验证北门道路：{position}")
+            if previous is not None:
+                stalled = stalled + 1 if previous[1]-position[1] < 3 else 0
+                if stalled >= 3:
+                    raise RuntimeError("妖魔殿北门连续三步没有预期位移")
+            if position[1] <= 335:
+                frame = self.wait("CatDiaryYoumaDoor")
+                door = self.reco("CatDiaryYoumaDoor", frame)
+                if not door:
+                    raise RuntimeError("妖魔殿北门按钮未就绪")
+                self.click(door)
+                self.wait_area_transition()
+                name, landing, _, _ = self.locate(entry)
+                if name != "妖魔殿一楼入口" or math.dist(landing, (640, 440)) > 20:
+                    raise RuntimeError(f"未确认进入妖魔殿一楼入口：{name} {landing}")
+                LOG.warning("CatDiary 已从妖魔殿北门进入一楼入口，进场移动 %s 步", step)
+                return
+            if step == 3:
+                break
+            next_step = road.step(position, (653, 340))
+            if next_step is None or next_step[0] != "up":
+                raise RuntimeError("妖魔殿北门未能规划已验证的向上道路")
+            LOG.warning("CatDiary 跨区 妖魔殿北门 第%s步：%s，up %sms", step+1, position, next_step[1])
+            self.action("CatDiarySwipe", {"CatDiarySwipe": {
+                "begin": [200, 450], "end": [200, 270],
+                "duration": next_step[1], "post_delay": 1500,
+            }})
+            previous = position
+        raise RuntimeError("妖魔殿北门超过 3 步仍未确认入口")
 
     def wait_area_transition(self):
         self.reset_navigation()

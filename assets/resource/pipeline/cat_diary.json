@@ -446,6 +446,19 @@
         ],
         "threshold": 0.9
     },
+    "CatDiaryYoumaDoor": {
+        "desc": "妖魔殿殿外北门；仅在精确地图名、传送落点及北侧道路位置均核对后识别。",
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/YoumaDoor.png",
+        "roi": [
+            580,
+            220,
+            120,
+            130
+        ],
+        "method": 10001,
+        "threshold": 0.9
+    },
     "CatDiaryXenoDoor": {
         "desc": "仅在异元晶控制所已确认的出口坐标附近点击门或扶梯入口。",
         "recognition": "TemplateMatch",

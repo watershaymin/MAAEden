@@ -970,7 +970,12 @@
             ],
             "world_names": [
                 "妖魔殿"
-            ]
+            ],
+            "approach": "youma_entrance",
+            "map_names": [
+                "妖魔殿一楼入口"
+            ],
+            "road_map": "妖魔殿一楼入口"
         },
         {
             "id": "cat_68",
