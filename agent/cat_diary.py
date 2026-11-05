@@ -1340,7 +1340,7 @@ class CatDiaryRunner(Navigator):
                 if self.interact():
                     return
                 if searching:
-                    # 仅沿实际标定的道路访问已观察到羽毛被遮挡的位置；不是找到猫的证据。
+                    # 仅沿实际标定道路检查遮挡点或已实走的未显示支路；不是找到猫的证据。
                     targets = [search_points[0]]
                     LOG.warning("CatDiary %s 暂未识别羽毛，沿已确认道路检查 %s", name, targets[0])
                 else:

@@ -78,8 +78,22 @@ class Navigator:
             height = max(r.box[3] for r in rows)
             rows = [r for r in rows if r.box[3] >= height * .5]
         order = (lambda r: r.box[0]) if single_line else (lambda r: (r.box[1], r.box[0]))
+        rows = sorted(rows, key=order)
+        if (single_line and node == 'CatDiaryConfirmText'
+                and any(a.box[0] + a.box[2] > b.box[0] for a, b in zip(rows, rows[1:]))):
+            # 确认行重叠字框会把“国”的边缘误读成数字。重读完整原始像素，
+            # 不按目的地删字或删数字；无唯一可靠结果时保留失败状态。
+            left = min(r.box[0] for r in rows)
+            top = min(r.box[1] for r in rows)
+            width = max(r.box[0] + r.box[2] for r in rows) - left
+            height = max(r.box[1] + r.box[3] for r in rows) - top
+            reread = self.reco(node, frame, {node: {'roi': [left, top, width, height], 'only_rec': True}})
+            candidates = [r for r in reread.all_results if r.score >= .8] if reread else []
+            text = candidates[0].text if len(candidates) == 1 else ''
+            LOG.warning('CatDiary 确认行重读：%r -> %r', ''.join(r.text for r in rows), text)
+            return text
         parts, right = [], 0
-        for row in sorted(rows, key=order):
+        for row in rows:
             text = row.text
             if single_line and node in ('NavigationMapName', 'CatDiaryMapName') and row.box[0] < right:
                 # 标题分框会把前一框末字重复读入后一框。只重读不重叠的真实像素，

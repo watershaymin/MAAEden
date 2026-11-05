@@ -809,7 +809,46 @@ class CatDiaryTests(unittest.TestCase):
         runner.reco = Mock(return_value=SimpleNamespace(all_results=[label, punctuation]))
         self.assertEqual(runner.text("CatDiaryConfirmText", None, single_line=True), label.text)
         punctuation.box = [782, 288, 20, 29]
+        full_line = SimpleNamespace(text=label.text + "2", box=[471, 288, 331, 29], score=.99)
+        runner.reco = Mock(side_effect=[SimpleNamespace(all_results=[label, punctuation]),
+                                       SimpleNamespace(all_results=[full_line])])
         self.assertEqual(runner.text("CatDiaryConfirmText", None, single_line=True), label.text + "2")
+
+    def test_overlapping_confirmation_rereads_complete_line_pixels(self):
+        runner = self.runner()
+        rows = [SimpleNamespace(text="即将移动到辰之国", box=[472, 290, 195, 25], score=.999),
+                SimpleNamespace(text="1", box=[659, 294, 31, 18], score=.905),
+                SimpleNamespace(text="那古萨无。", box=[681, 288, 114, 30], score=.999)]
+        full_line = SimpleNamespace(text="即将移动到辰之国那古萨无。", score=.999)
+        runner.reco = Mock(side_effect=[SimpleNamespace(all_results=rows),
+                                       SimpleNamespace(all_results=[full_line])])
+        frame = object()
+        self.assertEqual(runner.text("CatDiaryConfirmText", frame, single_line=True), full_line.text)
+        self.assertEqual(runner.reco.call_args.args,
+                         ("CatDiaryConfirmText", frame,
+                          {"CatDiaryConfirmText": {"roi": [472, 288, 323, 30], "only_rec": True}}))
+
+    def test_overlapping_confirmation_requires_unique_confident_reread(self):
+        rows = [SimpleNamespace(text="即将移动到时之塔", box=[450, 290, 200, 28], score=.99),
+                SimpleNamespace(text="1楼", box=[640, 290, 50, 28], score=.99)]
+        for candidates in [[], [SimpleNamespace(text="即将移动到时之塔1楼", score=.79)],
+                           [SimpleNamespace(text="时之塔1楼", score=.99),
+                            SimpleNamespace(text="时之塔2楼", score=.99)]]:
+            with self.subTest(candidates=candidates):
+                runner = self.runner()
+                runner.reco = Mock(side_effect=[SimpleNamespace(all_results=rows),
+                                               SimpleNamespace(all_results=candidates) if candidates else None])
+                self.assertEqual(runner.text("CatDiaryConfirmText", None, single_line=True), "")
+
+    def test_confirmation_reread_keeps_digits_and_unexpected_destination(self):
+        rows = [SimpleNamespace(text="即将移动到辰之国", box=[472, 290, 195, 25], score=.999),
+                SimpleNamespace(text="1那古萨无", box=[659, 288, 136, 30], score=.99)]
+        for text in ["即将移动到时之塔1楼。", "即将移动到辰之国1那古萨无。", "即将移动到猫神神社。"]:
+            with self.subTest(text=text):
+                runner = self.runner()
+                runner.reco = Mock(side_effect=[SimpleNamespace(all_results=rows),
+                                               SimpleNamespace(all_results=[SimpleNamespace(text=text, score=.99)])])
+                self.assertEqual(runner.text("CatDiaryConfirmText", None, single_line=True), text)
 
     def test_oversized_destination_box_is_clicked_at_its_center(self):
         runner = self.runner()
@@ -1297,6 +1336,32 @@ class CatDiaryTests(unittest.TestCase):
         runner.locate = Mock(return_value=("地图", (500, 300), [], RoadMap.from_segments([])))
         runner.action = Mock()
         runner.chase(runner.catalog[0])
+        runner.action.assert_not_called()
+
+    def test_dragon_pool_search_enters_observed_lower_ring(self):
+        runner = self.runner()
+        entry = next(e for e in runner.catalog if e["id"] == "cat_50")
+        self.assertEqual(entry["map_names"], ["龙神池"])
+        self.assertEqual(match_clue("鸟一飞走 路就被堵住了喵。真是不可思议的池子喵。", runner.catalog)["id"], "cat_50")
+        road = RoadMap.from_segments(runner.maps["龙神池"])
+        target = runner.search_points["龙神池"][0]
+        for position, direction in [((883, 401), "left"), ((754, 402), "left"),
+                                    ((731, 401), "down"), ((731, 487), "left")]:
+            self.assertEqual(road.step(position, target)[0], direction, position)
+        self.assertIsNone(road.step((704, 487), target))
+        with self.assertRaisesRegex(RuntimeError, "没有已确认道路"):
+            road.nearest((500, 317))
+
+    def test_dragon_pool_search_without_interaction_preserves_failure(self):
+        runner = self.runner()
+        entry = next(e for e in runner.catalog if e["id"] == "cat_50")
+        road = RoadMap.from_segments(runner.maps["龙神池"])
+        runner.interact = Mock(return_value=False)
+        runner.locate = Mock(return_value=("龙神池", (704, 488), [], road))
+        runner.action = Mock()
+        with self.assertRaisesRegex(RuntimeError, "连续四帧"):
+            runner.chase(entry)
+        self.assertEqual(runner.locate.call_count, 5)
         runner.action.assert_not_called()
 
     def test_calibrated_occlusion_search_never_counts_as_success(self):
