@@ -555,6 +555,17 @@ class CatDiaryRunner(Navigator):
     def teleport(self, entry):
         self.reset_navigation()
         self.tracking_cat = False
+        if entry.get("approach") == "ship_graveyard_exit":
+            source = dict(next(e for e in self.catalog if e["id"] == "cat_53"),
+                          map_names=["船墓第一只中型船船底"])
+            self.teleport(source)
+            self.leave_ship_graveyard(source, entry)
+            return
+        if entry.get("approach") == "angal_wasteland":
+            source = next(e for e in self.catalog if e["id"] == "cat_71")
+            self.teleport(source)
+            self.walk_angal_wasteland(source, entry)
+            return
         if entry.get("approach") == "nagsham_vermilion":
             source = next(e for e in self.catalog if e["id"] == "cat_65")
             self.teleport(source)
@@ -750,6 +761,74 @@ class CatDiaryRunner(Navigator):
             }})
             self.navigation_movement = 'right'
         raise RuntimeError("纳兹里克东侧路线超过 18 步，未确认进入冻时领域")
+
+    def walk_angal_wasteland(self, source, entry):
+        previous = None
+        stalled = 0
+        for step in range(13):
+            self.check()
+            name, position, _, _ = self.locate(source, previous, "left" if previous else None)
+            if name != "再生村落安格尔" or (previous is None and math.dist(position, (565, 399)) > 20):
+                raise RuntimeError(f"安格尔西行起点不符：{name} {position}")
+            if abs(position[1] - 399) > 12 or not 340 <= position[0] <= 590:
+                raise RuntimeError(f"安格尔西行偏离已验证道路：{position}")
+            if previous is not None:
+                stalled = stalled + 1 if previous[0] - position[0] < 3 else 0
+                if stalled >= 3:
+                    raise RuntimeError("安格尔西行连续三步没有预期位移")
+            if position[0] <= 380:
+                break
+            if step == 12:
+                raise RuntimeError("安格尔西行超过 12 步未到连接路")
+            LOG.warning("CatDiary 跨区 安格尔西侧 第%s步：%s，left 600ms", step + 1, position)
+            self.action("CatDiarySwipe", {"CatDiarySwipe": {
+                "begin": [200, 450], "end": [20, 450], "duration": 600, "post_delay": 700,
+            }})
+            previous = position
+
+        self.reset_navigation()
+        landmark = None
+        stalled = 0
+        nodes = tuple("CatDiaryAngalWest" + name for name in ("Wall", "WallEnd", "Ruin", "Log", "Tree"))
+        for step in range(13):
+            self.check()
+            name = self.crossing_map_name(("再生村落安格尔", "沉淀之地"))
+            if name == "沉淀之地":
+                self.reset_navigation()
+                name, position, _, _ = self.locate(entry)
+                if name != "沉淀之地" or math.dist(position, (1030, 316)) > 45:
+                    raise RuntimeError(f"未确认沉淀之地东侧落点：{name} {position}")
+                LOG.warning("CatDiary 已从安格尔进入沉淀之地，连接路移动 %s 步", step)
+                return
+            if name == "再生村落安格尔" and landmark is None:
+                _, position, _, _ = self.locate(source)
+                if abs(position[1] - 399) > 12 or not 330 <= position[0] <= 395:
+                    raise RuntimeError(f"安格尔西侧连接路起点偏离：{position}")
+            elif name is None:
+                frame = self.world()
+                matches = [(stage, result.best_result.box[0]) for stage, node in enumerate(nodes)
+                           if (result := self.reco(node, frame))]
+                if not matches:
+                    raise RuntimeError("安格尔西侧连接路场景标志不符")
+                stage, x = max(matches)
+                if landmark is None and stage != 0:
+                    raise RuntimeError("安格尔西侧未确认连接路起点墙体")
+                if landmark is not None:
+                    if stage < landmark[0] or stage > landmark[0] + 1:
+                        raise RuntimeError("安格尔西侧连接路场景顺序异常")
+                    stalled = stalled + 1 if stage == landmark[0] and x - landmark[1] < 3 else 0
+                    if stalled >= 3:
+                        raise RuntimeError("安格尔西侧连接路连续三步没有预期场景位移")
+                landmark = (stage, x)
+            else:
+                raise RuntimeError(f"安格尔西侧出现意外地图：{name}")
+            if step == 12:
+                break
+            LOG.warning("CatDiary 跨区 安格尔西侧连接路 第%s步，left 600ms", step + 1)
+            self.action("CatDiarySwipe", {"CatDiarySwipe": {
+                "begin": [200, 450], "end": [20, 450], "duration": 600, "post_delay": 1000,
+            }})
+        raise RuntimeError("安格尔西侧连接路超过 12 步，未确认进入沉淀之地")
 
     def walk_nagsham_vermilion(self, source, entry):
         # 红叶街道没有传送按钮；先走已标定的那古萨无下层道路到南门。
@@ -981,6 +1060,22 @@ class CatDiaryRunner(Navigator):
         if name != "异元晶控制所研究中心" or math.dist(position, (498, 462)) > 20:
             raise RuntimeError(f"未确认进入研究中心深处：{name} {position}")
         LOG.warning("CatDiary 已确认进入异元晶控制所研究中心深处")
+
+    def leave_ship_graveyard(self, source, entry):
+        # 海湾没有世界地图传送按钮；船墓传送落点前的门直接通往海湾。
+        name, position, _, _ = self.locate(source)
+        if name != "船墓第一只中型船船底" or math.dist(position, (815, 479)) > 20:
+            raise RuntimeError(f"船墓出口起点不符：{name} {position}")
+        frame = self.wait("CatDiaryShipGraveyardExit")
+        button = self.reco("CatDiaryShipGraveyardExit", frame)
+        if not button:
+            raise RuntimeError("船墓出口按钮未就绪")
+        self.click(button)
+        self.wait_area_transition()
+        name, position, _, _ = self.locate(entry)
+        if name != "库尔奇海湾" or math.dist(position, (250, 574)) > 20:
+            raise RuntimeError(f"未确认船墓出口到达库尔奇海湾：{name} {position}")
+        LOG.warning("CatDiary 已从船墓进入库尔奇海湾，进场移动 0 步")
 
     def leave_time_tower(self, source, entry):
         # 克鲁利大道只有世界地图地名；实走确认时之塔一楼落点前的门通往该区域。

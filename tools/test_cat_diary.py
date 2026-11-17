@@ -1330,6 +1330,17 @@ class CatDiaryTests(unittest.TestCase):
         self.assertEqual(road.step((751, 446), (870, 361))[0], "right")
         self.assertEqual(road.step((807.5, 445.5), (870, 361))[0], "up")
 
+    def test_konium_observed_main_road_crosses_the_covered_spawn(self):
+        road = RoadMap.from_segments(self.runner().maps["魔兽村落柯尼姆"])
+        self.assertEqual(road.step((604.46, 358.35), (793.35, 361.64))[0], "right")
+        self.assertEqual(road.step((604.46, 358.35), (375, 359))[0], "left")
+
+    def test_konium_lower_roads_use_their_separate_main_road_junctions(self):
+        road = RoadMap.from_segments(self.runner().maps["魔兽村落柯尼姆"])
+        self.assertEqual(road.step((560, 445), (650, 445))[0], "left")
+        self.assertEqual(road.step((518, 445), (650, 445))[0], "up")
+        self.assertEqual(road.step((723, 359), (927, 500))[0], "down")
+
     def test_hidden_marker_can_still_have_a_scene_interaction(self):
         runner = self.runner()
         runner.interact = Mock(side_effect=[False, True])

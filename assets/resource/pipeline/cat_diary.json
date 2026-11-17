@@ -421,6 +421,14 @@
         ],
         "threshold": 0.9
     },
+    "CatDiaryShipGraveyardExit": {
+        "desc": "仅在船墓第一只中型船船底完整标题和已验证传送落点通过后，识别通往库尔奇海湾的出口按钮。",
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/ShipGraveyardExit.png",
+        "roi": [570, 500, 140, 120],
+        "method": 10001,
+        "threshold": 0.95
+    },
     "CatDiaryTimeTowerExit": {
         "desc": "仅在时之塔1楼完整标题和已验证落点通过后，识别通往克鲁利大道的出口按钮。",
         "recognition": "TemplateMatch",
@@ -844,6 +852,61 @@
             280
         ],
         "threshold": 0.9
+    },
+    "CatDiaryAngalWestWall": {
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/AngalWestWall.png",
+        "roi": [
+            0,
+            0,
+            1280,
+            350
+        ],
+        "threshold": 0.92
+    },
+    "CatDiaryAngalWestWallEnd": {
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/AngalWestWallEnd.png",
+        "roi": [
+            0,
+            0,
+            1280,
+            350
+        ],
+        "threshold": 0.92
+    },
+    "CatDiaryAngalWestRuin": {
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/AngalWestRuin.png",
+        "roi": [
+            0,
+            0,
+            1280,
+            350
+        ],
+        "threshold": 0.92
+    },
+    "CatDiaryAngalWestLog": {
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/AngalWestLog.png",
+        "roi": [
+            0,
+            0,
+            1280,
+            350
+        ],
+        "threshold": 0.92
+    },
+    "CatDiaryAngalWestTree": {
+        "recognition": "TemplateMatch",
+        "template": "CatDiary/AngalWestTree.png",
+        "roi": [
+            0,
+            0,
+            1280,
+            350
+        ],
+        "threshold": 0.92
     },
     "CatDiaryStaticList": {
         "desc": "无滚动条三条日记的固定右边缘；必须再双向滑动复核完整内容不变。",

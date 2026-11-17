@@ -280,6 +280,8 @@ class SessionTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, '没有已确认道路'):
             occluded.nearest(anchor)
         nav = self.runner()
+        # 此组验证尚无录入中心线时的临时建图及旧道路复用。
+        nav.maps = {}
         nav.world, nav.action = Mock(return_value=base), Mock()
         nav.text = Mock(return_value='魔兽村落柯尼姆')
         nav.reco = lambda node, *args: True if node == 'NavigationLocalMap' else None

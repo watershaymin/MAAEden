@@ -750,6 +750,10 @@
             "region": "东方",
             "location": "库尔奇海湾",
             "teleport": "库尔奇海湾",
+            "approach": "ship_graveyard_exit",
+            "map_names": [
+                "库尔奇海湾"
+            ],
             "clues": [
                 "海湾的前方有艘腐朽的船"
             ],
@@ -1041,6 +1045,10 @@
             "region": "东方",
             "location": "沉淀之地",
             "teleport": "沉淀之地",
+            "approach": "angal_wasteland",
+            "map_names": [
+                "沉淀之地"
+            ],
             "clues": [
                 "这里真是荒废得很彻底"
             ],
